@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第7章 AI最先能帮你做的20件白领工作</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+  --accent: #f43f5e;
+  --accent-soft: #ffe4e6;
+  --ink: #0f172a;
+  --ink-mid: #334155;
+  --ink-soft: #64748b;
+  --surface: #f1f5f9;
+  --card: #ffffff;
+  --border: rgba(15,23,42,.07);
+  --orange: #f97316;
+  --orange-soft: #ffedd5;
+  --green: #16a34a;
+  --green-soft: #dcfce7;
+  --purple: #7c3aed;
+  --purple-soft: #ede9fe;
+  --teal: #0891b2;
+  --teal-soft: #cffafe;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  background: var(--surface); color: var(--ink); line-height: 1.75; font-size: 15px;
+}
+.page { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.chapter-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1a2d5a 40%, #0f3460 100%);
+  border-radius: 20px; padding: 48px 44px; color: #fff;
+  margin-bottom: 36px; position: relative; overflow: hidden;
+}
+.chapter-header::before {
+  content: ''; position: absolute; top: -50px; right: -50px;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(37,99,235,.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.chapter-header::after {
+  content: ''; position: absolute; bottom: -40px; left: 10px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(8,145,178,.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ch-eyebrow { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 14px; }
+.ch-title { font-size: 28px; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 16px; }
+.ch-subtitle { font-size: 14px; color: rgba(255,255,255,.65); max-width: 540px; line-height: 1.65; margin-bottom: 24px; }
+.ch-takeaway {
+  background: rgba(255,255,255,.1); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.15); border-radius: 12px;
+  padding: 16px 20px; font-size: 13.5px; color: rgba(255,255,255,.9);
+  line-height: 1.65; position: relative; z-index: 1;
+}
+.ch-takeaway strong { color: #fff; }
+
+.card {
+  background: var(--card); border-radius: 16px; border: 1px solid var(--border);
+  padding: 32px 36px; margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(15,23,42,.06);
+}
+.section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; }
+.section-title { font-size: 21px; font-weight: 800; color: var(--ink); line-height: 1.3; margin-bottom: 6px; }
+.section-pill {
+  display: inline-block; font-size: 12px; font-weight: 600;
+  padding: 3px 12px; border-radius: 20px; margin-bottom: 18px;
+}
+.pill-blue   { background: var(--primary-soft); color: var(--primary); }
+.pill-teal   { background: var(--teal-soft); color: var(--teal); }
+.pill-orange { background: var(--orange-soft); color: var(--orange); }
+.pill-purple { background: var(--purple-soft); color: var(--purple); }
+.pill-green  { background: var(--green-soft); color: var(--green); }
+
+.body-text { font-size: 14.5px; line-height: 1.82; color: var(--ink-mid); margin-bottom: 16px; }
+.body-text:last-child { margin-bottom: 0; }
+.body-text strong { color: var(--ink); font-weight: 700; }
+
+.example-box {
+  background: var(--orange-soft); border-left: 3px solid var(--orange);
+  border-radius: 0 10px 10px 0; padding: 16px 18px; margin: 18px 0;
+}
+.example-box .ex-label { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; }
+.example-box p { font-size: 13.5px; line-height: 1.72; color: #7c2d12; margin: 0 0 8px; }
+.example-box p:last-child { margin-bottom: 0; }
+
+.perception-box {
+  background: var(--green-soft); border-radius: 12px; padding: 18px 22px; margin: 20px 0;
+}
+.perception-box .p-label { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+.perception-box p { font-size: 13.5px; line-height: 1.72; color: #14532d; margin: 0; }
+
+.divider { height: 1px; background: var(--border); margin: 28px 0; }
+.svg-wrap { overflow-x: auto; margin: 20px 0; }
+.svg-wrap svg { display: block; max-width: 100%; height: auto; }
+.svg-caption { font-size: 11px; color: var(--ink-soft); text-align: center; margin-top: 6px; letter-spacing: .5px; }
+
+.layer-badge {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  padding: 2px 10px; border-radius: 20px;
+}
+.badge-skill    { background: #ede9fe; color: #6d28d9; }
+.badge-workflow { background: #dcfce7; color: #15803d; }
+.badge-tool     { background: #cffafe; color: #0e7490; }
+
+.task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+.task-card {
+  background: #f8fafc; border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 18px;
+}
+.task-card-title { font-size: 13.5px; font-weight: 800; color: var(--ink); margin: 6px 0; }
+.task-card-body { font-size: 13px; color: var(--ink-mid); line-height: 1.65; }
+
+.category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.cat-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+
+.chapter-footer { background: linear-gradient(135deg, var(--primary-soft), var(--purple-soft)); border-radius: 16px; padding: 28px 32px; margin-top: 12px; }
+.footer-title { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+.footer-text { font-size: 13.5px; color: var(--ink-mid); line-height: 1.72; }
+.next-chapter { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 13px; color: var(--primary); font-weight: 600; }
+
+/* ── 三阶入门路径 ── */
+.tier-path { margin: 22px 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+.tier-row { display: flex; align-items: flex-start; padding: 14px 18px; border-bottom: 1px solid var(--border); background: #fff; }
+.tier-row:last-child { border-bottom: none; }
+.tier-row:nth-child(1) { background: #eff6ff; }
+.tier-row:nth-child(2) { background: #f0fdf4; }
+.tier-row:nth-child(3) { background: #faf5ff; }
+.tier-badge {
+  flex-shrink: 0; width: 72px; font-size: 10.5px; font-weight: 800;
+  padding: 3px 0; border-radius: 6px; text-align: center; margin-right: 14px; margin-top: 1px; letter-spacing: .5px;
+}
+.tier-badge.l0 { background: #dbeafe; color: #1d4ed8; }
+.tier-badge.l1 { background: #dcfce7; color: #15803d; }
+.tier-badge.l2 { background: #ede9fe; color: #6d28d9; }
+.tier-body { font-size: 13px; line-height: 1.72; color: var(--ink-mid); }
+.tier-body strong { color: var(--ink); font-weight: 700; display: block; margin-bottom: 3px; }
+.tier-path-label { font-size: 10.5px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 10px; }
+
+/* ── Level 2 真实案例框 ── */
+.level2-box {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  border-radius: 14px; padding: 22px 26px; margin: 24px 0;
+}
+.level2-box .l2-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #a5b4fc; margin-bottom: 8px; }
+.level2-box .l2-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 10px; line-height: 1.4; }
+.level2-box p { font-size: 13px; color: rgba(255,255,255,.82); line-height: 1.72; margin: 0 0 8px; }
+.level2-box p:last-child { margin-bottom: 0; }
+.level2-box .code-snip {
+  background: rgba(0,0,0,.4); border-radius: 8px; padding: 12px 14px;
+  font-family: 'Menlo','Consolas','Courier New',monospace; font-size: 11.5px;
+  color: #c4b5fd; line-height: 1.7; margin: 12px 0;
+  white-space: pre;
+}
+.level2-box .file-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.level2-box .file-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px;
+  background: rgba(255,255,255,.12); color: rgba(255,255,255,.85);
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── 章节头部 ── -->
+  <div class="chapter-header">
+    <div class="ch-eyebrow">Part 2 · 第 7 章 · 场景地图</div>
+    <h1 class="ch-title">AI 最先能帮你做的<br>20 件白领工作</h1>
+    <p class="ch-subtitle">不是所有工作都适合 AI——但有一批任务，你今天就可以把它们交出去。这一章给你一张地图，标出那 20 个可以立刻开始的起点。</p>
+    <div class="ch-takeaway">
+      <strong>核心结论：</strong>判断一项任务该不该 AI 化，看三个维度：输入是否可以描述清楚、输出是否有参照标准、是否高频重复。符合其中两条，立刻动手；只符合一条，先建 Skill 备用；一条不符，暂缓。这二十件事，每一件都至少符合两条。
+    </div>
+  </div>
+
+  <!-- ── 小节一：判断框架 ── -->
+  <div class="card">
+    <div class="section-label">小节一</div>
+    <h2 class="section-title">任务拆解法：哪类工作该先让 AI 做</h2>
+    <span class="section-pill pill-blue">判断框架 · 三维标准</span>
+
+    <p class="body-text">在列出那 20 件事之前，有一个更重要的问题值得先回答：<strong>凭什么是这 20 件，而不是其他的？</strong>如果你只知道结论，不知道背后的判断逻辑，那这 20 件事用完了你还是不知道下一步该怎么走。所以这一节先给你判断框架，再给你具体任务清单。</p>
+
+    <p class="body-text">适合 AI 接管的任务，通常同时满足以下三个特征中的至少两个。第一，<strong>输入可以被清楚描述</strong>——这项任务的原材料是文字、数字、表格或其他结构化信息，而不是"感觉""氛围"或需要当面沟通才能传递的内容。第二，<strong>输出有参照标准</strong>——有格式模板、有前例可循、有明确的"好"的标准，不是完全依赖主观审美或个人风格。第三，<strong>高频重复</strong>——每周至少做一次，或者每月要做好几次同类型的任务。满足两条就可以立刻 AI 化；只满足一条，先建个 Skill 模板备用；一条都不满足，先不要强行接入 AI。</p>
+
+    <!-- 任务适合度矩阵 SVG -->
+    <div class="svg-wrap">
+      <svg viewBox="0 0 700 348" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+        <rect width="700" height="348" rx="14" fill="#f8fafc"/>
+
+        <!-- 坐标轴 -->
+        <line x1="100" y1="280" x2="660" y2="280" stroke="#cbd5e1" stroke-width="2"/>
+        <line x1="100" y1="280" x2="100" y2="40"  stroke="#cbd5e1" stroke-width="2"/>
+        <polygon points="656,274 666,280 656,286" fill="#cbd5e1"/>
+        <polygon points="94,46 100,36 106,46" fill="#cbd5e1"/>
+
+        <!-- 轴标签 -->
+        <text x="380" y="300" text-anchor="middle" font-size="11" font-weight="700" fill="#64748b">← 输出标准化程度 →</text>
+        <text x="44" y="160" text-anchor="middle" font-size="11" font-weight="700" fill="#64748b" transform="rotate(-90,44,160)">↑ 重复频率（高）</text>
+
+        <!-- 四象限底色：上方=高频，下方=低频 -->
+        <rect x="100" y="40"  width="280" height="120" fill="#fef9c3" opacity=".55"/>
+        <rect x="380" y="40"  width="280" height="120" fill="#bbf7d0" opacity=".65"/>
+        <rect x="100" y="160" width="280" height="120" fill="#f1f5f9" opacity=".7"/>
+        <rect x="380" y="160" width="280" height="120" fill="#dcfce7" opacity=".55"/>
+
+        <!-- 中轴分隔 -->
+        <line x1="380" y1="40" x2="380" y2="280" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <line x1="100" y1="160" x2="660" y2="160" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+        <!-- 象限标签（上方=高频） -->
+        <text x="240" y="92" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">建 Skill 备用</text>
+        <text x="240" y="108" text-anchor="middle" font-size="10" fill="#a16207">高频但格式不固定</text>
+
+        <text x="520" y="84" text-anchor="middle" font-size="13" font-weight="800" fill="#15803d">✓ 优先 AI 化</text>
+        <text x="520" y="100" text-anchor="middle" font-size="10" fill="#166534">高频 + 输出有标准</text>
+
+        <text x="240" y="214" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">暂缓</text>
+        <text x="240" y="230" text-anchor="middle" font-size="10" fill="#64748b">低频 + 格式不固定</text>
+
+        <text x="520" y="206" text-anchor="middle" font-size="12" font-weight="700" fill="#065f46">Skill 化备用</text>
+        <text x="520" y="222" text-anchor="middle" font-size="10" fill="#047857">低频但有标准可循</text>
+
+        <!-- 任务气泡（高频在上方 y=40-160，低频在下方 y=160-280） -->
+        <circle cx="545" cy="68" r="23" fill="#16a34a" opacity=".88"/>
+        <text x="545" y="65" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff">会议</text>
+        <text x="545" y="77" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff">纪要</text>
+
+        <circle cx="490" cy="88" r="20" fill="#0891b2" opacity=".85"/>
+        <text x="490" y="85" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">周报</text>
+        <text x="490" y="96" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">月报</text>
+
+        <circle cx="600" cy="76" r="21" fill="#7c3aed" opacity=".85"/>
+        <text x="600" y="73" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">竞品</text>
+        <text x="600" y="84" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">分析</text>
+
+        <circle cx="440" cy="104" r="19" fill="#2563eb" opacity=".85"/>
+        <text x="440" y="101" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">商务</text>
+        <text x="440" y="112" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">邮件</text>
+
+        <circle cx="205" cy="76" r="18" fill="#f97316" opacity=".78"/>
+        <text x="205" y="73" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff">演讲</text>
+        <text x="205" y="84" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff">稿</text>
+
+        <circle cx="530" cy="208" r="18" fill="#0891b2" opacity=".72"/>
+        <text x="530" y="205" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff">合同</text>
+        <text x="530" y="216" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff">提取</text>
+
+        <circle cx="465" cy="228" r="18" fill="#7c3aed" opacity=".72"/>
+        <text x="465" y="231" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">JD</text>
+
+        <circle cx="170" cy="218" r="16" fill="#64748b" opacity=".55"/>
+        <text x="170" y="215" text-anchor="middle" font-size="8" font-weight="800" fill="#fff">SWOT</text>
+        <text x="170" y="225" text-anchor="middle" font-size="8" font-weight="800" fill="#fff">分析</text>
+
+        <!-- 图例 -->
+        <circle cx="128" cy="326" r="8" fill="#16a34a"/>
+        <text x="143" y="330" font-size="10" fill="#64748b">立即 AI 化（★★★）</text>
+        <circle cx="270" cy="326" r="8" fill="#0891b2"/>
+        <text x="285" y="330" font-size="10" fill="#64748b">建 Skill（★★）</text>
+        <circle cx="370" cy="326" r="8" fill="#64748b" opacity=".6"/>
+        <text x="385" y="330" font-size="10" fill="#64748b">暂缓</text>
+      </svg>
+    </div>
+    <p class="svg-caption">任务 AI 化优先级矩阵：高频 + 输出有标准 = 右上角优先动手区域</p>
+
+    <p class="body-text">还有一个维度值得单独说明：<strong>任务是否涉及线下实体操作或关键人际判断</strong>。开一场重要的商务谈判，你需要读懂对方的肢体语言和情绪变化，这不是 AI 现在能做的事；但谈判前的背景资料整理、竞品信息汇总、提案初稿撰写，都可以交给 AI。原则是：凡是需要"在场"才能完成的，暂缓；凡是在屏幕前就能完成的信息处理任务，都值得考虑。</p>
+
+    <p class="body-text">下面这二十件事，按照任务类型分成四组：写作与生成、分析与处理、沟通与转化、研究与决策。每一组里，我会详细展开一个锚点案例，让你看到真正的操作路径——不是"输入一句话让 AI 写"，而是搭一个 Skill 或者建一条 Workflow。其余四件事以紧凑格式呈现，你可以按图索骥直接套用。</p>
+  </div>
+
+  <!-- ── 小节二：写作与生成类 ── -->
+  <div class="card">
+    <div class="section-label">小节二</div>
+    <div class="category-header">
+      <div class="cat-icon" style="background:#dbeafe">✍️</div>
+      <div>
+        <h2 class="section-title" style="margin-bottom:2px">写作与生成类（5 件）</h2>
+        <span class="section-pill pill-blue" style="margin-bottom:0">文字输出 · Skill / Workflow 层</span>
+      </div>
+    </div>
+
+    <p class="body-text">写作类任务是 AI 最早成熟、也最容易上手的领域。但这里有一个认知误区需要纠正：不是"让 AI 帮你写一篇文章"，而是<strong>建立一套标准化的生成流程</strong>。同样是写会议纪要，一个停在 Prompt 层的人每次要花 20 分钟描述背景、调整格式、反复修改；一个建了 Skill 的人 3 分钟出稿，建了 Workflow 的人根本不用手动触发。</p>
+
+    <h3 style="font-size:16px;font-weight:800;color:var(--ink);margin:20px 0 14px">锚点案例：会议纪要自动化</h3>
+
+    <p class="body-text">运营部的小李每周要参加或主持至少五场会议——周会、跨部门同步、项目复盘、供应商沟通。每场会议结束，她需要整理纪要发给参与者，这件事让她每周消耗大约两个半小时：录音需要手动整理，关键决策需要从对话里提炼，行动项需要标注责任人和截止日期，然后还要按照统一格式发到飞书群。</p>
+
+    <p class="body-text">她现在的方案是一条三段式 Workflow：会议结束后，她把腾讯会议或飞书妙记自动生成的转录稿复制进来，触发 Skill——这个 Skill 的角色设定是"专业会议助理"，固化了输出格式（背景摘要 / 核心决策 / 行动项清单 / 待跟进问题 / 下次会议议程），每次只需要填入两个变量：会议名称和参与人列表。AI 处理完后，Workflow 的第三段自动把格式化后的纪要推送到指定飞书群，并 @ 所有行动项责任人。全程她的操作时间：把转录稿粘进来，30 秒；确认发送，5 秒。</p>
+
+    <div class="example-box">
+      <div class="ex-label">操作路径 · Skill + Workflow</div>
+      <p><strong>第一步：建立会议纪要 Skill</strong> ——在 Coze 或 Claude 里，定义角色（专业会议助理）+ 输出格式（五个固定模块）+ 输入变量（转录稿 / 会议名称 / 参与人）。用三场不同类型的会议测试，确认格式稳定输出。</p>
+      <p><strong>第二步：升级为 Workflow</strong> ——在 Coze 里添加飞书推送节点，配置目标群组和通知格式。如果你的团队用腾讯会议，可进一步接入自动转录 API，实现会议结束后完全无需手动操作。</p>
+      <p><strong>预计节省：</strong>每次 25 分钟 → 约 1 分钟，每周节省约 2 小时。</p>
+    </div>
+
+    <p class="tier-path-label" style="margin-top:22px">三阶入门路径 · 今天就能开始，按需升级</p>
+    <div class="tier-path">
+      <div class="tier-row">
+        <div class="tier-badge l0">Level 0</div>
+        <div class="tier-body">
+          <strong>今天就能做 · Claude.ai Projects</strong>
+          在 Claude.ai 新建一个 Project，System Prompt 里写明"你是专业会议助理，每次输出：① 背景摘要 ② 核心决策 ③ 行动项（含责任人+截止日）④ 待跟进问题 ⑤ 下次议程"。把飞书妙记转录稿粘进去，30 秒出稿。零配置，今天就能用。
+        </div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-badge l1">Level 1</div>
+        <div class="tier-body">
+          <strong>进阶版 · Coze Bot + 飞书推送插件</strong>
+          在 Coze 创建 Bot，开启飞书消息插件，Workflow 节点配置：① 接收转录稿输入 → ② Skill 处理生成纪要 → ③ 自动推送到指定群 + @ 行动项责任人。从手动复制发送，变成粘贴一次全自动完成。
+        </div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-badge l2">Level 2</div>
+        <div class="tier-body">
+          <strong>工程版 · Claude Code SKILL.md（allowed-tools: Read, Bash）</strong>
+          SKILL.md 声明 <code style="background:rgba(109,40,217,.1);padding:1px 5px;border-radius:4px;font-size:11.5px">allowed-tools: Read, Bash</code>，Claude Code 自动读取本地指定目录下的所有转录文件，调用 Python 脚本批量处理，逐一生成标准化 md 纪要并归档。适合行政/秘书岗位，每天处理 5 场以上会议。
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <h3 style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:14px">另外 4 件写作类任务</h3>
+
+    <div class="task-grid">
+      <div class="task-card">
+        <div><span class="layer-badge badge-workflow">Workflow</span></div>
+        <div class="task-card-title">周报 / 月报自动生成</div>
+        <div class="task-card-body">在 Coze 设置定时触发（每周五 17:00），Workflow 自动抓取本周钉钉 / 飞书任务完成情况，喂给周报 Skill 生成草稿，推送到个人工作区。你只需补充判断性内容后确认发送，每周省 40 分钟。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">职位描述 JD 撰写</div>
+        <div class="task-card-body">固化 Skill 模板：输入变量为职级、核心职责关键词、团队文化标签，输出包含职位概述、核心职责、任职要求、加分项四个模块。HR 团队共享同一个 Skill，每个 JD 从 2 小时压缩到 15 分钟。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">汇报 PPT 文字稿</div>
+        <div class="task-card-body">用金字塔结构 Skill：输入核心结论 + 支撑论据 + 数据，输出每页 PPT 的标题、正文要点（不超过 3 条）、数据图表说明。AI 给的是文字框架，你只需套进 PPT 模板，视觉化由你或设计完成。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">产品需求文档 PRD 初稿</div>
+        <div class="task-card-body">Skill 模板固化"用户故事 + 验收标准"结构：输入需求背景和目标用户，输出标准格式的需求描述（用户故事 / 功能说明 / 边界条件 / 不做什么）。产品经理把精力放在逻辑审核和优先级判断，不是在打字。</div>
+      </div>
+    </div>
+
+    <div class="perception-box">
+      <div class="p-label">普通人的感知</div>
+      <p>很多人试过让 AI 写东西，但觉得"风格不对""需要大改"。这通常不是 AI 问题，而是你还没建 Skill——每次描述背景的方式不一样，AI 给的结果自然不稳定。一旦把格式、角色、变量固化下来，AI 输出的稳定性会让你惊讶。</p>
+    </div>
+  </div>
+
+  <!-- ── 小节三：分析与处理类 ── -->
+  <div class="card">
+    <div class="section-label">小节三</div>
+    <div class="category-header">
+      <div class="cat-icon" style="background:#dcfce7">🔍</div>
+      <div>
+        <h2 class="section-title" style="margin-bottom:2px">分析与处理类（5 件）</h2>
+        <span class="section-pill pill-green" style="margin-bottom:0">信息处理 · Skill + 工具调用层</span>
+      </div>
+    </div>
+
+    <p class="body-text">分析类任务是 AI 价值密度最高的区域。传统上，一份竞品报告需要一个人花半天时间搜集、整理、归纳；一个数据清洗任务可能让人在 Excel 里耗上几个小时。这类任务的共同特征是：<strong>原材料是信息，工作本质是结构化</strong>——把杂乱的输入变成有规律的输出。这正是 AI 最擅长的事情。而且配合工具调用（联网搜索 / MCP），分析类 Skill 还能主动去取数据，不需要你手动搬运。</p>
+
+    <h3 style="font-size:16px;font-weight:800;color:var(--ink);margin:20px 0 14px">锚点案例：竞品信息自动追踪</h3>
+
+    <p class="body-text">市场部的小王曾经每月花一整天做竞品分析：Google 搜索竞品官网、查各平台的用户评论、看行业媒体报道，把信息一条条粘进文档，再整理成报告。这件事重要但繁琐，而且信息收集的质量很依赖当天搜到什么。</p>
+
+    <p class="body-text">现在她在 Coze 里搭了一个启用了联网搜索工具的增强型 Skill。操作流程是：打开 Coze Bot，输入竞品名称和本次分析的时间范围，Bot 自动联网搜索三类信息来源（官方公告、行业媒体、用户社区），按照固化的五模块格式输出——产品动态、定价变化、用户评价关键词、营销动作、风险提示。整个过程 15 分钟，比过去快 5 倍，而且信息覆盖面更广，因为 AI 的搜索不会因为当天"没找到"而遗漏。</p>
+
+    <div class="example-box">
+      <div class="ex-label">操作路径 · Skill + 工具调用（联网搜索）</div>
+      <p><strong>工具选择：</strong>Coze（国内可用，自带联网搜索插件）。在 Coze 里创建 Bot，开启"联网搜索"插件权限，这就是第 6 章说的增强型 Skill——它不只处理你给的信息，还能主动去取外部数据。</p>
+      <p><strong>Skill 模板设计：</strong>角色 = 资深市场分析师；搜索指令 = 搜索 {竞品名} 近 {时间范围} 的产品动态、价格变化、用户反馈和营销动作；输出格式固化为五个模块，每个模块限 200 字以内，数据需注明来源。</p>
+      <p><strong>进阶：</strong>在 Coze 里加定时触发，每月 1 日自动生成报告推送到飞书，实现完全 Workflow 化。</p>
+    </div>
+
+    <p class="tier-path-label" style="margin-top:22px">三阶入门路径 · 今天就能开始，按需升级</p>
+    <div class="tier-path">
+      <div class="tier-row">
+        <div class="tier-badge l0">Level 0</div>
+        <div class="tier-body">
+          <strong>今天就能做 · Claude.ai Projects</strong>
+          在 Claude.ai 建 Project，System Prompt 定义"资深市场分析师"角色和五模块输出格式。每次把你已搜集的竞品信息粘贴进去，AI 整理成标准化报告。适合偶发性分析需求，不需要任何配置。
+        </div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-badge l1">Level 1</div>
+        <div class="tier-body">
+          <strong>进阶版 · Coze Bot + 联网搜索插件</strong>
+          Coze Bot 开启联网搜索，你只需输入竞品名称和时间范围，Bot 自动检索三类来源（官网公告 / 行业媒体 / 用户社区）并输出报告。加定时触发后，每月 1 日自动生成并推送飞书，无需手动操作。
+        </div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-badge l2">Level 2</div>
+        <div class="tier-body">
+          <strong>工程版 · Claude Code SKILL.md（allowed-tools: WebSearch, Bash, Read）</strong>
+          SKILL.md 声明 <code style="background:rgba(109,40,217,.1);padding:1px 5px;border-radius:4px;font-size:11.5px">allowed-tools: WebSearch, Bash, Read</code>，配合 Python 脚本：自动搜索多家竞品 → 读取历史数据文件 → 运行对比脚本 → 输出含趋势图的 Excel 报告。适合需要跨多个竞品持续追踪、并与历史数据做对比分析的场景。
+        </div>
+      </div>
+    </div>
+
+    <!-- Level 2 真实案例：券商年报分析 -->
+    <div class="level2-box">
+      <div class="l2-eyebrow">Level 2 真实案例 · Claude Code skill-creator 实战</div>
+      <div class="l2-title">券商年报分析 Skill：从 PDF 到多维对比 Excel，全自动完成</div>
+      <p>这是一个 Level 2 Skill 的真实案例。用户用 Claude Code 内置的 <strong style="color:#c4b5fd">skill-creator</strong> 技能，通过几轮对话描述需求，Claude Code 自动生成了一套完整的分析工具：</p>
+      <div class="code-snip">---
+name: broker-annual-report
+description: 从用户上传的多家券商年报 PDF/数据文件中提取关键
+  财务指标，生成多维度对比分析的 Excel 表格+图表。
+  聚焦：盈利能力指标、业务结构分析
+allowed-tools: Read, Bash, WebSearch
+---
+
+执行步骤：
+1. Read  → 读取年报 PDF，提取关键财务指标
+2. Bash  → 运行 generate_report.py，对比多家数据
+3. Bash  → 生成 Excel 表格 + 可视化图表
+4. 输出  → 对比分析报告 + 风险提示</div>
+      <p>skill-creator 同时生成了三个辅助文件：</p>
+      <div class="file-tags">
+        <span class="file-tag">📄 generate_report.py — 数据提取+对比脚本</span>
+        <span class="file-tag">📖 metric_glossary.md — 财务指标词汇表</span>
+        <span class="file-tag">🧪 evals.json — 自动化测试用例</span>
+      </div>
+      <p style="margin-top:12px">这类任务的 Level 0 版本只能粘贴文本手动提取；Level 1 Coze 版可以联网但无法读取本地 PDF 批量处理；只有 Level 2 才能做到：批量读取本地年报文件 → 跨文件对比 → 程序化输出 Excel。这就是三个层级真实的能力边界差异。</p>
+    </div>
+
+    <div class="divider"></div>
+    <h3 style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:14px">另外 4 件分析类任务</h3>
+
+    <div class="task-grid">
+      <div class="task-card">
+        <div><span class="layer-badge badge-tool">Skill + 代码生成</span></div>
+        <div class="task-card-title">数据表格清洗与汇总</div>
+        <div class="task-card-body">把数据处理需求用自然语言描述给 AI："把这列日期格式统一、删除空行、按金额从大到小排序、生成各月汇总"，AI 生成对应的 Python 或 Excel 宏代码，你直接运行。不需要学编程，只需要说清楚你想要什么结果。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">合同关键条款提取</div>
+        <div class="task-card-body">固化合同审阅 Skill：输入合同全文，输出六项固定内容——付款条件、违约责任、保密条款、知识产权归属、合同期限、风险提示。法务同事不需要重复做同类工作，Skill 做初筛，人工复核关键点。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-workflow">Workflow</span></div>
+        <div class="task-card-title">用户评论 / 反馈分类</div>
+        <div class="task-card-body">Workflow：定期从表单、应用商店、问卷星导出原始反馈 → AI 按"功能问题 / 体验投诉 / 正面称赞 / 功能建议"分类打标签 → 输出各类数量统计 + 典型样本。用户研究从手工阅读 500 条变成审阅结构化报告。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-workflow">Workflow</span></div>
+        <div class="task-card-title">行业资讯日报 / 周报</div>
+        <div class="task-card-body">Coze Workflow 每天 8:00 自动搜索指定行业关键词，AI 摘要每条的核心信息和影响判断，推送到个人飞书或企业微信。信息获取从"刷手机看到什么算什么"变成"定向过滤 + 每日简报"。</div>
+      </div>
+    </div>
+
+    <div class="perception-box">
+      <div class="p-label">普通人的感知</div>
+      <p>很多人以为分析工作的核心是"思考"，AI 做不了。但实际工作里，分析的 80% 时间花在信息搜集和格式整理上，只有 20% 是真正的判断。AI 把那 80% 拿走，你专注做那 20%——判断力才是你真正的不可替代性所在。</p>
+    </div>
+  </div>
+
+  <!-- ── 小节四：沟通与转化类 ── -->
+  <div class="card">
+    <div class="section-label">小节四</div>
+    <div class="category-header">
+      <div class="cat-icon" style="background:#ede9fe">💬</div>
+      <div>
+        <h2 class="section-title" style="margin-bottom:2px">沟通与转化类（5 件）</h2>
+        <span class="section-pill pill-purple" style="margin-bottom:0">文字转化 · Skill 层</span>
+      </div>
+    </div>
+
+    <p class="body-text">沟通类任务看起来高度依赖"个人风格"，很多人因此觉得 AI 不适合。但仔细拆解会发现，职场沟通的大部分场景其实是有固定逻辑的：商务邮件有结构，客户提案有框架，翻译有专业词汇要求，话术有场景分类。这类任务的关键不是创造性表达，而是<strong>在正确的结构里填入正确的信息</strong>——AI 非常擅长这件事，尤其是在建立了针对你的风格和语气偏好的 Skill 之后。</p>
+
+    <h3 style="font-size:16px;font-weight:800;color:var(--ink);margin:20px 0 14px">锚点案例：商务邮件 Skill 体系</h3>
+
+    <p class="body-text">销售经理小张每天要处理几十封邮件：向新客户介绍方案、跟进报价谈判、处理投诉、感谢合作伙伴、推进内部审批。每种场景语气不同，诉求不同，需要拿捏的分寸也不同。过去他每封邮件都要思考措辞，每天在邮件上消耗一到两个小时。</p>
+
+    <p class="body-text">现在他建了一套按场景分类的商务邮件 Skill 体系，共五个子 Skill：初次接触型（AIDA 结构：注意力 → 兴趣 → 欲望 → 行动）、跟进催促型（礼貌坚定语气 + 下一步行动清晰）、报价谈判型（锚定价值 → 预留让步空间）、投诉处理型（共情 → 确认 → 解决方案 → 保障）、内部协调型（简洁说明目的 + 明确需要对方做什么）。每个子 Skill 的输入变量只有三项：对方背景、本次沟通目的、需要对方采取的下一步行动。他现在写一封邮件平均花 3 分钟，其中 2 分钟是检查和个性化调整。</p>
+
+    <div class="example-box">
+      <div class="ex-label">操作路径 · Skill 体系搭建</div>
+      <p><strong>第一步：</strong>列出你高频的邮件场景（3—5 类）。不需要覆盖所有，先把最重复的做出来。</p>
+      <p><strong>第二步：</strong>为每类场景定义 Skill 模板——角色（你的身份背景）+ 语气（正式 / 半正式 / 友好）+ 结构（3—4 个段落的固定框架）+ 输入变量（对方信息 + 目的 + 期望行动）。</p>
+      <p><strong>第三步：</strong>用过去 5 封同类邮件检验 AI 输出质量，调整模板直到输出风格接近你的真实用语。这是一次性的"调教"投入，长期受益。</p>
+    </div>
+
+    <p class="tier-path-label" style="margin-top:22px">三阶入门路径 · 今天就能开始，按需升级</p>
+    <div class="tier-path">
+      <div class="tier-row">
+        <div class="tier-badge l0">Level 0</div>
+        <div class="tier-body">
+          <strong>今天就能做 · Claude.ai Projects</strong>
+          按场景各建一个 Project（初次接触 / 跟进催促 / 报价谈判 / 投诉处理 / 内部协调），每个 Project 的 System Prompt 固定对应的角色背景、语气风格和段落框架。输入三个变量：对方背景 + 沟通目的 + 期望行动，即可生成草稿。
+        </div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-badge l1">Level 1</div>
+        <div class="tier-body">
+          <strong>进阶版 · Coze Bot + 场景路由</strong>
+          在 Coze 里用一个 Bot 管理所有场景：Bot 先识别邮件场景类型，自动路由到对应的子 Workflow 节点处理，最后把草稿推送到你的企业微信或飞书。适合邮件量大、场景类型多的销售和客户成功团队。
+        </div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-badge l2">Level 2</div>
+        <div class="tier-body">
+          <strong>工程版 · Claude Code SKILL.md（allowed-tools: Read, Bash）</strong>
+          SKILL.md 声明 <code style="background:rgba(109,40,217,.1);padding:1px 5px;border-radius:4px;font-size:11.5px">allowed-tools: Read, Bash</code>，让 Claude Code 读取你过去的真实往来邮件文件夹，自动分析你的语气偏好和高频词汇，生成高度个性化的邮件模板。用你自己的"历史数据"训练，输出风格最接近真实的你。
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <h3 style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:14px">另外 4 件沟通类任务</h3>
+
+    <div class="task-grid">
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">快速邮件回复草稿</div>
+        <div class="task-card-body">把收到的邮件原文粘进 Skill，附上你的回复立场（同意 / 拒绝 / 需要更多信息 / 推迟），AI 生成语气合适的草稿。你做最终审查和发送。每封邮件从 10 分钟压缩到 2 分钟，处理量可提升 4 倍。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">专业文档多语言翻译</div>
+        <div class="task-card-body">Skill 模板里预置行业专业词汇表和品牌术语规范，翻译时自动应用。输出比通用翻译工具准确得多，尤其是技术文档、法律条款、品牌文案这类对术语一致性要求高的内容。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill 库</span></div>
+        <div class="task-card-title">客服话术 / FAQ 生成</div>
+        <div class="task-card-body">按问题类型建立话术 Skill 库（退款 / 投诉 / 使用问题 / 功能咨询）。输入用户原始问题，Skill 识别类型、匹配话术框架、生成个性化回复。团队共享同一套 Skill 库，保证品牌口径一致性。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">演讲稿 / 发言稿</div>
+        <div class="task-card-body">Skill 变量：时长（5 / 10 / 20 分钟）+ 场合（内部会议 / 对外发布 / 行业论坛）+ 受众（同行 / 投资人 / 客户）+ 核心信息（1—3 条）。AI 生成逻辑结构和段落草稿，你做语气个性化和现场发挥空间的保留。</div>
+      </div>
+    </div>
+
+    <div class="perception-box">
+      <div class="p-label">普通人的感知</div>
+      <p>用 AI 写邮件，最常见的担心是"不像我写的"。解决方案不是放弃，而是用你过去的真实文本去调教 Skill——把你满意的过去几封邮件作为示例放进模板，AI 会学习你的语气和风格。调教过的 Skill，输出会越来越接近你的真实表达。</p>
+    </div>
+  </div>
+
+  <!-- ── 小节五：研究与决策类 ── -->
+  <div class="card">
+    <div class="section-label">小节五</div>
+    <div class="category-header">
+      <div class="cat-icon" style="background:#cffafe">🧭</div>
+      <div>
+        <h2 class="section-title" style="margin-bottom:2px">研究与决策类（5 件）</h2>
+        <span class="section-pill pill-teal" style="margin-bottom:0">结构化思考 · Skill + 联网工具</span>
+      </div>
+    </div>
+
+    <p class="body-text">研究类任务是很多人觉得"AI 帮不上忙"的领域，因为它似乎依赖专业判断和经验积累。但这里有一个值得重新审视的区分：<strong>信息搜集和结构化整理是 AI 能做的，最终判断和决策是人做的</strong>。一份市场调研报告，80% 的工作量在于"找信息、读信息、整理信息"，这些 AI 可以替你做；剩下 20% 是"判断这个市场对我们意味着什么、我们该怎么做"，这是你的工作。研究类 Skill 的价值，在于把那 80% 的时间还给你。</p>
+
+    <h3 style="font-size:16px;font-weight:800;color:var(--ink);margin:20px 0 14px">锚点案例：快速行业摘要生成</h3>
+
+    <p class="body-text">产品经理小陈接手了一个新项目，需要在三天内对目标市场形成基本判断：市场规模、主要玩家、用户痛点、当前阶段。以前这类调研需要花两天时间搜索、阅读、整理，产出一份二十页的文档。他现在用一个配备了联网搜索的 Skill 解决了信息搜集和整理部分，只花了 40 分钟。</p>
+
+    <p class="body-text">他的 Skill 设计是：角色 = 资深行业分析师；搜索覆盖范围 = 行业报告关键词 + 主要竞品名 + 用户社区反馈；输出结构 = 市场规模与增速（含数据来源）/ 主要玩家及其定位 / 用户典型痛点（引用原始声音）/ 当前行业阶段判断 / 值得进一步调研的 3 个问题。最后一项"值得进一步调研的问题"是关键设计——AI 把它不确定或信息不足的地方标出来，交给小陈去判断是否需要一手调研。这是一种"AI 做初稿，人做判断"的高效分工。</p>
+
+    <div class="example-box">
+      <div class="ex-label">操作路径 · Skill + 联网工具</div>
+      <p><strong>工具：</strong>Coze（开启联网搜索插件）或 Perplexity（专门做研究型搜索的 AI 工具，国内可访问）。</p>
+      <p><strong>Skill 关键设计：</strong>① 明确信息来源优先级（行业报告 > 头部媒体 > 企业官网 > 用户社区）；② 要求每个数据点后标注来源，便于人工核实；③ 加入"信息缺口标注"模块——AI 主动说明哪些问题没有找到可靠数据，避免误信 AI 的编造。</p>
+      <p><strong>时间对比：</strong>人工调研 8—16 小时 → AI 辅助 40—60 分钟（信息搜集 + 整理）+ 人工判断 1—2 小时。</p>
+    </div>
+
+    <p class="tier-path-label" style="margin-top:22px">三阶入门路径 · 今天就能开始，按需升级</p>
+    <div class="tier-path">
+      <div class="tier-row">
+        <div class="tier-badge l0">Level 0</div>
+        <div class="tier-body">
+          <strong>今天就能做 · Claude.ai Projects</strong>
+          在 Claude.ai 建 Project，System Prompt 定义"资深行业分析师"角色，固化五模块输出结构（市场规模 / 主要玩家 / 用户痛点 / 阶段判断 / 信息缺口）。把你已经找到的报告内容粘贴进去，AI 整理成结构化摘要。适合一次性的快速调研需求。
+        </div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-badge l1">Level 1</div>
+        <div class="tier-body">
+          <strong>进阶版 · Coze Bot + 联网搜索插件</strong>
+          Coze Bot 开启联网搜索，你只输入"行业名称 + 分析维度"，Bot 自动检索行业报告、媒体和社区，按固化结构输出摘要。加定时触发后，可实现每周自动生成行业动态简报推送到飞书/企微。
+        </div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-badge l2">Level 2</div>
+        <div class="tier-body">
+          <strong>工程版 · Claude Code SKILL.md（allowed-tools: WebSearch, Read, Bash）</strong>
+          SKILL.md 声明 <code style="background:rgba(109,40,217,.1);padding:1px 5px;border-radius:4px;font-size:11.5px">allowed-tools: WebSearch, Read, Bash</code>，配合 Python 脚本实现：多关键词并行搜索 → 读取本地已有报告文件 → 交叉对比去重 → 输出含引用来源的结构化 md 报告 + 数据汇总表。与"券商年报分析"逻辑完全相同，适合需要定期深度调研的分析师岗位。
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <h3 style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:14px">另外 4 件研究类任务</h3>
+
+    <div class="task-grid">
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">供应商 / 方案对比分析</div>
+        <div class="task-card-body">预先定义评分维度矩阵（价格 / 交期 / 资质 / 案例 / 风险），把各供应商资料一起喂给 Skill，输出标准化对比表格 + 综合评分 + 推荐理由。从每次重新建表格，变成固化评估框架复用。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-tool">Skill + 联网</span></div>
+        <div class="task-card-title">内容选题策划</div>
+        <div class="task-card-body">Skill 模板：平台（小红书 / 抖音 / 公众号）+ 受众画像 + 本周热点关键词（联网获取）→ 输出 10 个选题方向，每个附带钩子角度、竞争程度评估、适合发布时段。从每次头脑风暴变成结构化选题流水线。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">SWOT / 问题诊断分析</div>
+        <div class="task-card-body">Skill 固化结构化分析框架：输入问题背景和已知信息，AI 按 SWOT 或 5Why 等框架展开，每个维度给出判断依据。输出不是"答案"，而是结构化的思考框架，帮你把判断对象摆放清楚，避免遗漏视角。</div>
+      </div>
+      <div class="task-card">
+        <div><span class="layer-badge badge-skill">Skill</span></div>
+        <div class="task-card-title">用户访谈 / 问卷设计</div>
+        <div class="task-card-body">输入研究目标和用户群体，Skill 生成访谈提纲（核心问题 + 追问方向 + 开放型收尾问题）或问卷题目（含 NPS、量表、开放题的合理配比）。研究设计从"凭经验想"变成"目标对齐的系统化输出"。</div>
+      </div>
+    </div>
+
+    <div class="perception-box">
+      <div class="p-label">普通人的感知</div>
+      <p>研究类任务用 AI 最大的风险是"AI 编数据"——它有时候会编造看起来合理的数字或来源。解决方案是在 Skill 模板里加两条规则：① 每个数据必须标注来源；② 如果找不到可靠数据，明确标注"无可靠数据支持"而非给出估计。这两条规则可以大幅降低"看起来真实但是编的"问题。</p>
+    </div>
+  </div>
+
+  <!-- ── 小节六：全景图 ── -->
+  <div class="card">
+    <div class="section-label">小节六</div>
+    <h2 class="section-title">20 件事全景：你的 AI 化起跑线</h2>
+    <span class="section-pill pill-orange">全局视图 · 行动指引</span>
+
+    <p class="body-text">把这 20 件事放在一张图里，你会看到它们不是随机的列表，而是覆盖了白领日常工作的四个核心场景领域。每个领域里，你现在至少有一两件事可以立刻开始。</p>
+
+    <!-- 全景 SVG -->
+    <div class="svg-wrap">
+      <svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+        <rect width="720" height="330" rx="14" fill="#f8fafc"/>
+        <text x="360" y="24" text-anchor="middle" font-size="12" font-weight="700" fill="#64748b">20 件 AI 起跑任务全景 · 操作层次一览</text>
+
+        <!-- 四列标题 -->
+        <rect x="16"  y="36" width="162" height="30" rx="8" fill="#dbeafe"/>
+        <rect x="188" y="36" width="162" height="30" rx="8" fill="#dcfce7"/>
+        <rect x="360" y="36" width="162" height="30" rx="8" fill="#ede9fe"/>
+        <rect x="532" y="36" width="172" height="30" rx="8" fill="#cffafe"/>
+
+        <text x="97"  y="56" text-anchor="middle" font-size="11" font-weight="800" fill="#1d4ed8">✍️ 写作与生成</text>
+        <text x="269" y="56" text-anchor="middle" font-size="11" font-weight="800" fill="#15803d">🔍 分析与处理</text>
+        <text x="441" y="56" text-anchor="middle" font-size="11" font-weight="800" fill="#6d28d9">💬 沟通与转化</text>
+        <text x="618" y="56" text-anchor="middle" font-size="11" font-weight="800" fill="#0e7490">🧭 研究与决策</text>
+
+        <!-- 分隔线 -->
+        <line x1="183" y1="36" x2="183" y2="308" stroke="#e2e8f0" stroke-width="1"/>
+        <line x1="355" y1="36" x2="355" y2="308" stroke="#e2e8f0" stroke-width="1"/>
+        <line x1="527" y1="36" x2="527" y2="308" stroke="#e2e8f0" stroke-width="1"/>
+
+        <!-- 写作列 -->
+        <rect x="20"  y="78"  width="154" height="38" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+        <text x="97"  y="95"  text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">会议纪要</text>
+        <text x="97"  y="108" text-anchor="middle" font-size="9" fill="#3b82f6">Workflow ★★★</text>
+
+        <rect x="20"  y="124" width="154" height="38" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+        <text x="97"  y="141" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">周报 / 月报</text>
+        <text x="97"  y="154" text-anchor="middle" font-size="9" fill="#3b82f6">Workflow ★★★</text>
+
+        <rect x="20"  y="170" width="154" height="38" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+        <text x="97"  y="187" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">职位描述 JD</text>
+        <text x="97"  y="200" text-anchor="middle" font-size="9" fill="#3b82f6">Skill ★★★</text>
+
+        <rect x="20"  y="216" width="154" height="38" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+        <text x="97"  y="233" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">PPT 文字稿</text>
+        <text x="97"  y="246" text-anchor="middle" font-size="9" fill="#3b82f6">Skill ★★</text>
+
+        <rect x="20"  y="262" width="154" height="38" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+        <text x="97"  y="279" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">PRD 初稿</text>
+        <text x="97"  y="292" text-anchor="middle" font-size="9" fill="#3b82f6">Skill ★★</text>
+
+        <!-- 分析列 -->
+        <rect x="192" y="78"  width="154" height="38" rx="7" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+        <text x="269" y="95"  text-anchor="middle" font-size="10.5" font-weight="700" fill="#15803d">竞品分析追踪</text>
+        <text x="269" y="108" text-anchor="middle" font-size="9" fill="#16a34a">Skill+联网 ★★★</text>
+
+        <rect x="192" y="124" width="154" height="38" rx="7" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+        <text x="269" y="141" text-anchor="middle" font-size="10.5" font-weight="700" fill="#15803d">数据表格处理</text>
+        <text x="269" y="154" text-anchor="middle" font-size="9" fill="#16a34a">Skill+代码 ★★★</text>
+
+        <rect x="192" y="170" width="154" height="38" rx="7" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+        <text x="269" y="187" text-anchor="middle" font-size="10.5" font-weight="700" fill="#15803d">合同条款提取</text>
+        <text x="269" y="200" text-anchor="middle" font-size="9" fill="#16a34a">Skill ★★★</text>
+
+        <rect x="192" y="216" width="154" height="38" rx="7" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+        <text x="269" y="233" text-anchor="middle" font-size="10.5" font-weight="700" fill="#15803d">用户反馈分类</text>
+        <text x="269" y="246" text-anchor="middle" font-size="9" fill="#16a34a">Workflow ★★</text>
+
+        <rect x="192" y="262" width="154" height="38" rx="7" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+        <text x="269" y="279" text-anchor="middle" font-size="10.5" font-weight="700" fill="#15803d">行业资讯日报</text>
+        <text x="269" y="292" text-anchor="middle" font-size="9" fill="#16a34a">Workflow ★★★</text>
+
+        <!-- 沟通列 -->
+        <rect x="364" y="78"  width="154" height="38" rx="7" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1"/>
+        <text x="441" y="95"  text-anchor="middle" font-size="10.5" font-weight="700" fill="#6d28d9">商务邮件体系</text>
+        <text x="441" y="108" text-anchor="middle" font-size="9" fill="#7c3aed">Skill ★★★</text>
+
+        <rect x="364" y="124" width="154" height="38" rx="7" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1"/>
+        <text x="441" y="141" text-anchor="middle" font-size="10.5" font-weight="700" fill="#6d28d9">快速邮件回复</text>
+        <text x="441" y="154" text-anchor="middle" font-size="9" fill="#7c3aed">Skill ★★★</text>
+
+        <rect x="364" y="170" width="154" height="38" rx="7" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1"/>
+        <text x="441" y="187" text-anchor="middle" font-size="10.5" font-weight="700" fill="#6d28d9">专业翻译</text>
+        <text x="441" y="200" text-anchor="middle" font-size="9" fill="#7c3aed">Skill ★★</text>
+
+        <rect x="364" y="216" width="154" height="38" rx="7" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1"/>
+        <text x="441" y="233" text-anchor="middle" font-size="10.5" font-weight="700" fill="#6d28d9">客服话术库</text>
+        <text x="441" y="246" text-anchor="middle" font-size="9" fill="#7c3aed">Skill 库 ★★</text>
+
+        <rect x="364" y="262" width="154" height="38" rx="7" fill="#faf5ff" stroke="#c4b5fd" stroke-width="1"/>
+        <text x="441" y="279" text-anchor="middle" font-size="10.5" font-weight="700" fill="#6d28d9">演讲 / 发言稿</text>
+        <text x="441" y="292" text-anchor="middle" font-size="9" fill="#7c3aed">Skill ★★</text>
+
+        <!-- 研究列 -->
+        <rect x="536" y="78"  width="164" height="38" rx="7" fill="#ecfeff" stroke="#67e8f9" stroke-width="1"/>
+        <text x="618" y="95"  text-anchor="middle" font-size="10.5" font-weight="700" fill="#0e7490">行业摘要调研</text>
+        <text x="618" y="108" text-anchor="middle" font-size="9" fill="#0891b2">Skill+联网 ★★★</text>
+
+        <rect x="536" y="124" width="164" height="38" rx="7" fill="#ecfeff" stroke="#67e8f9" stroke-width="1"/>
+        <text x="618" y="141" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0e7490">供应商对比</text>
+        <text x="618" y="154" text-anchor="middle" font-size="9" fill="#0891b2">Skill ★★★</text>
+
+        <rect x="536" y="170" width="164" height="38" rx="7" fill="#ecfeff" stroke="#67e8f9" stroke-width="1"/>
+        <text x="618" y="187" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0e7490">内容选题策划</text>
+        <text x="618" y="200" text-anchor="middle" font-size="9" fill="#0891b2">Skill+联网 ★★</text>
+
+        <rect x="536" y="216" width="164" height="38" rx="7" fill="#ecfeff" stroke="#67e8f9" stroke-width="1"/>
+        <text x="618" y="233" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0e7490">SWOT 分析</text>
+        <text x="618" y="246" text-anchor="middle" font-size="9" fill="#0891b2">Skill ★★</text>
+
+        <rect x="536" y="262" width="164" height="38" rx="7" fill="#ecfeff" stroke="#67e8f9" stroke-width="1"/>
+        <text x="618" y="279" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0e7490">访谈问卷设计</text>
+        <text x="618" y="292" text-anchor="middle" font-size="9" fill="#0891b2">Skill ★★</text>
+
+        <!-- 图例 -->
+        <text x="20"  y="318" font-size="9.5" font-weight="700" fill="#475569">优先级：</text>
+        <text x="74"  y="318" font-size="9.5" fill="#16a34a">★★★ 立刻开始</text>
+        <text x="170" y="318" font-size="9.5" fill="#0891b2">★★ 本周计划</text>
+        <text x="258" y="318" font-size="9.5" fill="#94a3b8">★ 下月规划</text>
+      </svg>
+    </div>
+    <p class="svg-caption">20 件任务按类型和优先级排列，找到你职能对应的那列，从 ★★★ 开始</p>
+
+    <p class="body-text">你不需要同时做 20 件事。<strong>选一件你最熟悉的任务，把它做成 Skill，这是最高效的起点</strong>。那件你重复最多次的工作——每次都要重新描述背景、每次格式都差不多、每次花的时间都让你有点不耐烦——那件事，就是你的第一个 Skill。把它做出来、用一个月、感受效率差距，然后再选下一件。AI 化不是一次性的大工程，而是一个个小的 Skill 积累。三个月之后，你会发现自己已经拥有一套真正属于你的 AI 工具系统。</p>
+
+    <div style="background:linear-gradient(135deg,#0f172a,#1a2d5a,#1e1b4b);border-radius:14px;padding:24px 28px;margin-top:8px">
+      <p style="font-size:15px;font-weight:800;color:#fff;line-height:1.6;margin:0 0 10px">你和"AI 重度用户"之间的差距不是工具，是 Skill 数量</p>
+      <p style="font-size:13.5px;color:rgba(255,255,255,.82);line-height:1.75;margin:0 0 12px">那些你看到的"AI 一小时搞定别人一天工作"的案例，背后不是某种特殊技巧，而是他们已经把高频任务全部 Skill 化了。每天节省 30 分钟看起来不多，一年下来是 180 小时——相当于 22.5 个工作日。这二十件事，是你这个 Skill 库的起点。</p>
+      <p style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,.55);margin:0">接下来第 8 章：把 AI 接入你每天都在用的 Office 工具</p>
+    </div>
+  </div>
+
+  <!-- ── 章节尾部 ── -->
+  <div class="chapter-footer">
+    <div class="footer-title">本章小结 · 20 件起跑任务</div>
+    <p class="footer-text">AI 化的判断标准是三个维度：输入可描述、输出有标准、高频重复，符合两条就动手。这二十件任务覆盖写作生成、分析处理、沟通转化、研究决策四个核心白领场景，每件事的操作层次从 Skill 到 Workflow 不等——它们不只是"让 AI 写一句话"，而是可复用的处理流程。选你最熟悉的一件事，今天就做出第一个 Skill。</p>
+    <div class="next-chapter">→ 第8章：AI + Office 实战：让文档和表格为你工作</div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第12章 建立你的Skill库——把经验沉淀成可复用资产</title>
+<style>
+:root {
+  --primary: #2563eb; --primary-soft: #dbeafe;
+  --accent: #f43f5e;  --accent-soft: #ffe4e6;
+  --ink: #0f172a; --ink-mid: #334155; --ink-soft: #64748b;
+  --surface: #f1f5f9; --card: #ffffff; --border: rgba(15,23,42,.07);
+  --orange: #f97316; --orange-soft: #ffedd5;
+  --green: #16a34a;  --green-soft: #dcfce7;
+  --purple: #7c3aed; --purple-soft: #ede9fe;
+  --teal: #0891b2;   --teal-soft: #cffafe;
+  --gold: #d97706;   --gold-soft: #fef3c7;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif; background: var(--surface); color: var(--ink); line-height: 1.75; font-size: 15px; }
+.page { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.chapter-header {
+  background: linear-gradient(135deg, #1a0533 0%, #3b0764 45%, #1e1b4b 100%);
+  border-radius: 20px; padding: 48px 44px; color: #fff; margin-bottom: 36px; position: relative; overflow: hidden;
+}
+.chapter-header::before { content:''; position:absolute; top:-40px; right:-40px; width:260px; height:260px; background:radial-gradient(circle,rgba(124,58,237,.4) 0%,transparent 70%); pointer-events:none; }
+.chapter-header::after  { content:''; position:absolute; bottom:-40px; left:10px; width:200px; height:200px; background:radial-gradient(circle,rgba(99,102,241,.25) 0%,transparent 70%); pointer-events:none; }
+.ch-eyebrow { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:14px; }
+.ch-title   { font-size:27px; font-weight:800; line-height:1.25; color:#fff; margin-bottom:16px; }
+.ch-subtitle{ font-size:14px; color:rgba(255,255,255,.65); max-width:560px; line-height:1.65; margin-bottom:24px; }
+.ch-takeaway{ background:rgba(255,255,255,.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:16px 20px; font-size:13.5px; color:rgba(255,255,255,.9); line-height:1.65; position:relative; z-index:1; }
+.ch-takeaway strong { color:#fff; }
+
+.card { background:var(--card); border-radius:16px; border:1px solid var(--border); padding:32px 36px; margin-bottom:24px; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+.section-label { font-size:10.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--primary); margin-bottom:8px; }
+.section-title { font-size:21px; font-weight:800; color:var(--ink); line-height:1.3; margin-bottom:6px; }
+.section-pill  { display:inline-block; font-size:12px; font-weight:600; padding:3px 12px; border-radius:20px; margin-bottom:18px; }
+.pill-blue   { background:var(--primary-soft); color:var(--primary); }
+.pill-green  { background:var(--green-soft);   color:var(--green); }
+.pill-orange { background:var(--orange-soft);  color:var(--orange); }
+.pill-purple { background:var(--purple-soft);  color:var(--purple); }
+.pill-teal   { background:var(--teal-soft);    color:var(--teal); }
+.pill-gold   { background:var(--gold-soft);    color:var(--gold); }
+
+.body-text { font-size:14.5px; line-height:1.82; color:var(--ink-mid); margin-bottom:16px; }
+.body-text:last-child { margin-bottom:0; }
+.body-text strong { color:var(--ink); font-weight:700; }
+
+.example-box { background:var(--orange-soft); border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.example-box .ex-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.example-box p { font-size:13.5px; line-height:1.72; color:#3d1108; margin:0 0 8px; }
+.example-box p:last-child { margin-bottom:0; }
+
+.insight-box { background:#f0f9ff; border-left:3px solid var(--teal); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.insight-box .ins-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--teal); margin-bottom:8px; }
+.insight-box p { font-size:13.5px; line-height:1.72; color:#0c4a6e; margin:0 0 6px; }
+.insight-box p:last-child { margin-bottom:0; }
+
+.warn-box { background:#fff7ed; border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.warn-box .w-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.warn-box p { font-size:13.5px; line-height:1.72; color:#7c2d12; margin:0 0 6px; }
+.warn-box p:last-child { margin-bottom:0; }
+
+.perception-box { background:var(--green-soft); border-radius:12px; padding:18px 22px; margin:20px 0; }
+.perception-box .p-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--green); margin-bottom:8px; }
+.perception-box p { font-size:13.5px; line-height:1.72; color:#14532d; margin:0; }
+
+.key-box { background:linear-gradient(135deg,var(--purple-soft),#f0f9ff); border:1.5px solid #c4b5fd; border-radius:12px; padding:18px 22px; margin:18px 0; }
+.key-box .kb-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--purple); margin-bottom:10px; }
+.key-box p { font-size:13.5px; line-height:1.72; color:#3b0764; margin:0 0 6px; }
+.key-box p:last-child { margin-bottom:0; }
+
+.code-block { background:#1e293b; border-radius:10px; padding:16px 20px; margin:16px 0; font-family:'Menlo','Consolas','Courier New',monospace; font-size:12px; line-height:1.85; overflow-x:auto; white-space:pre; }
+.code-block .comment { color:#475569; font-style:italic; }
+.code-block .key     { color:#86efac; }
+.code-block .val     { color:#fde68a; }
+.code-block .tag     { color:#7dd3fc; }
+.code-block .str     { color:#fde68a; }
+.code-block .dim     { color:#94a3b8; }
+.code-block .accent  { color:#f9a8d4; }
+.code-block .section { color:#c084fc; font-weight:bold; }
+
+.prompt-box { background:#1e293b; border-radius:12px; padding:18px 22px; margin:18px 0; }
+.prompt-box .pb-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#7dd3fc; margin-bottom:10px; }
+.prompt-box p { font-size:13px; line-height:1.78; color:#e2e8f0; margin:0 0 8px; }
+.prompt-box p:last-child { margin:0; }
+.prompt-box .ph   { color:#fde68a; font-style:italic; }
+.prompt-box .note { color:#94a3b8; }
+.prompt-box .hi   { color:#86efac; font-weight:700; }
+.prompt-box .sec  { color:#c084fc; font-weight:800; }
+
+.step-list { margin:18px 0; }
+.step-row  { display:flex; gap:14px; margin-bottom:20px; align-items:flex-start; }
+.step-num  { width:32px; height:32px; border-radius:50%; background:var(--primary); color:#fff; font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.step-num-purple { background:var(--purple); }
+.step-content { flex:1; }
+.step-content .s-title { font-size:14px; font-weight:800; color:var(--ink); margin-bottom:6px; }
+.step-content .s-desc  { font-size:13.5px; line-height:1.75; color:var(--ink-mid); }
+
+.skill-card { border-radius:14px; padding:20px 22px; margin-bottom:14px; border:1.5px solid var(--border); background:#fff; }
+.skill-card .sc-head { display:flex; align-items:flex-start; gap:14px; margin-bottom:12px; }
+.skill-card .sc-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.skill-card .sc-meta { flex:1; }
+.skill-card .sc-name { font-size:15px; font-weight:800; color:var(--ink); margin-bottom:3px; }
+.skill-card .sc-tag  { display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:4px; margin-right:4px; }
+.tag-hr       { background:#fce7f3; color:#be185d; }
+.tag-ops      { background:var(--teal-soft); color:var(--teal); }
+.tag-sales    { background:var(--orange-soft); color:var(--orange); }
+.tag-pm       { background:var(--purple-soft); color:var(--purple); }
+.tag-finance  { background:var(--green-soft); color:var(--green); }
+.tag-general  { background:var(--primary-soft); color:var(--primary); }
+.skill-card .sc-desc { font-size:13px; line-height:1.7; color:var(--ink-mid); }
+.skill-card .sc-prompt-preview { background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin-top:10px; font-size:12px; line-height:1.72; color:#475569; font-family:'Menlo','Consolas',monospace; white-space:pre-wrap; }
+.skill-card .sc-meta-row { display:flex; gap:16px; margin-top:10px; }
+.skill-card .sc-meta-item { font-size:11.5px; color:var(--ink-soft); }
+.skill-card .sc-meta-item strong { color:var(--ink-mid); font-weight:700; }
+
+.tier-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:20px 0; }
+.tier-box { border-radius:12px; padding:16px 14px; text-align:center; }
+.tier-1 { background:var(--primary-soft); border:1.5px solid #93c5fd; }
+.tier-2 { background:var(--purple-soft);  border:1.5px solid #c4b5fd; }
+.tier-3 { background:var(--gold-soft);    border:1.5px solid #fcd34d; }
+.tier-box .t-num   { font-size:22px; font-weight:900; margin-bottom:4px; }
+.tier-1 .t-num { color:var(--primary); }
+.tier-2 .t-num { color:var(--purple); }
+.tier-3 .t-num { color:var(--gold); }
+.tier-box .t-name  { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:6px; }
+.tier-box .t-desc  { font-size:12px; line-height:1.6; color:var(--ink-soft); }
+
+.compare-table { width:100%; border-collapse:collapse; margin:18px 0; font-size:13px; }
+.compare-table th { background:#1e293b; color:#e2e8f0; padding:10px 14px; text-align:left; font-size:11px; font-weight:700; letter-spacing:.5px; }
+.compare-table th:first-child { border-radius:8px 0 0 0; }
+.compare-table th:last-child  { border-radius:0 8px 0 0; }
+.compare-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--ink-mid); vertical-align:top; }
+.compare-table tr:last-child td { border-bottom:none; }
+.compare-table tr:nth-child(even) td { background:#f8fafc; }
+.compare-table td:first-child { font-weight:700; color:var(--ink); }
+
+.asset-panel { background:linear-gradient(135deg,#1e1b4b,#3b0764); border-radius:14px; padding:24px 26px; margin:20px 0; }
+.asset-panel .ap-title { font-size:13px; font-weight:800; color:rgba(255,255,255,.9); margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+.asset-panel .ap-sub   { font-size:12px; color:rgba(255,255,255,.5); margin-bottom:16px; }
+.asset-panel .ap-row   { display:flex; align-items:center; gap:12px; padding:10px 12px; background:rgba(255,255,255,.07); border-radius:8px; margin-bottom:8px; border:1px solid rgba(255,255,255,.1); }
+.asset-panel .ap-row:last-child { margin-bottom:0; }
+.asset-panel .ap-icon  { font-size:18px; flex-shrink:0; }
+.asset-panel .ap-info  { flex:1; }
+.asset-panel .ap-name  { font-size:13px; font-weight:700; color:#e2e8f0; margin-bottom:2px; }
+.asset-panel .ap-desc  { font-size:11.5px; color:rgba(255,255,255,.5); }
+.asset-panel .ap-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:4px; background:rgba(124,58,237,.4); color:#c4b5fd; }
+
+.lifecycle-row { display:flex; align-items:center; gap:0; margin:20px 0; overflow-x:auto; }
+.lc-node { flex:1; min-width:80px; text-align:center; padding:12px 6px; }
+.lc-circle { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; margin:0 auto 8px; }
+.lc-1 { background:var(--primary-soft); }
+.lc-2 { background:var(--green-soft); }
+.lc-3 { background:var(--gold-soft); }
+.lc-4 { background:var(--purple-soft); }
+.lc-5 { background:var(--teal-soft); }
+.lc-node .lc-label { font-size:11px; font-weight:700; color:var(--ink); line-height:1.4; }
+.lc-arrow { font-size:20px; color:#94a3b8; flex-shrink:0; align-self:flex-start; margin-top:10px; }
+
+.doc-template { background:#f8fafc; border:1px solid var(--border); border-radius:14px; overflow:hidden; margin:18px 0; }
+.dt-header { background:#1e293b; padding:12px 18px; display:flex; align-items:center; gap:8px; }
+.dt-dot { width:10px; height:10px; border-radius:50%; }
+.dt-title { font-size:11px; font-weight:700; color:#94a3b8; margin-left:4px; }
+.dt-body { padding:20px 22px; }
+.dt-field { margin-bottom:16px; }
+.dt-field:last-child { margin-bottom:0; }
+.dt-field .df-label { font-size:10.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--ink-soft); margin-bottom:5px; }
+.dt-field .df-value { font-size:13px; line-height:1.7; color:var(--ink-mid); background:#fff; border:1px solid var(--border); border-radius:6px; padding:8px 12px; }
+.dt-field .df-placeholder { color:#94a3b8; font-style:italic; }
+
+.upgrade-path { display:flex; flex-direction:column; gap:0; margin:20px 0; }
+.up-node { display:flex; gap:14px; padding:14px 0; border-left:2px solid var(--border); padding-left:22px; position:relative; }
+.up-node::before { content:''; position:absolute; left:-6px; top:20px; width:10px; height:10px; border-radius:50%; border:2px solid var(--border); background:#fff; }
+.up-node.active::before { background:var(--primary); border-color:var(--primary); }
+.up-node.gold::before   { background:var(--gold); border-color:var(--gold); }
+.up-node.purple::before { background:var(--purple); border-color:var(--purple); }
+.up-node .un-content { flex:1; }
+.up-node .un-stage { font-size:10.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
+.up-node.active .un-stage { color:var(--primary); }
+.up-node.gold   .un-stage { color:var(--gold); }
+.up-node.purple .un-stage { color:var(--purple); }
+.up-node .un-title { font-size:14px; font-weight:800; color:var(--ink); margin-bottom:4px; }
+.up-node .un-desc  { font-size:13px; line-height:1.65; color:var(--ink-mid); }
+
+.dialog-block { background:#f8fafc; border-radius:12px; padding:20px 22px; margin:18px 0; border:1px solid var(--border); }
+.dialog-row { display:flex; gap:12px; margin-bottom:14px; }
+.dialog-row:last-child { margin-bottom:0; }
+.dialog-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; margin-top:2px; }
+.dialog-you { background:#dbeafe; }
+.dialog-ai  { background:#dcfce7; }
+.dialog-content { font-size:13px; line-height:1.7; color:var(--ink-mid); flex:1; }
+.dialog-content .who { font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+.who-you { color:var(--primary); }
+.who-ai  { color:var(--green); }
+
+.divider { height:1px; background:var(--border); margin:28px 0; }
+.svg-wrap { overflow-x:auto; margin:20px 0; }
+.svg-wrap svg { display:block; max-width:100%; height:auto; }
+.svg-caption { font-size:11px; color:var(--ink-soft); text-align:center; margin-top:6px; letter-spacing:.5px; }
+
+.chapter-footer { background:linear-gradient(135deg,var(--purple-soft),var(--primary-soft)); border-radius:16px; padding:28px 32px; margin-top:12px; }
+.footer-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:8px; }
+.footer-text  { font-size:13.5px; color:var(--ink-mid); line-height:1.72; }
+.next-chapter { display:flex; align-items:center; gap:10px; margin-top:16px; font-size:13px; color:var(--primary); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ── 章节头部 ── -->
+<div class="chapter-header">
+  <div class="ch-eyebrow">Part 3 · 第 12 章 · 建立 AI 系统</div>
+  <h1 class="ch-title">建立你的 Skill 库<br><span style="font-size:20px;opacity:.75">把经验沉淀成可复用资产——从反复提问到一次建库</span></h1>
+  <p class="ch-subtitle">每次遇到类似任务都重新写 Prompt，其实是在浪费时间。真正高效的人不是"更会提问"，而是把反复验证过的提问方式封装起来，变成随时可调用的模块。这一章讲的，就是如何把经验变成资产。</p>
+  <div class="ch-takeaway">
+    <strong>核心方法论：经验资产化</strong> — Skill 是一个有标准输入、固定提示词逻辑、清晰输出格式的"AI操作模板"。建立 Skill 库不是收集 Prompt，而是把你在实际工作中反复验证过的好用做法，按场景整理成可调用的模块，让以后每次启动同类任务的时候不用重新思考，直接套用。
+  </div>
+</div>
+
+<!-- ── 小节一：Prompt 和 Skill 的根本区别 ── -->
+<div class="card">
+  <div class="section-label">小节一</div>
+  <h2 class="section-title">Prompt 和 Skill 有什么本质区别</h2>
+  <span class="section-pill pill-blue">认知基础 · 理解区别</span>
+
+  <p class="body-text">用了一段时间 AI 之后，很多人会进入一种状态：手上攒了几十条"好用的 Prompt"，有些存在备忘录里，有些发在微信收藏，有些只记得"好像有一次我这样问效果特别好"——但下次遇到同类任务时，还是要重新思考、重新试错，找不到之前那个好用的版本。</p>
+
+  <p class="body-text">这说明你积累的是 Prompt，而不是 Skill。两者的区别不是形式，而是结构和可复用程度。</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <rect width="700" height="220" rx="14" fill="#f8fafc"/>
+
+      <!-- Prompt 侧 -->
+      <rect x="16" y="18" width="310" height="184" rx="12" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+      <text x="171" y="44" text-anchor="middle" font-size="13" font-weight="800" fill="#c2410c">Prompt（临时提问）</text>
+      <text x="171" y="64" text-anchor="middle" font-size="11" fill="#9a3412">遇到任务时即兴组织语言发给 AI</text>
+
+      <rect x="36" y="76" width="270" height="36" rx="6" fill="#fff" stroke="#fcd34d" stroke-width="1"/>
+      <text x="171" y="92" text-anchor="middle" font-size="10.5" fill="#64748b">帮我写一份周报，本周做了...</text>
+      <text x="171" y="108" text-anchor="middle" font-size="10" fill="#9a3412">（每次格式/要求不同）</text>
+
+      <text x="171" y="136" text-anchor="middle" font-size="11" fill="#9a3412">❌ 无固定结构　❌ 无标准输入</text>
+      <text x="171" y="154" text-anchor="middle" font-size="11" fill="#9a3412">❌ 输出不稳定　❌ 难以复用</text>
+      <text x="171" y="176" text-anchor="middle" font-size="10.5" fill="#c2410c">每次都要重新思考 · 效果忽高忽低</text>
+      <text x="171" y="194" text-anchor="middle" font-size="10" fill="#c2410c">攒再多也是散件，不是资产</text>
+
+      <!-- 箭头 -->
+      <text x="370" y="118" text-anchor="middle" font-size="24" fill="#c4b5fd">→</text>
+      <text x="370" y="138" text-anchor="middle" font-size="10" fill="#94a3b8">封装升级</text>
+
+      <!-- Skill 侧 -->
+      <rect x="390" y="18" width="295" height="184" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+      <text x="537" y="44" text-anchor="middle" font-size="13" font-weight="800" fill="#7c3aed">Skill（可复用模块）</text>
+      <text x="537" y="64" text-anchor="middle" font-size="11" fill="#5b21b6">结构化的操作单元，随时调用</text>
+
+      <rect x="408" y="76" width="259" height="72" rx="6" fill="#fff" stroke="#c4b5fd" stroke-width="1"/>
+      <text x="537" y="94" text-anchor="middle" font-size="10.5" font-weight="700" fill="#7c3aed">📥 输入：{本周工作内容}</text>
+      <text x="537" y="112" text-anchor="middle" font-size="10" fill="#64748b">（固定字段，粘贴即可）</text>
+      <text x="537" y="128" text-anchor="middle" font-size="10.5" font-weight="700" fill="#7c3aed">📤 输出：结构化周报</text>
+      <text x="537" y="144" text-anchor="middle" font-size="10" fill="#64748b">（亮点/进展/风险/下周计划）</text>
+
+      <text x="537" y="168" text-anchor="middle" font-size="11" fill="#5b21b6">✅ 固定结构　✅ 标准输入</text>
+      <text x="537" y="186" text-anchor="middle" font-size="11" fill="#5b21b6">✅ 输出稳定　✅ 可复用</text>
+    </svg>
+  </div>
+  <p class="svg-caption">Prompt 是临时提问，Skill 是可复用的结构化操作模块</p>
+
+  <p class="body-text">Skill 的本质是一个有三个要素的模块：<strong>标准化的输入字段</strong>（你每次需要填写什么内容）、<strong>经过验证的提示词逻辑</strong>（告诉 AI 怎么处理、输出什么格式）、<strong>清晰的输出规格</strong>（结果是什么样的、有哪些部分）。有了这三个要素，它才能被复用——你只需要填写当次的输入，不需要每次都重新思考怎么问。</p>
+
+  <p class="body-text">还有一个更直接的区分方式：如果你能把这套操作交给另一个同事，对方看完说明就能独立使用、得到差不多质量的结果——它才算 Skill。如果只有你自己知道怎么用，它还只是你脑子里的"感觉"。</p>
+</div>
+
+<!-- ── 小节二：什么值得变成 Skill ── -->
+<div class="card">
+  <div class="section-label">小节二</div>
+  <h2 class="section-title">什么值得变成 Skill——三个判断标准</h2>
+  <span class="section-pill pill-green">筛选逻辑 · 什么值得沉淀</span>
+
+  <p class="body-text">不是所有 Prompt 都值得封装成 Skill。封装是有成本的：你要整理结构、测试输入、规范输出格式。如果一个任务一年只做一次，花时间封装的收益远不如直接用。</p>
+
+  <p class="body-text">判断一个 Prompt 是否值得升级为 Skill，有三个标准。满足其中两个就值得做：</p>
+
+  <div class="tier-grid">
+    <div class="tier-box tier-1">
+      <div class="t-num">①</div>
+      <div class="t-name">高频重复</div>
+      <div class="t-desc">同类任务每月至少做2次以上，输入格式基本一致，不是一次性的特殊需求</div>
+    </div>
+    <div class="tier-box tier-2">
+      <div class="t-num">②</div>
+      <div class="t-name">已验证好用</div>
+      <div class="t-desc">这个 Prompt 在实际场景里用过、输出质量达到你的要求，不是第一次尝试</div>
+    </div>
+    <div class="tier-box tier-3">
+      <div class="t-num">③</div>
+      <div class="t-name">输入可标准化</div>
+      <div class="t-desc">任务所需的原材料是固定类型的（文字/表格/数据），不是每次都完全不同的内容</div>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-label">举例：哪些值得建成 Skill</div>
+    <p><strong>✅ 值得：</strong>每周写工作汇报、每次收到竞品动态需要摘要整理、每次来新员工需要生成入职培训材料提纲、每月整理销售数据需要生成分析报告……这些任务结构固定、频率高、原材料格式稳定。</p>
+    <p><strong>❌ 不值得：</strong>临时帮领导写一封特殊的感谢信、一次性的市场调研总结、处理特定客户投诉的定制化回复……这些任务每次情况差异太大，标准化之后反而会变得僵硬。</p>
+  </div>
+
+  <p class="body-text">另一个实用的判断方式是看你有没有在对 AI 说过"上次那个很好用，但我忘了我是怎么问的了"。只要你出现过这种情况，那个"上次的好用做法"就是一个待沉淀的 Skill 候选。</p>
+
+  <div class="insight-box">
+    <div class="ins-label">💡 建议的筛选节奏</div>
+    <p>不要从零开始想"我应该建哪些 Skill"，而是<strong>先用两周，边用边记录</strong>。每次你觉得某个 AI 对话结果特别好、或者某次花了很长时间调试 Prompt 终于出了满意结果时，把它标记一下。两周后，从这些标记里挑频率最高的3-5个，先把它们变成 Skill。</p>
+  </div>
+</div>
+
+<!-- ── 小节三：一个 Skill 的完整结构 ── -->
+<div class="card">
+  <div class="section-label">小节三</div>
+  <h2 class="section-title">一个 Skill 的完整结构长什么样</h2>
+  <span class="section-pill pill-purple">模板设计 · 标准格式</span>
+
+  <p class="body-text">一个设计良好的 Skill，本质上是一张可填写的操作卡片。它需要让任何拿到它的人，都能在不和你沟通的情况下，独立完成同样质量的工作。这意味着它必须把所有"需要思考的部分"都事先设计好，使用者只需要填写当次的具体内容。</p>
+
+  <p class="body-text">一个完整的 Skill 包含六个字段：</p>
+
+  <div class="doc-template">
+    <div class="dt-header">
+      <div class="dt-dot" style="background:#ef4444;"></div>
+      <div class="dt-dot" style="background:#f59e0b;"></div>
+      <div class="dt-dot" style="background:#22c55e;"></div>
+      <div class="dt-title">Skill 卡片模板 · 标准格式</div>
+    </div>
+    <div class="dt-body">
+      <div class="dt-field">
+        <div class="df-label">Skill 名称</div>
+        <div class="df-value">一句话说清楚这个 Skill 做什么，比如"周报生成器"或"竞品动态摘要提炼器"</div>
+      </div>
+      <div class="dt-field">
+        <div class="df-label">适用场景</div>
+        <div class="df-value">什么时候用它、用于什么工作，方便以后搜索和分类，如"每周五整理工作汇报时使用"</div>
+      </div>
+      <div class="dt-field">
+        <div class="df-label">输入字段（每次使用前需要填写的内容）</div>
+        <div class="df-value df-placeholder">
+          【本周工作内容】：粘贴本周完成的事项（不需要格式化，原始记录即可）<br>
+          【所属部门/岗位】：用于校准汇报口吻<br>
+          【汇报对象】：直属上级 / 隔级汇报 / 跨部门
+        </div>
+      </div>
+      <div class="dt-field">
+        <div class="df-label">提示词主体（复制给 AI 的指令，含占位符）</div>
+        <div class="df-value df-placeholder" style="font-family:monospace;font-size:12px;">
+          你是一位职场写作助手。请根据以下信息，生成一份专业的工作周报。<br><br>
+          【工作内容】：{本周工作内容}<br>
+          【部门/岗位】：{所属部门/岗位}<br>
+          【汇报对象】：{汇报对象}<br><br>
+          请按以下结构输出：<br>
+          1. 本周亮点（2-3点，每点1-2句话）<br>
+          2. 主要进展（分项列举，附完成度）<br>
+          3. 遇到的问题/风险（如有）<br>
+          4. 下周计划（3-5项）<br><br>
+          风格要求：简洁专业，避免空话，数字优先。
+        </div>
+      </div>
+      <div class="dt-field">
+        <div class="df-label">预期输出格式</div>
+        <div class="df-value">结构化文字，4个部分，总字数300-500字，无需 Markdown 标记，可直接粘贴使用</div>
+      </div>
+      <div class="dt-field">
+        <div class="df-label">注意事项 / 已知局限</div>
+        <div class="df-value">如本周工作内容较少（不足3项），AI 可能会"水"出不实际的进展描述，需要手动删减；不适用于高度保密的项目汇报场景</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="body-text">上面这个结构看起来有点繁琐，但只需要第一次建的时候认真填，之后每次用只需要填"输入字段"那一栏。关键是<strong>提示词主体里的占位符</strong>——那些用 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">{}</code> 括起来的内容，就是每次需要替换的变量，其余部分完全不需要改动。</p>
+
+  <div class="warn-box">
+    <div class="w-label">⚠️ 常见错误：Skill 写得太死</div>
+    <p>很多人建 Skill 时会把所有细节都写进提示词，比如"本周是年度绩效季，请特别强调……"——这就把一个通用 Skill 变成了一个一次性用品。好的 Skill 设计原则是：<strong>固定的部分（逻辑、结构、风格）放进提示词主体，变化的部分（具体内容、当次背景）留作输入字段</strong>。</p>
+  </div>
+</div>
+
+<!-- ── 小节四：五类白领高频 Skill 示例 ── -->
+<div class="card">
+  <div class="section-label">小节四</div>
+  <h2 class="section-title">五类职场高频 Skill——真实示例参考</h2>
+  <span class="section-pill pill-teal">场景示例 · 五类职能</span>
+
+  <p class="body-text">下面是五个真实场景的 Skill 示例，覆盖不同职能方向。你可以直接复用，也可以把它们当作结构参考，改造成适合自己工作的版本。</p>
+
+  <!-- Skill 卡片 1 -->
+  <div class="skill-card">
+    <div class="sc-head">
+      <div class="sc-icon" style="background:var(--primary-soft);">📊</div>
+      <div class="sc-meta">
+        <div class="sc-name">月度数据复盘报告生成器</div>
+        <span class="sc-tag tag-ops">运营</span>
+        <span class="sc-tag tag-finance">数据分析</span>
+      </div>
+    </div>
+    <div class="sc-desc">将本月核心业务数据（GMV、DAU、转化率、环比数字等）输入后，自动生成结构化复盘报告，包含数据解读、异常原因分析、下月改进建议。</div>
+    <div class="sc-prompt-preview">输入字段：{核心指标数据} {目标值 vs 实际值} {已知的异常原因（可选）}
+
+提示词主体节选：
+你是一位运营分析师。请根据以下数据生成本月复盘报告：
+本月数据：{核心指标数据}
+请分析：① 完成情况（达成/未达成及幅度）② 关键变化点
+③ 可能原因分析 ④ 下月重点优化方向</div>
+    <div class="sc-meta-row">
+      <span class="sc-meta-item"><strong>使用频率：</strong>每月一次</span>
+      <span class="sc-meta-item"><strong>节省时间：</strong>从2小时 → 30分钟</span>
+    </div>
+  </div>
+
+  <!-- Skill 卡片 2 -->
+  <div class="skill-card">
+    <div class="sc-head">
+      <div class="sc-icon" style="background:#fce7f3;">👔</div>
+      <div class="sc-meta">
+        <div class="sc-name">招聘 JD（职位描述）生成器</div>
+        <span class="sc-tag tag-hr">HR</span>
+        <span class="sc-tag tag-general">通用</span>
+      </div>
+    </div>
+    <div class="sc-desc">输入岗位名称、核心职责要点、任职要求关键词、团队背景，生成一份语气专业、层次清晰的招聘 JD。同时提供内部用的岗位画像（面试官版）。</div>
+    <div class="sc-prompt-preview">输入字段：{岗位名称} {核心职责（3-5条关键词）}
+{必要技能/经验要求} {团队规模和业务方向}
+
+提示词主体节选：
+生成两个版本：①对外招聘JD（500字，正式），②内部面试官用
+岗位画像（包含：候选人红绿旗、面试核心考察点）</div>
+    <div class="sc-meta-row">
+      <span class="sc-meta-item"><strong>使用频率：</strong>每次开新岗</span>
+      <span class="sc-meta-item"><strong>节省时间：</strong>从1.5小时 → 20分钟</span>
+    </div>
+  </div>
+
+  <!-- Skill 卡片 3 -->
+  <div class="skill-card">
+    <div class="sc-head">
+      <div class="sc-icon" style="background:var(--orange-soft);">📧</div>
+      <div class="sc-meta">
+        <div class="sc-name">客户沟通邮件转化器</div>
+        <span class="sc-tag tag-sales">销售</span>
+        <span class="sc-tag tag-general">通用</span>
+      </div>
+    </div>
+    <div class="sc-desc">把口语化的沟通记录（会议纪要、微信截图文字、语音转文字稿）转化为正式的邮件跟进函，保留关键信息，自动添加礼貌性开场/收尾，并提炼行动项。</div>
+    <div class="sc-prompt-preview">输入字段：{原始沟通记录} {邮件接收方（客户/合作方）}
+{邮件核心目的：跟进/确认/推进/致谢}
+
+提示词主体节选：
+请将以下沟通记录转化为专业邮件，要求：语气正式但不冷漠、
+结构清晰（背景→正文→行动项→下一步），字数不超过300字</div>
+    <div class="sc-meta-row">
+      <span class="sc-meta-item"><strong>使用频率：</strong>每周3-5次</span>
+      <span class="sc-meta-item"><strong>节省时间：</strong>从25分钟 → 5分钟</span>
+    </div>
+  </div>
+
+  <!-- Skill 卡片 4 -->
+  <div class="skill-card">
+    <div class="sc-head">
+      <div class="sc-icon" style="background:var(--purple-soft);">🎯</div>
+      <div class="sc-meta">
+        <div class="sc-name">培训材料大纲生成器</div>
+        <span class="sc-tag tag-hr">HR</span>
+        <span class="sc-tag tag-pm">项目管理</span>
+      </div>
+    </div>
+    <div class="sc-desc">输入培训主题、目标学员群体、培训时长、核心要传达的3-5个知识点，生成完整的培训大纲，包含各模块时间分配、互动设计建议、课后作业/检验方式。</div>
+    <div class="sc-prompt-preview">输入字段：{培训主题} {目标学员：岗位+经验层级}
+{培训时长} {必须覆盖的核心内容（关键词即可）}
+
+提示词主体节选：
+设计一份培训大纲，包含：①模块划分+时间分配 ②每模块核心内容
+③建议互动环节 ④知识检验方式（测验/演练/讨论）</div>
+    <div class="sc-meta-row">
+      <span class="sc-meta-item"><strong>使用频率：</strong>每次新培训项目</span>
+      <span class="sc-meta-item"><strong>节省时间：</strong>从3小时 → 45分钟</span>
+    </div>
+  </div>
+
+  <!-- Skill 卡片 5 -->
+  <div class="skill-card">
+    <div class="sc-head">
+      <div class="sc-icon" style="background:var(--teal-soft);">🔍</div>
+      <div class="sc-meta">
+        <div class="sc-name">行业资讯摘要提炼器</div>
+        <span class="sc-tag tag-general">通用</span>
+        <span class="sc-tag tag-ops">研究</span>
+      </div>
+    </div>
+    <div class="sc-desc">将一篇或多篇行业资讯/报告/新闻粘贴进来，自动提炼核心信息、判断对所在行业/公司的潜在影响，生成可直接分享给团队的内参简报。</div>
+    <div class="sc-prompt-preview">输入字段：{原文内容（可多篇，用---分隔）}
+{我的业务方向（1句话）} {本次关注重点（可选）}
+
+提示词主体节选：
+请提炼以下内容，生成内参简报：①核心事实（3条）
+②对{业务方向}的潜在影响（积极/风险各一条）③建议关注点</div>
+    <div class="sc-meta-row">
+      <span class="sc-meta-item"><strong>使用频率：</strong>每周2-3次</span>
+      <span class="sc-meta-item"><strong>节省时间：</strong>从1小时 → 15分钟</span>
+    </div>
+  </div>
+
+  <p class="body-text">这五个示例覆盖了职场最高频的信息处理类型：数据复盘、岗位管理、客户沟通、知识传递、信息摘要。它们的共同特点是：<strong>输入结构可以标准化、执行逻辑可以重复、输出质量可以预期</strong>。这三点是所有值得沉淀的 Skill 的核心共性。</p>
+</div>
+
+<!-- ── 小节五：Skill 库的组织方式 ── -->
+<div class="card">
+  <div class="section-label">小节五</div>
+  <h2 class="section-title">Skill 库怎么组织——三层结构，不要只用一个文档</h2>
+  <span class="section-pill pill-gold">组织方式 · 库的结构</span>
+
+  <p class="body-text">很多人把 Skill 集中存在一个超长的备忘录文档里。这在前5个 Skill 的时候没问题，但当你积累到20个以上时，找起来会越来越慢，而且没有结构的文档让你很难知道"自己究竟有多少 Skill、覆盖了哪些场景"。</p>
+
+  <p class="body-text">推荐用三层结构来组织你的 Skill 库：</p>
+
+  <div class="step-list">
+    <div class="step-row">
+      <div class="step-num step-num-purple">1</div>
+      <div class="step-content">
+        <div class="s-title">第一层：Skill 索引表（一张表格）</div>
+        <div class="s-desc">所有 Skill 的总目录，每行一个 Skill，包含：名称、适用场景标签、使用频率、链接/位置。这层的作用是让你在5秒内找到想用的 Skill，不需要翻内容细节。可以放在飞书表格、Notion、甚至 Excel 里。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num step-num-purple">2</div>
+      <div class="step-content">
+        <div class="s-title">第二层：Skill 卡片（每个 Skill 一张卡）</div>
+        <div class="s-desc">按上一小节的六字段结构填写的完整 Skill 文档。可以是飞书文档的子页面，也可以是 Notion 的 database record，甚至是一个文件夹里的 .txt 文件——格式不重要，重要的是结构完整、信息齐全、不需要靠记忆补全。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num step-num-purple">3</div>
+      <div class="step-content">
+        <div class="s-title">第三层：快捷启动（你的常用工具里）</div>
+        <div class="s-desc">对于每周使用超过3次的高频 Skill，把它的提示词主体直接存在你最常用的输入位置——比如 Claude 的项目 Instructions、ChatGPT 的 Custom Instructions、或者一个桌面快捷文件。这层的目标是"开始任务后立即可用"，不需要打开任何额外文档。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="asset-panel">
+    <div class="ap-title">
+      <span>📦</span>
+      Skill 库示例结构（飞书文档版本）
+    </div>
+    <div class="ap-sub">一个实际可用的组织方式参考</div>
+    <div class="ap-row">
+      <div class="ap-icon">📋</div>
+      <div class="ap-info">
+        <div class="ap-name">Skill 总索引（飞书表格）</div>
+        <div class="ap-desc">28个 Skill，按场景分类，有使用频率和最近更新时间</div>
+      </div>
+      <div class="ap-badge">第一层</div>
+    </div>
+    <div class="ap-row">
+      <div class="ap-icon">📁</div>
+      <div class="ap-info">
+        <div class="ap-name">Skill 卡片库（飞书文档目录）</div>
+        <div class="ap-desc">按职能分5个子目录：运营 / HR / 销售 / 管理 / 通用工具</div>
+      </div>
+      <div class="ap-badge">第二层</div>
+    </div>
+    <div class="ap-row">
+      <div class="ap-icon">⚡</div>
+      <div class="ap-info">
+        <div class="ap-name">高频 Skill 快捷区（Claude Project Instructions）</div>
+        <div class="ap-desc">每周使用3次以上的5个 Skill 提示词主体，直接放在 Claude 项目设置里</div>
+      </div>
+      <div class="ap-badge">第三层</div>
+    </div>
+    <div class="ap-row">
+      <div class="ap-icon">🔄</div>
+      <div class="ap-info">
+        <div class="ap-name">待迭代队列（飞书评论）</div>
+        <div class="ap-desc">每次使用后的反馈标记，每月固定一次 Skill 复审和升级</div>
+      </div>
+      <div class="ap-badge">维护机制</div>
+    </div>
+  </div>
+
+  <p class="body-text">三层结构看起来比"一个文档"复杂，但实际上只有第一次搭建需要时间，之后日常使用只会接触第三层（快捷启动）和第一层（查索引找 Skill），第二层是备案不是日常操作界面。</p>
+</div>
+
+<!-- ── 小节六：从 Prompt 到 Skill 的完整升级流程 ── -->
+<div class="card">
+  <div class="section-label">小节六</div>
+  <h2 class="section-title">从一个好用的 Prompt 到一个 Skill——实操四步</h2>
+  <span class="section-pill pill-blue">实操流程 · 四步升级</span>
+
+  <p class="body-text">假设你上周用 AI 做了一次竞品分析，结果非常好，现在想把这次的做法固化成一个可复用的 Skill。走一遍升级流程：</p>
+
+  <div class="step-list">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="s-title">回溯这次好结果的关键原因</div>
+        <div class="s-desc">找到你上次的对话记录，看一看：是提示词里哪些部分起了关键作用？是"告诉 AI 你想对比哪几个维度"，还是"要求 AI 用表格输出"，还是"先给了一个案例告诉 AI 你想要什么风格"？把这些关键要素标记出来，这是提炼提示词主体的原材料。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="s-title">识别变量部分，提炼为输入字段</div>
+        <div class="s-desc">把原来提示词里那些每次都会变化的内容（竞品名称、分析维度、目标读者）替换成占位符 {竞品名称}、{分析维度}。剩下固定不变的部分（AI的角色、输出格式要求、思考框架）就是提示词主体。这一步通常很机械，但是把"一次性 Prompt"和"可复用 Skill"拆开的关键动作。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="s-title">用不同的输入测试两到三次</div>
+        <div class="s-desc">用这个 Skill 框架做两到三次不同的竞品分析（换不同的产品、换不同的分析维度），检查输出质量是否稳定。如果某一次效果明显变差，找到原因：是输入字段不够清晰、还是提示词主体有某个约束条件太宽松？根据测试结果调整。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="s-title">填写完整的 Skill 卡片，存入库</div>
+        <div class="s-desc">按照上一小节的六字段格式，填写完整的 Skill 卡片，包括"注意事项/已知局限"（这个字段很重要，记录你在测试中发现的边界情况）。存入 Skill 库，更新索引表。整个过程通常只需要15-20分钟。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-block">
+    <div class="dialog-row">
+      <div class="dialog-avatar dialog-you">👤</div>
+      <div class="dialog-content">
+        <div class="who who-you">我 · 升级对话示例</div>
+        我之前让你做的那次竞品分析输出得很好。帮我把它整理成一个可复用的 Skill 卡片——找出输入字段、提炼提示词主体、写上适用场景和注意事项，格式按六字段 Skill 模板。
+      </div>
+    </div>
+    <div class="dialog-row">
+      <div class="dialog-avatar dialog-ai">🤖</div>
+      <div class="dialog-content">
+        <div class="who who-ai">AI</div>
+        好的，我来整理。从上次的对话来看，起关键作用的有三点：你指定了"从用户体验/价格/功能覆盖/GTM策略四个维度"（这是变量，每次可以调整）；要求用对比表格输出；以及要求最后给出"我方可借鉴的具体动作"而不只是观察。<br><br>
+        我把这些整理成 Skill 卡片：<br>
+        <strong>名称：</strong>竞品深度对比分析器<br>
+        <strong>输入字段：</strong>{我方产品名} / {竞品名称（1-3个）} / {分析维度（默认4维）} / {目标读者（内部使用/对外汇报）}<br>
+        <strong>提示词主体：</strong>你是产品策略分析师，请对以下产品组合进行对比分析……<br>
+        <strong>注意事项：</strong>当竞品数量超过3个时，对比表格会变得很宽，建议拆成两组分别分析。
+      </div>
+    </div>
+  </div>
+
+  <p class="body-text">上面这个对话说明了一件事：<strong>你不需要自己从零开始整理 Skill，可以直接让 AI 帮你从已有的好用对话中提炼结构</strong>。这是一个被很多人忽视的技巧——AI 不只是执行工具，它也可以帮你整理和沉淀你用 AI 的经验本身。</p>
+</div>
+
+<!-- ── 小节七：Skill 库的维护和迭代 ── -->
+<div class="card">
+  <div class="section-label">小节七</div>
+  <h2 class="section-title">Skill 库的维护——不要建完就放着不管</h2>
+  <span class="section-pill pill-orange">维护机制 · 持续迭代</span>
+
+  <p class="body-text">Skill 库最常见的死法，不是"没有建起来"，而是"建起来之后慢慢腐烂"——里面的 Skill 越来越老、越来越不符合实际工作需求，但没有人更新，最后变成了一个没人看的文档死角。</p>
+
+  <p class="body-text">维护 Skill 库需要两个机制，缺一不可：</p>
+
+  <div class="lifecycle-row">
+    <div class="lc-node">
+      <div class="lc-circle lc-1">📌</div>
+      <div class="lc-label">使用时<br>标记反馈</div>
+    </div>
+    <div class="lc-arrow">›</div>
+    <div class="lc-node">
+      <div class="lc-circle lc-2">📊</div>
+      <div class="lc-label">每月<br>复审</div>
+    </div>
+    <div class="lc-arrow">›</div>
+    <div class="lc-node">
+      <div class="lc-circle lc-3">✏️</div>
+      <div class="lc-label">迭代<br>更新</div>
+    </div>
+    <div class="lc-arrow">›</div>
+    <div class="lc-node">
+      <div class="lc-circle lc-4">🗂️</div>
+      <div class="lc-label">标注<br>版本</div>
+    </div>
+    <div class="lc-arrow">›</div>
+    <div class="lc-node">
+      <div class="lc-circle lc-5">🔁</div>
+      <div class="lc-label">下次<br>使用</div>
+    </div>
+  </div>
+
+  <p class="body-text"><strong>机制一：使用时随手标记。</strong>每次用完一个 Skill，花30秒做一个标记：这次效果好不好？有没有遇到新的边界情况？是否需要调整某个输入字段？不需要立刻改，只需要记下来。最简单的方式是在 Skill 卡片文档末尾加一行"[2026-03-28 反馈：竞品数量为4个时表格显示有问题，考虑加一条判断提示]"。</p>
+
+  <p class="body-text"><strong>机制二：每月固定复审。</strong>每个月花30分钟过一遍 Skill 索引，做三件事：把上个月收集到的反馈逐条处理；把三个月没有用过的 Skill 标记为"待确认"（也许那个工作场景变了）；把最近发现的新好用 Prompt 整理进库。30分钟不多，但这是 Skill 库保持活力的核心动作。</p>
+
+  <div class="compare-table" style="margin-top:0;">
+    <table class="compare-table" style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr>
+          <th>动作</th>
+          <th>频率</th>
+          <th>时间成本</th>
+          <th>作用</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>使用后标记反馈</td>
+          <td>每次使用时</td>
+          <td>30秒</td>
+          <td>积累改进原材料，不让问题沉没</td>
+        </tr>
+        <tr>
+          <td>处理反馈、更新 Skill</td>
+          <td>每月一次</td>
+          <td>20分钟</td>
+          <td>让 Skill 保持与实际工作同步</td>
+        </tr>
+        <tr>
+          <td>扫描沉睡 Skill</td>
+          <td>每月一次</td>
+          <td>5分钟</td>
+          <td>识别不再适用的 Skill，避免库腐烂</td>
+        </tr>
+        <tr>
+          <td>新增 Skill 入库</td>
+          <td>按需（通常每月1-3个）</td>
+          <td>15-20分钟/个</td>
+          <td>库的持续增长，覆盖更多场景</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight-box">
+    <div class="ins-label">💡 一个有用的习惯：Skill 版本号</div>
+    <p>当你对一个 Skill 做了较大改动时，给它加一个版本标记，比如"v1.2（2026-03更新：加入对报告读者的风格适配逻辑）"。这有两个好处：一是让你随时知道这个 Skill 上次是什么时候改的，二是万一新版本效果反而不如旧版，你能回溯。不需要保存完整历史版本，只需要在卡片里加一行版本说明即可。</p>
+  </div>
+</div>
+
+<!-- ── 小节八：三种 Skill 使用模式 ── -->
+<div class="card">
+  <div class="section-label">小节八</div>
+  <h2 class="section-title">Skill 的三种使用模式——从手动调用到半自动触发</h2>
+  <span class="section-pill pill-purple">使用模式 · 三种方式</span>
+
+  <p class="body-text">Skill 建好之后，有三种使用方式，复杂度和效率递增。你不需要一开始就追求最高级的方式，按实际需求选择就好。</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <rect width="700" height="200" rx="14" fill="#f8fafc"/>
+
+      <!-- Mode 1 -->
+      <rect x="16" y="20" width="204" height="160" rx="12" fill="var(--primary-soft)" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="118" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="var(--primary)">模式一：手动复制粘贴</text>
+      <rect x="30" y="60" width="176" height="24" rx="5" fill="#fff"/>
+      <text x="118" y="77" text-anchor="middle" font-size="10.5" fill="#64748b">打开 Skill 卡片 → 复制提示词</text>
+      <rect x="30" y="90" width="176" height="24" rx="5" fill="#fff"/>
+      <text x="118" y="107" text-anchor="middle" font-size="10.5" fill="#64748b">粘贴到 AI 对话框 → 替换变量</text>
+      <text x="118" y="140" text-anchor="middle" font-size="11" fill="var(--primary)">适合：低频使用</text>
+      <text x="118" y="158" text-anchor="middle" font-size="10" fill="#64748b">无需额外配置</text>
+
+      <!-- Mode 2 -->
+      <rect x="248" y="20" width="204" height="160" rx="12" fill="var(--purple-soft)" stroke="#c4b5fd" stroke-width="1.5"/>
+      <text x="350" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="var(--purple)">模式二：项目预置</text>
+      <rect x="262" y="60" width="176" height="24" rx="5" fill="#fff"/>
+      <text x="350" y="77" text-anchor="middle" font-size="10.5" fill="#64748b">在 AI 工具里建独立项目</text>
+      <rect x="262" y="90" width="176" height="24" rx="5" fill="#fff"/>
+      <text x="350" y="107" text-anchor="middle" font-size="10.5" fill="#64748b">把 Skill 提示词放进项目 Instructions</text>
+      <text x="350" y="140" text-anchor="middle" font-size="11" fill="var(--purple)">适合：每周使用多次</text>
+      <text x="350" y="158" text-anchor="middle" font-size="10" fill="#64748b">进项目对话即自动激活</text>
+
+      <!-- Mode 3 -->
+      <rect x="480" y="20" width="204" height="160" rx="12" fill="var(--gold-soft)" stroke="#fcd34d" stroke-width="1.5"/>
+      <text x="582" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="var(--gold)">模式三：工作流触发</text>
+      <rect x="494" y="60" width="176" height="24" rx="5" fill="#fff"/>
+      <text x="582" y="77" text-anchor="middle" font-size="10.5" fill="#64748b">脚本/工作流节点自动调用</text>
+      <rect x="494" y="90" width="176" height="24" rx="5" fill="#fff"/>
+      <text x="582" y="107" text-anchor="middle" font-size="10.5" fill="#64748b">触发条件满足 → Skill 自动执行</text>
+      <text x="582" y="140" text-anchor="middle" font-size="11" fill="var(--gold)">适合：固定触发的场景</text>
+      <text x="582" y="158" text-anchor="middle" font-size="10" fill="#64748b">第13章会详细讲这一模式</text>
+    </svg>
+  </div>
+  <p class="svg-caption">三种 Skill 使用模式——按使用频率和自动化需求选择</p>
+
+  <p class="body-text">大多数人从模式一开始就足够了。当你发现某个 Skill 每天都要用，打开文档复制粘贴开始觉得麻烦的时候，升级到模式二——在 Claude 或 ChatGPT 里建一个专项 Project，把这个 Skill 的提示词设置为 Project Instructions，以后只要打开这个 Project 开始对话，Skill 就自动激活。</p>
+
+  <p class="body-text">模式三是更进阶的用法，当一个 Skill 不再需要你手动启动、而是由某个事件自动触发时（比如每次收到新简历邮件就自动运行简历解析 Skill），它就从"手动工具"变成了"工作流节点"。这是第13章的主题——把多个 Skill 串起来，变成一条自动化工作流。</p>
+
+  <div class="key-box">
+    <div class="kb-label">🔑 核心洞察：Skill 是 Workflow 的积木，也是可移植的资产</div>
+    <p>你现在建的每一个 Skill，本质上都是未来工作流里的一块积木。当你有了足够数量的、质量稳定的 Skill，把它们按顺序串起来就变成了工作流。这就是为什么 Skill 库是 Part 3 的起点——没有好的 Skill，工作流只是空架子；有了稳定的 Skill，工作流就有了可靠的执行单元。</p>
+    <p>还有一件事值得提前知道：2025年12月，Agent Skills 格式成为跨平台开放标准，Claude Code、GitHub Copilot、VS Code、Cursor 等主流工具都已原生支持。这意味着你现在积累的 Skill 文档，不绑定任何单一工具。你建的是判断标准本身，而不是某个平台的配置文件。</p>
+  </div>
+</div>
+
+<!-- ── 小节九：你的第一个 Skill 库——从零开始的三周路线 ── -->
+<div class="card">
+  <div class="section-label">小节九</div>
+  <h2 class="section-title">你的第一个 Skill 库——三周落地路线</h2>
+  <span class="section-pill pill-green">行动计划 · 从零开始</span>
+
+  <p class="body-text">理解了方法论之后，很多人还是会陷入"不知道从哪里开始"的状态。下面是一条三周建立 Skill 库的最简化路线，每一步都有具体的交付物。</p>
+
+  <div class="upgrade-path">
+    <div class="up-node active">
+      <div class="un-content">
+        <div class="un-stage">第一周</div>
+        <div class="un-title">积累观察，不要急着建</div>
+        <div class="un-desc">这一周正常使用 AI，但每次用完做一件事：在备忘录里记一行"[日期] 做了什么 + 效果好不好 + 关键原因是什么"。不需要整理格式，流水账记法就行。到周末，你大概会有5-10条记录。</div>
+      </div>
+    </div>
+    <div class="up-node gold">
+      <div class="un-content">
+        <div class="un-stage">第二周</div>
+        <div class="un-title">从记录里提炼第一批 Skill</div>
+        <div class="un-desc">从上周的记录里挑 3 个"效果好、还会再用"的案例，按六字段格式各整理一张 Skill 卡片。同时建好索引表（一张简单的飞书/Excel 表格），把这3个 Skill 录进去。本周末，你有了 3 张 Skill 卡片 + 1 张索引表——这是你的 Skill 库的最小可行版本。</div>
+      </div>
+    </div>
+    <div class="up-node purple">
+      <div class="un-content">
+        <div class="un-stage">第三周</div>
+        <div class="un-title">测试、迭代，培养使用习惯</div>
+        <div class="un-desc">这一周正式启用你的 Skill 库。每次遇到之前建了 Skill 的场景，优先从库里调用而不是重新想。注意：第一次用 Skill 时可能会觉得"填输入字段比直接说更麻烦"——这是正常的，第三次之后就会感受到差异。同时继续积累，把新发现的好 Prompt 加入候选队列。</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="body-text">三周之后，你不需要有完美的 Skill 库，需要的只是两样东西：一个建立了基础结构的库（哪怕只有5-10个 Skill），以及一个使用的习惯（遇到老任务先看库，不是先想提示词）。从这里开始，Skill 库会自然随着你的工作积累而增长，不需要专门"抽时间来建"。</p>
+
+  <div class="perception-box">
+    <div class="p-label">✅ 本章交付物检查</div>
+    <p>完成这一章之后，你应该有：① 一份包含3-5个 Skill 的索引表（有名称、场景标签、使用频率）② 对应的 Skill 卡片（六字段填写完整）③ 至少一个 Skill 被配置为 AI 项目的预置提示词（模式二）④ 一个简单的每月复审提醒（日历备注即可）。以上四项是本章的最小交付物，也是进入第13章（工作流）的前置条件。</p>
+  </div>
+</div>
+
+<!-- ── 小节十：Skill 库 vs Prompt 收藏——一张对比表 ── -->
+<div class="card">
+  <div class="section-label">小节十</div>
+  <h2 class="section-title">为什么你的同事还在"收藏 Prompt"而你在"运营资产"</h2>
+  <span class="section-pill pill-teal">视角对比 · 长期竞争力</span>
+
+  <p class="body-text">大多数人对 AI 能力积累的理解，停留在"攒 Prompt"的阶段——在小红书收藏了200个 Prompt、在微信收藏里有一个"AI神器合集"文档，但这些内容90%从来不会再看第二遍，更不会被系统性地用进工作。</p>
+
+  <p class="body-text">Skill 库和 Prompt 收藏的根本差异，不是整理得好不好，而是对"AI能力"的理解深度不同。看一下这张对比表：</p>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>维度</th>
+        <th>Prompt 收藏</th>
+        <th>Skill 库</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>来源</td>
+        <td>别人分享的 + 偶尔自己想的，主要是输入型积累</td>
+        <td>自己实际使用并验证过的，完全是输出型积累</td>
+      </tr>
+      <tr>
+        <td>结构</td>
+        <td>无固定格式，靠关键词和记忆定位</td>
+        <td>六字段标准结构，有索引，可被他人理解</td>
+      </tr>
+      <tr>
+        <td>可复用程度</td>
+        <td>低，每次用还需要思考怎么适配当下情境</td>
+        <td>高，填写输入字段即可使用，不需要重新思考</td>
+      </tr>
+      <tr>
+        <td>增长方式</td>
+        <td>随机积累，越积越多越难用</td>
+        <td>主动沉淀，越用越精简越好用</td>
+      </tr>
+      <tr>
+        <td>可分享性</td>
+        <td>分享出去对方不一定懂怎么用</td>
+        <td>有说明文档，可以直接移交给同事使用</td>
+      </tr>
+      <tr>
+        <td>核心价值</td>
+        <td>降低"想提示词"的门槛</td>
+        <td>把你的工作经验和判断力固化成可调用的系统</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="body-text">最后一行是关键。Prompt 解决的是"怎么更好地问 AI"，而 Skill 库解决的是"怎么把你在工作中积累的业务理解转化为可持续调用的资产"。前者让你用得更流畅，后者让你建立起真正意义上的个人 AI 竞争力。</p>
+
+  <p class="body-text">三年后，可能每个人都会用 AI，会写 Prompt 不再是优势。但<strong>拥有一个根植于自己业务场景、经过反复验证、持续维护的 Skill 库——这是你自己的经验在 AI 系统里的沉淀，它无法被简单地复制或替代</strong>。</p>
+
+  <div class="perception-box">
+    <div class="p-label">✅ 本章核心结论</div>
+    <p>Skill 是结构化的可复用操作模块，不是随手记下来的提示词。建立 Skill 库的本质是经验资产化——把你在实际工作中反复验证过的好做法，按标准格式整理成随时可调用的模块。从第一周记录观察、第二周提炼前三个 Skill、第三周开始实际使用，三周之后你就拥有了一个有活力的个人 AI 资产库。这是接下来搭工作流的基础。</p>
+  </div>
+</div>
+
+<!-- ── 章节结尾 ── -->
+<div class="chapter-footer">
+  <div class="footer-title">📚 本章小结</div>
+  <p class="footer-text">Prompt 解决一次，Skill 解决一类。把经验沉淀成 Skill 的核心动作是：识别高频可复用场景 → 提炼标准输入字段和提示词主体 → 填写六字段卡片 → 建立三层库结构 → 用使用时标记 + 每月复审的机制让库保持活力。Skill 库是你在 AI 时代最值得建立的个人资产之一，因为它不只是一个工具列表，而是你的业务判断和工作经验在系统里的固化形式。</p>
+  <div class="next-chapter">
+    → 下一章：搭建你的第一条自动化工作流——把多个 Skill 串起来，用 Coze 实现触发→处理→输出的全自动执行
+  </div>
+</div>
+
+</div><!-- .page -->
+</body>
+</html>

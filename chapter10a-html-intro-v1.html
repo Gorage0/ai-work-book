@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第10A章 入门篇——你的第一个 HTML 工具</title>
+<style>
+:root {
+  --primary: #2563eb; --primary-soft: #dbeafe;
+  --accent: #f43f5e;  --accent-soft: #ffe4e6;
+  --ink: #0f172a; --ink-mid: #334155; --ink-soft: #64748b;
+  --surface: #f1f5f9; --card: #ffffff; --border: rgba(15,23,42,.07);
+  --orange: #f97316; --orange-soft: #ffedd5;
+  --green: #16a34a;  --green-soft: #dcfce7;
+  --purple: #7c3aed; --purple-soft: #ede9fe;
+  --teal: #0891b2;   --teal-soft: #cffafe;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif; background: var(--surface); color: var(--ink); line-height: 1.75; font-size: 15px; }
+.page { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.chapter-header {
+  background: linear-gradient(135deg, #0c4a6e 0%, #1e3a8a 50%, #312e81 100%);
+  border-radius: 20px; padding: 48px 44px; color: #fff; margin-bottom: 36px; position: relative; overflow: hidden;
+}
+.chapter-header::before { content:''; position:absolute; top:-40px; right:-40px; width:240px; height:240px; background:radial-gradient(circle,rgba(99,102,241,.4) 0%,transparent 70%); pointer-events:none; }
+.chapter-header::after  { content:''; position:absolute; bottom:-30px; left:20px; width:200px; height:200px; background:radial-gradient(circle,rgba(37,99,235,.25) 0%,transparent 70%); pointer-events:none; }
+.ch-eyebrow { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:14px; }
+.ch-title   { font-size:27px; font-weight:800; line-height:1.25; color:#fff; margin-bottom:16px; }
+.ch-subtitle{ font-size:14px; color:rgba(255,255,255,.65); max-width:560px; line-height:1.65; margin-bottom:24px; }
+.ch-takeaway{ background:rgba(255,255,255,.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:16px 20px; font-size:13.5px; color:rgba(255,255,255,.9); line-height:1.65; position:relative; z-index:1; }
+.ch-takeaway strong { color:#fff; }
+
+.series-nav { display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
+.series-btn { display:flex; align-items:center; gap:6px; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; border:1.5px solid; text-decoration:none; }
+.series-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+.series-btn.inactive { background:#fff; color:var(--ink-soft); border-color:var(--border); }
+
+.card { background:var(--card); border-radius:16px; border:1px solid var(--border); padding:32px 36px; margin-bottom:24px; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+.section-label { font-size:10.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--primary); margin-bottom:8px; }
+.section-title { font-size:21px; font-weight:800; color:var(--ink); line-height:1.3; margin-bottom:6px; }
+.section-pill  { display:inline-block; font-size:12px; font-weight:600; padding:3px 12px; border-radius:20px; margin-bottom:18px; }
+.pill-blue   { background:var(--primary-soft); color:var(--primary); }
+.pill-green  { background:var(--green-soft);   color:var(--green); }
+.pill-orange { background:var(--orange-soft);  color:var(--orange); }
+.pill-purple { background:var(--purple-soft);  color:var(--purple); }
+.pill-teal   { background:var(--teal-soft);    color:var(--teal); }
+
+.body-text { font-size:14.5px; line-height:1.82; color:var(--ink-mid); margin-bottom:16px; }
+.body-text:last-child { margin-bottom:0; }
+.body-text strong { color:var(--ink); font-weight:700; }
+
+.example-box { background:var(--orange-soft); border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.example-box .ex-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.example-box p { font-size:13.5px; line-height:1.72; color:#3d1108; margin:0 0 8px; }
+.example-box p:last-child { margin-bottom:0; }
+
+.insight-box { background:#f0f9ff; border-left:3px solid var(--teal); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.insight-box .ins-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--teal); margin-bottom:8px; }
+.insight-box p { font-size:13.5px; line-height:1.72; color:#0c4a6e; margin:0 0 6px; }
+.insight-box p:last-child { margin-bottom:0; }
+
+.warn-box { background:#fff7ed; border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.warn-box .w-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.warn-box p { font-size:13.5px; line-height:1.72; color:#7c2d12; margin:0 0 6px; }
+.warn-box p:last-child { margin-bottom:0; }
+
+.perception-box { background:var(--green-soft); border-radius:12px; padding:18px 22px; margin:20px 0; }
+.perception-box .p-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--green); margin-bottom:8px; }
+.perception-box p { font-size:13.5px; line-height:1.72; color:#14532d; margin:0; }
+
+.code-block { background:#1e293b; border-radius:10px; padding:16px 20px; margin:16px 0; font-family:'Menlo','Consolas','Courier New',monospace; font-size:12px; line-height:1.85; overflow-x:auto; }
+.code-block .comment { color:#475569; font-style:italic; }
+.code-block .key     { color:#86efac; }
+.code-block .val     { color:#fde68a; }
+.code-block .tag     { color:#7dd3fc; }
+.code-block .str     { color:#fde68a; }
+
+.prompt-box { background:#1e293b; border-radius:12px; padding:18px 22px; margin:18px 0; }
+.prompt-box .pb-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#7dd3fc; margin-bottom:10px; }
+.prompt-box p { font-size:13px; line-height:1.78; color:#e2e8f0; margin:0 0 8px; }
+.prompt-box p:last-child { margin:0; }
+.prompt-box .ph { color:#fde68a; font-style:italic; }
+.prompt-box .note { color:#94a3b8; font-size:11.5px; }
+
+.step-list { margin:18px 0; }
+.step-row  { display:flex; gap:14px; margin-bottom:18px; align-items:flex-start; }
+.step-num  { width:32px; height:32px; border-radius:50%; background:var(--primary); color:#fff; font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.step-content { flex:1; background:#f8fafc; border-radius:10px; padding:14px 16px; border:1px solid var(--border); }
+.step-content .s-title { font-size:13.5px; font-weight:800; color:var(--ink); margin-bottom:6px; }
+.step-content .s-desc  { font-size:13px; line-height:1.68; color:var(--ink-mid); }
+.step-content .s-action { display:inline-block; background:var(--primary-soft); color:var(--primary); font-size:12px; font-weight:700; padding:3px 10px; border-radius:6px; margin-top:8px; }
+
+.mock-window { background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(15,23,42,.08); margin:18px 0; }
+.mock-top { height:36px; background:#f8fafc; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 14px; gap:6px; }
+.mock-dot { width:10px; height:10px; border-radius:50%; }
+.mock-body { padding:16px; }
+
+.compare-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.compare-box { border-radius:12px; padding:16px 18px; }
+.cb-old { background:#fff7ed; border:1px solid #fed7aa; }
+.cb-new { background:var(--green-soft); border:1px solid #86efac; }
+.cb-label { font-size:10px; font-weight:800; letter-spacing:1px; margin-bottom:8px; }
+.cb-old .cb-label { color:#c2410c; }
+.cb-new .cb-label { color:#15803d; }
+.cb-content { font-size:13px; line-height:1.65; }
+.cb-old .cb-content { color:#9a3412; }
+.cb-new .cb-content { color:#166534; }
+
+.divider { height:1px; background:var(--border); margin:28px 0; }
+.svg-wrap { overflow-x:auto; margin:20px 0; }
+.svg-wrap svg { display:block; max-width:100%; height:auto; }
+.svg-caption { font-size:11px; color:var(--ink-soft); text-align:center; margin-top:6px; letter-spacing:.5px; }
+
+.chapter-footer { background:linear-gradient(135deg,var(--primary-soft),var(--purple-soft)); border-radius:16px; padding:28px 32px; margin-top:12px; }
+.footer-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:8px; }
+.footer-text  { font-size:13.5px; color:var(--ink-mid); line-height:1.72; }
+.next-chapter { display:flex; align-items:center; gap:10px; margin-top:16px; font-size:13px; color:var(--primary); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- 系列导航 -->
+<div class="series-nav">
+  <div class="series-btn active">📘 10A · 入门篇</div>
+  <div class="series-btn inactive">📗 10B · 进阶篇 → 报告产品化</div>
+  <div class="series-btn inactive">📙 10C · 高级篇 → 可编辑与可维护</div>
+</div>
+
+<!-- ── 章节头部 ── -->
+<div class="chapter-header">
+  <div class="ch-eyebrow">Part 2 · 第 10 章 A · HTML 工具入门</div>
+  <h1 class="ch-title">你的第一个 HTML 工具<br><span style="font-size:20px;opacity:.75">从"零代码基础"到30分钟做出一个能用的东西</span></h1>
+  <p class="ch-subtitle">这是这本书里动手性最强的一章。你不需要懂任何编程语言，不需要安装任何软件，只需要一个 Claude 账号和一个文本编辑器。读完本章，你将亲手做出第一个在浏览器里运行的 HTML 工具，并且知道下一步怎么迭代它。</p>
+  <div class="ch-takeaway">
+    <strong>本章目标：</strong>完成一次从"提需求"到"拿到可用工具"的完整闭环——理解 HTML 为什么是最好的轻量工具容器，掌握提示词框架，亲手做出并保存第一个工具。整个过程预计 30 分钟内完成。
+  </div>
+</div>
+
+<!-- ── 小节一：认知转变 ── -->
+<div class="card">
+  <div class="section-label">小节一</div>
+  <h2 class="section-title">先说一个认知转变：报告不再是文档，而是产品</h2>
+  <span class="section-pill pill-purple">认知升级 · 范式转变</span>
+
+  <p class="body-text">在动手之前，有一个认知需要先建立，因为它会改变你对这件事的期待和做法。<strong>最高阶的汇报方式，不是做出一份更漂亮的文档，而是交出一个"可以运行的产品"。</strong>这听起来很夸张，但它正在真实地发生。</p>
+
+  <div class="compare-row">
+    <div class="compare-box cb-old">
+      <div class="cb-label">传统汇报（Word / PPT）</div>
+      <div class="cb-content">静态内容，一次性交付。领导问"如果这个参数变了会怎样"——你只能口头解释，或者回去重做一版。文档越长没人认真看，图表再多也难以追问。</div>
+    </div>
+    <div class="compare-box cb-new">
+      <div class="cb-label">HTML 产品化汇报</div>
+      <div class="cb-content">可交互、可推演。领导问"如果增速下调5%怎样"——你直接在页面上拖动滑块，图表和结论实时变化。汇报现场变成"软件演示"而不是"讲稿朗读"。</div>
+    </div>
+  </div>
+
+  <p class="body-text">你可能会说：这不是需要会写代码才能做吗？在 AI 出现之前，是的。但现在不是了。你把需求描述清楚，Claude 生成全部代码，你只需要把代码保存成 .html 文件，双击打开，一个在浏览器里运行的完整交互工具就出现在眼前了。真正需要你做的，是把需求说清楚——而这是你一直都擅长的事。</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 700 140" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <rect width="700" height="140" rx="14" fill="#f8fafc"/>
+
+      <!-- 旧范式 -->
+      <rect x="16" y="20" width="290" height="100" rx="10" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+      <text x="161" y="50" text-anchor="middle" font-size="13" font-weight="800" fill="#c2410c">旧范式：我写文档，你看文档</text>
+      <text x="161" y="74" text-anchor="middle" font-size="11" fill="#9a3412">静态 Word / PPT → 发出去 → 完事</text>
+      <text x="161" y="94" text-anchor="middle" font-size="11" fill="#9a3412">领导追问 → 你回去重做</text>
+      <text x="161" y="112" text-anchor="middle" font-size="10" fill="#c2410c">每次修改 = 重新写</text>
+
+      <!-- 箭头 -->
+      <text x="350" y="75" text-anchor="middle" font-size="22" fill="#94a3b8">→</text>
+
+      <!-- 新范式 -->
+      <rect x="394" y="20" width="290" height="100" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="539" y="50" text-anchor="middle" font-size="13" font-weight="800" fill="#15803d">新范式：我发布产品，你来操作</text>
+      <text x="539" y="74" text-anchor="middle" font-size="11" fill="#166534">HTML 工具 → 双击打开 → 即时交互</text>
+      <text x="539" y="94" text-anchor="middle" font-size="11" fill="#166534">领导追问 → 直接现场演示</text>
+      <text x="539" y="112" text-anchor="middle" font-size="10" fill="#16a34a">每次改参数 = 工具复用</text>
+    </svg>
+  </div>
+  <p class="svg-caption">从"写文档"到"发布产品"，这是一次表达范式的真实升级</p>
+
+  <p class="body-text">这个认知很重要，因为它会影响你如何构建工具。如果你把 HTML 当成"更好看的文档"，你会做一个漂亮但死的页面。如果你把它当成"可以运行的小产品"，你会自然地思考：<strong>用户会在哪里点击？数据来自哪里？结果怎么展示？能不能下周再打开还能用？</strong>这些思考，正是做出好工具的起点。</p>
+</div>
+
+<!-- ── 小节二：为什么 HTML ── -->
+<div class="card">
+  <div class="section-label">小节二</div>
+  <h2 class="section-title">为什么偏偏是 HTML——四个任何其他格式都给不了的理由</h2>
+  <span class="section-pill pill-teal">选择理由 · 技术常识</span>
+
+  <p class="body-text">很多人第一次听到"用 AI 生成 HTML 工具"会有一个困惑：为什么不是 Excel？不是飞书多维表格？不是低代码平台？这是一个好问题，值得把答案说清楚，因为理解了这一点，你才知道什么场景该用 HTML、什么场景用别的。</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0">
+    <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:12px;padding:16px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1px;color:#1d4ed8;margin-bottom:8px">① 无需安装，无需账号</div>
+      <div style="font-size:13px;color:#1e40af;line-height:1.65">一个 .html 文件，任何人在任何电脑上双击就能打开。不需要安装软件，不需要登录，不需要注册。发文件过去就是产品交付。</div>
+    </div>
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:16px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1px;color:#15803d;margin-bottom:8px">② 完整交互逻辑</div>
+      <div style="font-size:13px;color:#166534;line-height:1.65">按钮、滑块、输入框、下拉选择、图表联动——这些 HTML + JavaScript 天然支持。Word 和 Excel 能做到 10%，HTML 可以做到 100%。</div>
+    </div>
+    <div style="background:#fdf4ff;border:1px solid #d8b4fe;border-radius:12px;padding:16px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1px;color:#7c3aed;margin-bottom:8px">③ 可导入本地数据</div>
+      <div style="font-size:13px;color:#5b21b6;line-height:1.65">HTML 工具可以让用户上传 CSV / Excel 文件，页面读取后实时渲染分析结果。敏感数据完全在本地，不上传任何服务器。</div>
+    </div>
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:16px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1px;color:#c2410c;margin-bottom:8px">④ AI 最擅长生成的格式</div>
+      <div style="font-size:13px;color:#9a3412;line-height:1.65">HTML + CSS + JS 是 AI 训练数据里占比最高的内容之一。Claude 生成 HTML 的质量和稳定性，远超生成 VBA 宏、低代码配置或者 Python 可视化代码。</div>
+    </div>
+  </div>
+
+  <p class="body-text">还有一个经常被忽略的优势：<strong>HTML 是 AI 生成内容里唯一"即时可见"的格式</strong>。AI 生成 Python 代码，你得配环境才能跑；AI 生成 Word 文档，你得手动打开调整；但 AI 生成 HTML，你复制粘贴进文本文件、改扩展名为 .html、双击打开——3 步，你就看到了运行结果。这个反馈闭环的速度，是整个流程里的关键优势。</p>
+
+  <div class="perception-box">
+    <div class="p-label">普通人的感知</div>
+    <p>很多人以为"做 HTML 工具"是程序员的事，跟自己没关系。但现实是：你在汇报里需要的绝大多数工具，写起来不过三四百行代码，Claude 一次就能搞定。真正需要你的，是把需求想清楚——这件事，你比任何程序员都更擅长，因为你最了解业务场景。</p>
+  </div>
+</div>
+
+<!-- ── 小节三：新手动手教程 ── -->
+<div class="card">
+  <div class="section-label">小节三</div>
+  <h2 class="section-title">第一次动手——30分钟做出你的第一个工具</h2>
+  <span class="section-pill pill-green">新手动手 · 全程步骤</span>
+
+  <p class="body-text">下面是一个完整的操作流程，从打开 Claude 到拿到一个可以发给同事用的工具，每一步都有说明。如果你是第一次做这件事，就按这个顺序来，不要跳步骤。</p>
+
+  <div class="step-list">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="s-title">准备阶段：在动手之前先想清楚三个问题</div>
+        <div class="s-desc">不要直接打开 Claude 就开始。先在纸上或备忘录里写下：<br><br>
+        <strong>① 谁来用这个工具？</strong>（自己 / 小团队 / 领导）<br>
+        <strong>② 用来解决什么问题？</strong>（一句话）<br>
+        <strong>③ 工具产出什么结果？</strong>（数字 / 图表 / 建议）<br><br>
+        这三个问题的答案，直接粘贴到提示词里就是需求描述。不需要写得很完整，有个粗稿就够。</div>
+        <div class="s-action">预计耗时：5分钟</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="s-title">打开 Claude，用"产品经理语气"描述你的工具</div>
+        <div class="s-desc">核心要点：把自己当成一个"在跟开发说需求的产品经理"，而不是"在跟AI问问题"。描述要包含：<strong>工具是干什么的 + 用户操作什么 + 显示什么结果 + 用什么样的风格</strong>。<br><br>如果你有具体数据，在提示词里放几行示例数据（可以用假数据）。下一小节有完整的提示词模板可以直接用。</div>
+        <div class="s-action">预计耗时：5分钟</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="s-title">复制 Claude 生成的代码</div>
+        <div class="s-desc">Claude 会输出一整段 HTML 代码，通常以 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px">&lt;!DOCTYPE html&gt;</code> 开头，以 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px">&lt;/html&gt;</code> 结尾。<strong>选中全部代码，复制（Ctrl+C / Cmd+C）。</strong><br><br>
+        如果你看到 Claude 用代码框包裹了代码，直接点代码框右上角的"复制"按钮。</div>
+        <div class="s-action">预计耗时：30秒</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="s-title">新建文本文件，粘贴代码，保存为 .html</div>
+        <div class="s-desc">
+        <strong>Windows 用户：</strong>在桌面上右键 → 新建 → 文本文档，打开，粘贴代码，点"文件 → 另存为"，<strong>文件名改为 my-tool.html，保存类型选"所有文件"</strong>，点保存。<br><br>
+        <strong>Mac 用户：</strong>打开"文本编辑"App，新建文档，菜单栏选"格式 → 制作纯文本格式"，粘贴代码，保存时文件名改为 my-tool.html（注意 Mac 可能会自动加 .txt，检查一下确保扩展名是 .html）。<br><br>
+        <strong>或者用 VS Code（推荐）：</strong>右键桌面新建 my-tool.html，用 VS Code 打开，粘贴代码，Ctrl+S 保存。</div>
+        <div class="s-action">预计耗时：2分钟</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="s-title">双击打开，在浏览器里看效果</div>
+        <div class="s-desc">找到刚才保存的 .html 文件，<strong>双击</strong>，它会自动在你的默认浏览器里打开。你应该能看到一个完整的页面——有样式、有布局、可能已经有了交互效果。<br><br>
+        如果打开后是一堆代码字符（说明文件被当成文本打开了），右键文件 → "打开方式" → 选择浏览器（Chrome / Edge / Safari）。</div>
+        <div class="s-action">预计耗时：30秒</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="s-title">测试 + 提反馈 + 第二轮迭代</div>
+        <div class="s-desc">在浏览器里操作你的工具，检查：计算逻辑对不对？交互反应对不对？有没有显示出你需要的结果？<br><br>
+        如果有需要修改的地方，<strong>不要自己改代码</strong>，回到 Claude 直接说明问题。例如："合计数字算错了，应该是A+B+C的总和，但现在显示的是A+B"。描述越具体，Claude 修复越准。修复完毕后，把新代码复制粘贴覆盖原来的 .html 文件即可。</div>
+        <div class="s-action">预计耗时：10分钟</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <div class="ins-label">关键心态</div>
+    <p>第一次做出来的工具不会完美。不要期待一次成功，把"第一版能跑通核心逻辑"作为第一轮的目标。第二轮解决"数字对不对"，第三轮解决"样式好不好看"。这三轮下来，你的工具就达到可以投入实际使用的水平了。</p>
+  </div>
+</div>
+
+<!-- ── 小节四：提示词模板 ── -->
+<div class="card">
+  <div class="section-label">小节四</div>
+  <h2 class="section-title">新手提示词模板——填空就能用</h2>
+  <span class="section-pill pill-orange">提示词 · 可复用模板</span>
+
+  <p class="body-text">下面是一个经过验证的 HTML 工具提示词结构，分成五个模块。你只需要把 <span style="background:#fde68a;padding:1px 4px;border-radius:3px;font-size:12px;color:#78350f">黄色部分</span> 替换成你的实际需求，其他说明保留，Claude 就能生成质量较好的初版工具。</p>
+
+  <div class="prompt-box">
+    <div class="pb-label">通用 HTML 工具提示词模板</div>
+    <p><span class="note">【角色设定】</span><br>
+    你是一名擅长生成单文件 HTML 交互工具的前端开发工程师，熟悉 CSS 设计系统和 JavaScript 交互逻辑。</p>
+    <p><span class="note">【工具描述】</span><br>
+    帮我生成一个 <span class="ph">【工具用途，例如：供应商综合评分工具】</span>，用于 <span class="ph">【使用场景，例如：采购部门每季度对供应商做评估】</span>。</p>
+    <p><span class="note">【输入设计】</span><br>
+    用户需要输入的内容：<span class="ph">【例如：每家供应商在质量/交期/价格/服务四个维度的评分（1-10分），最多输入8家供应商】</span>。</p>
+    <p><span class="note">【输出设计】</span><br>
+    工具需要展示的结果：<span class="ph">【例如：自动计算加权总分（权重40/30/20/10），按总分高低排序，用颜色区分优秀/合格/待改进三档，并用图表展示各供应商的分布】</span>。</p>
+    <p><span class="note">【示例数据（可选但强烈推荐）】</span><br>
+    初始数据先用以下示例：<span class="ph">【例如：供应商A：8/7/6/9；供应商B：6/8/9/7；供应商C：9/6/7/8】</span>，后续我会替换成真实数据。</p>
+    <p><span class="note">【技术要求】</span><br>
+    ① 生成单文件 HTML，所有 CSS 和 JavaScript 都内联，不依赖外部 CDN（文件要在没有网络时也能打开）<br>
+    ② 整体风格现代简洁，适合在电脑上打开使用<br>
+    ③ 请直接输出完整 HTML 代码，不要有额外说明</p>
+  </div>
+
+  <div class="warn-box">
+    <div class="w-label">新手常见错误</div>
+    <p>不要在提示词里只说"帮我做一个工具"或者"帮我做个看板"——这种描述太模糊，Claude 会生成一个通用模板，几乎无法直接使用。<strong>需求越具体，生成的工具越贴近你想要的</strong>。把你的具体场景、具体字段名、具体计算规则写进去，哪怕写得不完整、不优雅，也比什么都不写强。</p>
+  </div>
+
+  <p class="body-text">还有一个小技巧：如果你有一张现有的 Excel 表格，可以截图发给 Claude，说"帮我把这张 Excel 表格里的内容做成一个 HTML 交互工具"。Claude 会从截图里识别字段名和数据结构，生成的代码字段名和你的 Excel 几乎完全匹配，后续替换数据会很方便。</p>
+</div>
+
+<!-- ── 小节五：第一个真实案例 ── -->
+<div class="card">
+  <div class="section-label">小节五</div>
+  <h2 class="section-title">跟我一起做：KPI 追踪仪表板（完整示范）</h2>
+  <span class="section-pill pill-blue">全程示范 · 可直接复用</span>
+
+  <p class="body-text">下面是一个完整的"从提需求到拿到工具"的示范。这是产品运营总监小林的真实场景：她每个月要整理一份 KPI 汇报，数据散在四个不同的表格里，格式调整要花两小时。她想要一个页面：展示五个核心指标，用颜色区分状态，并显示趋势。</p>
+
+  <div class="prompt-box">
+    <div class="pb-label">小林用的提示词（直接可用）</div>
+    <p>你是一名擅长生成单文件 HTML 交互工具的前端开发工程师。</p>
+    <p>帮我生成一个产品运营 KPI 仪表板，用于每月向管理层汇报核心指标。</p>
+    <p><span class="note">【5个指标数据（先用示例数据，我后续会替换成真实数字）：】</span><br>
+    DAU：目标12万，当月11.2万<br>
+    留存率（次日）：目标42%，当月39%<br>
+    付费转化：目标3.8%，当月4.1%<br>
+    客单价：目标198元，当月187元<br>
+    NPS：目标65，当月71</p>
+    <p><span class="note">【展示要求：】</span><br>
+    • 每个指标卡片显示：当月值、目标值、完成率%<br>
+    • 完成率&gt;100%显示绿色，80-100%显示橙色，低于80%显示红色<br>
+    • 卡片下方自动生成一段简短的文字分析（点出最好和最差的指标）<br>
+    • 深色背景风格，适合会议室投屏</p>
+    <p><span class="note">【技术要求：】</span><br>
+    单文件HTML，所有CSS/JS内联，不依赖CDN，直接输出完整代码。</p>
+  </div>
+
+  <p class="body-text">用这段提示词，Claude 通常能一次生成一个接近可用的仪表板。小林拿到代码后：</p>
+
+  <div class="step-list">
+    <div class="step-row">
+      <div class="step-num">①</div>
+      <div class="step-content">
+        <div class="s-title">保存文件，双击打开，检查核心逻辑</div>
+        <div class="s-desc">仪表板打开后，小林发现 NPS 71（超出目标65）显示的是橙色而不是绿色——颜色逻辑写反了。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">②</div>
+      <div class="step-content">
+        <div class="s-title">回到 Claude 说明问题</div>
+        <div class="s-desc">"NPS 当月71，目标65，完成率108%，已经超出目标，但页面显示橙色，应该是绿色。请修复颜色判断逻辑。" Claude 定位到 JavaScript 里的判断条件，直接修复。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">③</div>
+      <div class="step-content">
+        <div class="s-title">替换真实数据，完工</div>
+        <div class="s-desc">修复后，小林打开 .html 文件，用文本编辑器找到示例数字（比如 11.2万），改成当月真实数字，保存，刷新浏览器——仪表板立刻更新。全程不需要理解任何代码。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-label">小林的反馈</div>
+    <p>从写提示词到拿到能用的仪表板，总共花了 25 分钟。其中提示词写了 8 分钟，等 Claude 生成用了 2 分钟，保存文件用了 2 分钟，测试+修复颜色逻辑用了 8 分钟，最后替换真实数据用了 5 分钟。</p>
+    <p>现在每个月开会前，她只需要打开 .html 文件，把上个月的数字改成这个月的，刷新浏览器就是最新的仪表板。PPT 制作时间从两小时缩短到了 10 分钟。</p>
+  </div>
+</div>
+
+<!-- ── 小节六：工具类型选择 ── -->
+<div class="card">
+  <div class="section-label">小节六</div>
+  <h2 class="section-title">三类工具，对应三种提示词复杂度</h2>
+  <span class="section-pill pill-purple">分类指引 · 选对难度</span>
+
+  <p class="body-text">不是所有 HTML 工具都一样难做。在动手之前判断你需要的是哪一类，可以帮你预估需要几轮迭代、提示词要写多细。</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <rect width="700" height="200" rx="14" fill="#f8fafc"/>
+
+      <!-- Type 1 -->
+      <rect x="16" y="16" width="210" height="168" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+      <rect x="16" y="16" width="210" height="44" rx="12" fill="#2563eb"/>
+      <rect x="16" y="48" width="210" height="12" fill="#2563eb"/>
+      <text x="121" y="36" text-anchor="middle" font-size="11" font-weight="800" fill="rgba(255,255,255,.8)">展示型  ★☆☆</text>
+      <text x="121" y="53" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">最容易入门</text>
+      <text x="121" y="85"  text-anchor="middle" font-size="11" fill="#1e40af">数据写死在页面里</text>
+      <text x="121" y="103" text-anchor="middle" font-size="11" fill="#1e40af">KPI仪表板 / 对比图</text>
+      <text x="121" y="121" text-anchor="middle" font-size="11" fill="#1e40af">进度看板 / 活动议程</text>
+      <text x="121" y="150" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6">一次生成基本完工</text>
+      <text x="121" y="168" text-anchor="middle" font-size="10" fill="#3b82f6">推荐新手第一个工具</text>
+
+      <!-- Type 2 -->
+      <rect x="246" y="16" width="210" height="168" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+      <rect x="246" y="16" width="210" height="44" rx="12" fill="#16a34a"/>
+      <rect x="246" y="48" width="210" height="12" fill="#16a34a"/>
+      <text x="351" y="36" text-anchor="middle" font-size="11" font-weight="800" fill="rgba(255,255,255,.8)">计算型  ★★☆</text>
+      <text x="351" y="53" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">需要1-2轮迭代</text>
+      <text x="351" y="85"  text-anchor="middle" font-size="11" fill="#166534">用户输入数据</text>
+      <text x="351" y="103" text-anchor="middle" font-size="11" fill="#166534">评分工具 / 成本计算</text>
+      <text x="351" y="121" text-anchor="middle" font-size="11" fill="#166534">收入预测 / 决策矩阵</text>
+      <text x="351" y="150" text-anchor="middle" font-size="10" font-weight="700" fill="#16a34a">最有日常使用价值</text>
+      <text x="351" y="168" text-anchor="middle" font-size="10" fill="#16a34a">熟悉工具后优先尝试</text>
+
+      <!-- Type 3 -->
+      <rect x="476" y="16" width="208" height="168" rx="12" fill="#fdf4ff" stroke="#d8b4fe" stroke-width="1.5"/>
+      <rect x="476" y="16" width="208" height="44" rx="12" fill="#7c3aed"/>
+      <rect x="476" y="48" width="208" height="12" fill="#7c3aed"/>
+      <text x="580" y="36" text-anchor="middle" font-size="11" font-weight="800" fill="rgba(255,255,255,.8)">交互数据处理  ★★★</text>
+      <text x="580" y="53" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">多轮迭代开发</text>
+      <text x="580" y="85"  text-anchor="middle" font-size="11" fill="#5b21b6">导入CSV/本地文件</text>
+      <text x="580" y="103" text-anchor="middle" font-size="11" fill="#5b21b6">动态筛选 + 可视化</text>
+      <text x="580" y="121" text-anchor="middle" font-size="11" fill="#5b21b6">项目风险地图</text>
+      <text x="580" y="150" text-anchor="middle" font-size="10" font-weight="700" fill="#7c3aed">推荐 Claude Code 模式</text>
+      <text x="580" y="168" text-anchor="middle" font-size="10" fill="#7c3aed">见 10B/10C 进阶篇</text>
+    </svg>
+  </div>
+  <p class="svg-caption">新手从第一类（展示型）起步，熟悉节奏后进阶到计算型和数据处理型</p>
+
+  <p class="body-text">这三类工具之间没有明确的分界线，而是一个渐进的光谱。一个工具可能主要是展示型，但加了一个筛选按钮就有了交互；一个计算型工具，如果加了图表联动就开始向数据处理型过渡。重要的是：<strong>第一个工具从展示型开始，感受到完整的"生成→保存→打开→反馈→修改"闭环，比做出一个复杂工具更重要。</strong></p>
+</div>
+
+<!-- ── 小节七：常见问题 ── -->
+<div class="card">
+  <div class="section-label">小节七</div>
+  <h2 class="section-title">新手最常遇到的五个问题</h2>
+  <span class="section-pill pill-orange">常见问题 · 快速解决</span>
+
+  <p class="body-text">根据很多人第一次做 HTML 工具的经历，整理了五个高频问题和解决方法。</p>
+
+  <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px">
+    <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid var(--border)">
+      <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:6px">Q1：打开 .html 文件后显示的是一堆代码，不是页面</div>
+      <div style="font-size:13px;color:var(--ink-mid);line-height:1.65">文件被用文本编辑器打开了。右键文件 → 打开方式 → 选择 Chrome 或 Edge 浏览器。如果没有显示浏览器选项，先打开浏览器，把文件直接拖进浏览器窗口。</div>
+    </div>
+    <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid var(--border)">
+      <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:6px">Q2：页面打开了但是一片空白</div>
+      <div style="font-size:13px;color:var(--ink-mid);line-height:1.65">代码可能不完整（复制时漏掉了一部分），或者 JavaScript 有错误。回到 Claude，说"刚才生成的代码打开后页面空白，请检查是否有 JavaScript 错误并重新生成"。同时按 F12 打开浏览器开发者工具，查看 Console 标签是否有红色错误信息，把错误信息发给 Claude。</div>
+    </div>
+    <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid var(--border)">
+      <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:6px">Q3：工具里的图表不显示</div>
+      <div style="font-size:13px;color:var(--ink-mid);line-height:1.65">通常是 Claude 生成的代码引用了外部图表库（如 Chart.js 的 CDN），但当前没有网络连接。解决方法：告诉 Claude "请不要依赖任何外部CDN，图表用原生 Canvas API 或 SVG 实现，确保离线可用"。</div>
+    </div>
+    <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid var(--border)">
+      <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:6px">Q4：计算结果出错了，不知道怎么让 AI 修</div>
+      <div style="font-size:13px;color:var(--ink-mid);line-height:1.65">最有效的反馈格式：<strong>①具体说是哪个数字错了 + ②正确结果应该是多少 + ③计算逻辑是什么</strong>。比如"总分显示78，但按质量40%+交期30%+价格20%+服务10%算，供应商A的加权分应该是 8×0.4+7×0.3+6×0.2+9×0.1 = 7.5，不是78"。</div>
+    </div>
+    <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid var(--border)">
+      <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:6px">Q5：工具没问题，但样式很丑，怎么让它好看</div>
+      <div style="font-size:13px;color:var(--ink-mid);line-height:1.65">样式调整最有效的方法是参考具体页面。告诉 Claude "风格参考 Linear.app 的设计风格"、"整体颜色偏深色科技感"、"适合在会议室投屏，字体要大，数字要突出"。比说"好看一点"更有效。也可以截图一个你喜欢的界面发给 Claude，说"风格参考这张图"。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 章节结尾卡片 ── -->
+<div class="chapter-footer">
+  <div class="footer-title">本章核心带走</div>
+  <div class="footer-text">HTML 工具不是程序员的专属，而是每个有具体需求的人都能做的事——你负责把需求描述清楚，AI 负责把代码写出来。从展示型工具起步，完成一次完整的"生成→保存→打开→测试→修复"闭环，比做出一个复杂工具更重要。第一个工具的目标只有一个：跑通这个闭环，建立信心。</div>
+  <div class="next-chapter">→ 10B 进阶篇：学会"报告产品化"——设计参数滑块、图表联动，让你的 HTML 工具能在汇报现场现场推演</div>
+</div>
+
+</div><!-- end .page -->
+</body>
+</html>

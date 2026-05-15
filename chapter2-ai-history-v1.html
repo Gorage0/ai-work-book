@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第2章 AI的前世今生</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+  --accent: #f43f5e;
+  --accent-soft: #ffe4e6;
+  --ink: #0f172a;
+  --ink-mid: #334155;
+  --ink-soft: #64748b;
+  --surface: #f1f5f9;
+  --card: #ffffff;
+  --border: rgba(15,23,42,.07);
+  --orange: #f97316;
+  --orange-soft: #ffedd5;
+  --green: #16a34a;
+  --green-soft: #dcfce7;
+  --purple: #7c3aed;
+  --purple-soft: #ede9fe;
+  --teal: #0891b2;
+  --teal-soft: #cffafe;
+  --era1: #dc2626; /* 规则时代 */
+  --era2: #d97706; /* 统计时代 */
+  --era3: #2563eb; /* 深度学习 */
+  --era4: #7c3aed; /* 大模型 */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  background: var(--surface);
+  color: var(--ink);
+  line-height: 1.75;
+  font-size: 15px;
+}
+
+.page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* ── 章节头部 ── */
+.chapter-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e1b4b 100%);
+  border-radius: 20px;
+  padding: 48px 44px;
+  color: #fff;
+  margin-bottom: 36px;
+  position: relative;
+  overflow: hidden;
+}
+.chapter-header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(124,58,237,.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.chapter-header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: 20px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(37,99,235,.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ch-eyebrow {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.5);
+  margin-bottom: 14px;
+}
+.ch-title {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+  margin-bottom: 16px;
+}
+.ch-subtitle {
+  font-size: 14px;
+  color: rgba(255,255,255,.65);
+  max-width: 500px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.ch-takeaway {
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 13.5px;
+  color: rgba(255,255,255,.9);
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+.ch-takeaway strong { color: #fff; }
+
+/* ── 通用卡片 ── */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 32px 36px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(15,23,42,.06);
+}
+
+/* ── 小节标题 ── */
+.section-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.section-title {
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.section-era {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+.era-1 { background: #fee2e2; color: var(--era1); }
+.era-2 { background: #fef3c7; color: var(--era2); }
+.era-3 { background: var(--primary-soft); color: var(--primary); }
+.era-4 { background: var(--purple-soft); color: var(--purple); }
+
+/* ── 段落 ── */
+.body-text {
+  font-size: 14.5px;
+  line-height: 1.82;
+  color: var(--ink-mid);
+  margin-bottom: 16px;
+}
+.body-text:last-child { margin-bottom: 0; }
+.body-text strong { color: var(--ink); font-weight: 700; }
+
+/* ── 案例框 ── */
+.example-box {
+  background: var(--orange-soft);
+  border-left: 3px solid var(--orange);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px;
+  margin: 18px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #7c2d12;
+}
+.example-box .ex-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 6px;
+}
+
+/* ── 引用/类比框 ── */
+.analogy-box {
+  background: var(--primary-soft);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 18px 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #1e3a8a;
+  border: 1px solid rgba(37,99,235,.15);
+}
+.analogy-box .al-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+/* ── 里程碑卡片 ── */
+.milestone-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-mid);
+  margin: 4px 4px 4px 0;
+}
+.milestone-inline .year { color: var(--primary); font-weight: 800; }
+
+/* ── 分割线 ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+/* ── 表格 ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 20px 0;
+}
+.data-table thead th {
+  background: var(--ink);
+  color: #fff;
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .3px;
+}
+.data-table thead th:first-child { border-radius: 8px 0 0 0; }
+.data-table thead th:last-child { border-radius: 0 8px 0 0; }
+.data-table tbody tr:nth-child(odd) { background: #f8fafc; }
+.data-table tbody tr:hover { background: var(--primary-soft); }
+.data-table tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.55;
+  color: var(--ink-mid);
+}
+.data-table tbody td:first-child { font-weight: 700; color: var(--ink); }
+.era-badge {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+/* ── SVG 容器 ── */
+.diagram-wrap {
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 28px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(15,23,42,.06);
+}
+.diagram-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* ── 统计高亮 ── */
+.stat-row {
+  display: flex;
+  gap: 16px;
+  margin: 20px 0;
+}
+.stat-card {
+  flex: 1;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+.stat-card .num {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-card .label {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+/* ── 章节尾部 ── */
+.chapter-footer {
+  background: linear-gradient(135deg, var(--primary-soft), var(--purple-soft));
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-top: 12px;
+}
+.footer-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.footer-text {
+  font-size: 13.5px;
+  color: var(--ink-mid);
+  line-height: 1.7;
+}
+.next-chapter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── 章节头部 ── -->
+  <div class="chapter-header">
+    <div class="ch-eyebrow">第二章 · Part 1 认识AI</div>
+    <h1 class="ch-title">AI的前世今生<br>普通人该怎么理解</h1>
+    <p class="ch-subtitle">从图灵的问题，到三条赛道七十年后的汇合——大模型不是凭空出现的，它是一段漫长积累在某一刻突然引爆的结果。</p>
+    <div class="ch-takeaway">
+      <strong>一句话结论：</strong>AI不是一条直线，而是视觉、语言、游戏三条并行赛道，在2017年的Transformer这个节点汇合，才有了今天的大模型。
+    </div>
+  </div>
+
+  <!-- ── 全章里程碑时间轴 ── -->
+  <div class="diagram-wrap">
+    <div class="diagram-label">AI发展里程碑 · 1950—2024</div>
+    <svg viewBox="0 0 760 548" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <!-- 背景分区 -->
+      <rect x="0" y="0" width="760" height="548" fill="#f8fafc" rx="12"/>
+
+      <!-- 时代背景色带 -->
+      <rect x="30" y="20" width="700" height="100" rx="8" fill="#fee2e2" opacity=".45"/>
+      <rect x="30" y="133" width="700" height="90" rx="8" fill="#fef3c7" opacity=".45"/>
+      <rect x="30" y="236" width="700" height="100" rx="8" fill="#dbeafe" opacity=".45"/>
+      <rect x="30" y="374" width="700" height="156" rx="8" fill="#ede9fe" opacity=".45"/>
+
+      <!-- 时代标签 -->
+      <text x="44" y="38" font-size="9" font-weight="800" letter-spacing="1.5" fill="#dc2626">规则时代 1950s–1980s</text>
+      <text x="44" y="151" font-size="9" font-weight="800" letter-spacing="1.5" fill="#d97706">统计学习 1990s–2010s</text>
+      <text x="44" y="254" font-size="9" font-weight="800" letter-spacing="1.5" fill="#2563eb">深度学习爆发 2012–2017</text>
+      <text x="44" y="392" font-size="9" font-weight="800" letter-spacing="1.5" fill="#7c3aed">大模型时代 2017—至今</text>
+
+      <!-- 中心时间线 -->
+      <line x1="380" y1="32" x2="380" y2="518" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,3"/>
+
+      <!-- === 规则时代事件 === -->
+      <circle cx="380" cy="55" r="6" fill="#dc2626"/>
+      <line x1="374" y1="55" x2="235" y2="55" stroke="#dc2626" stroke-width="1.5"/>
+      <rect x="100" y="42" width="133" height="26" rx="6" fill="#dc2626"/>
+      <text x="167" y="58" text-anchor="middle" font-size="11" font-weight="700" fill="white">1950 图灵测试提出</text>
+
+      <circle cx="380" cy="80" r="6" fill="#dc2626"/>
+      <line x1="386" y1="80" x2="525" y2="80" stroke="#dc2626" stroke-width="1.5"/>
+      <rect x="527" y="67" width="148" height="26" rx="6" fill="#dc2626" opacity=".15"/>
+      <text x="601" y="83" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="600">1956 达特茅斯会议</text>
+
+      <circle cx="380" cy="106" r="5" fill="#ef4444"/>
+      <line x1="375" y1="106" x2="235" y2="106" stroke="#ef4444" stroke-width="1.5"/>
+      <rect x="100" y="93" width="133" height="26" rx="6" fill="#ef4444" opacity=".12"/>
+      <text x="167" y="109" text-anchor="middle" font-size="11" fill="#ef4444" font-weight="600">1972 MYCIN专家系统</text>
+
+      <!-- === 统计学习时代 === -->
+      <circle cx="380" cy="165" r="6" fill="#d97706"/>
+      <line x1="386" y1="165" x2="525" y2="165" stroke="#d97706" stroke-width="1.5"/>
+      <rect x="527" y="152" width="148" height="26" rx="6" fill="#d97706"/>
+      <text x="601" y="168" text-anchor="middle" font-size="11" font-weight="700" fill="white">1997 深蓝击败卡斯帕罗夫</text>
+
+      <circle cx="380" cy="193" r="5" fill="#d97706"/>
+      <line x1="375" y1="193" x2="235" y2="193" stroke="#d97706" stroke-width="1.5"/>
+      <rect x="100" y="180" width="133" height="26" rx="6" fill="#d97706" opacity=".12"/>
+      <text x="167" y="196" text-anchor="middle" font-size="11" fill="#d97706" font-weight="600">2006 深度学习复兴</text>
+
+      <!-- === 深度学习时代 === -->
+      <circle cx="380" cy="260" r="8" fill="#2563eb"/>
+      <circle cx="380" cy="260" r="14" fill="#2563eb" opacity=".15"/>
+      <line x1="388" y1="260" x2="525" y2="260" stroke="#2563eb" stroke-width="2"/>
+      <rect x="527" y="247" width="148" height="26" rx="6" fill="#2563eb"/>
+      <text x="601" y="263" text-anchor="middle" font-size="11" font-weight="700" fill="white">2012 AlexNet ⚡ 分水岭</text>
+
+      <circle cx="380" cy="285" r="5" fill="#3b82f6"/>
+      <line x1="375" y1="285" x2="235" y2="285" stroke="#3b82f6" stroke-width="1.5"/>
+      <rect x="100" y="272" width="133" height="26" rx="6" fill="#3b82f6" opacity=".12"/>
+      <text x="167" y="288" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600">2013 Word2Vec</text>
+
+      <circle cx="380" cy="313" r="6" fill="#2563eb"/>
+      <line x1="386" y1="313" x2="525" y2="313" stroke="#2563eb" stroke-width="1.5"/>
+      <rect x="527" y="300" width="148" height="26" rx="6" fill="#2563eb" opacity=".12"/>
+      <text x="601" y="316" text-anchor="middle" font-size="11" fill="#2563eb" font-weight="600">2016 AlphaGo击败李世石</text>
+
+      <!-- === 大模型时代（下移约25px）=== -->
+      <circle cx="380" cy="406" r="9" fill="#7c3aed"/>
+      <circle cx="380" cy="406" r="17" fill="#7c3aed" opacity=".15"/>
+      <line x1="363" y1="406" x2="200" y2="406" stroke="#7c3aed" stroke-width="2"/>
+      <rect x="60" y="393" width="138" height="26" rx="6" fill="#7c3aed"/>
+      <text x="129" y="409" text-anchor="middle" font-size="11" font-weight="700" fill="white">2017 Transformer论文 🔑</text>
+
+      <circle cx="380" cy="436" r="6" fill="#7c3aed"/>
+      <line x1="386" y1="436" x2="525" y2="436" stroke="#7c3aed" stroke-width="1.5"/>
+      <rect x="527" y="423" width="148" height="26" rx="6" fill="#7c3aed" opacity=".12"/>
+      <text x="601" y="439" text-anchor="middle" font-size="11" fill="#7c3aed" font-weight="600">2020 GPT-3 涌现能力</text>
+
+      <circle cx="380" cy="470" r="9" fill="#7c3aed"/>
+      <circle cx="380" cy="470" r="17" fill="#f43f5e" opacity=".2"/>
+      <line x1="363" y1="470" x2="200" y2="470" stroke="#f43f5e" stroke-width="2"/>
+      <rect x="60" y="457" width="138" height="26" rx="6" fill="#f43f5e"/>
+      <text x="129" y="473" text-anchor="middle" font-size="11" font-weight="700" fill="white">2022.11 ChatGPT 🌍 全球震动</text>
+
+      <circle cx="380" cy="502" r="5" fill="#7c3aed"/>
+      <line x1="386" y1="502" x2="525" y2="502" stroke="#7c3aed" stroke-width="1.5"/>
+      <rect x="527" y="489" width="148" height="26" rx="6" fill="#7c3aed" opacity=".12"/>
+      <text x="601" y="505" text-anchor="middle" font-size="11" fill="#7c3aed" font-weight="600">2024 多模态大模型普及</text>
+    </svg>
+  </div>
+
+  <!-- ── 小节一：规则时代 ── -->
+  <div class="card">
+    <div class="section-label">小节一</div>
+    <h2 class="section-title">从图灵的问题说起</h2>
+    <span class="section-era era-1">规则时代 · 1950s—1980s</span>
+
+    <p class="body-text">1950年，图灵在一篇名为《计算机器与智能》的论文里提出了一个问题："机器能思考吗？"他没有直接回答，而是设计了一个测试：如果你和一台机器通过文字对话，却无法判断对方是人还是机器，那这台机器就算通过了测试。这就是图灵测试，一个被争论了七十年却从未真正被解决的问题——它不是一个技术标准，而是AI这个领域的精神起点。</p>
+
+    <p class="body-text">六年后的1956年，一批科学家聚在美国新罕布什尔州的达特茅斯学院，开了一个夏季研讨会。会议的发起人之一麦卡锡在申请书里正式写下了"人工智能"这个词。他们当时非常乐观，觉得二十年内就能造出具有真正智能的机器。这种乐观很快被现实打脸——但这次会议，正式宣告了一个新学科的诞生。</p>
+
+    <div class="example-box">
+      <div class="ex-label">历史案例</div>
+      那个时代的AI走的是一条直觉上最符合逻辑的路：把人类专家的知识翻译成规则，塞进计算机。1966年，MIT的ELIZA程序能模拟心理咨询师和人对话——它没有任何理解能力，只是在套用固定的句式模板，碰到"我很难过"就回答"为什么你觉得难过？"。有趣的是，很多使用者明知道它是程序，还是会产生真实的情感依附。1972年的医疗诊断系统MYCIN则更为精密，内置了600多条"如果……那么……"的推理规则，诊断细菌感染的准确率甚至在某些实验中超过了住院医生——但它完全不知道"生病"是什么感受。
+    </div>
+
+    <p class="body-text">到了1980年代，"专家系统"成了整个行业的风口。大量企业投入资金，把各个领域的专家知识编码进计算机：有为法律专业设计的系统，有为地质勘探设计的系统，有为工厂设备故障诊断设计的系统。一时间，AI似乎距离真正落地只有一步之遥。</p>
+
+    <p class="body-text">但问题很快暴露出来：规则写不完。世界的复杂性超出了任何规则集的覆盖范围。一个法律专家系统可能需要十万条规则，而这些规则之间还会互相矛盾，修改一条可能引发连锁反应。更致命的是，规则系统无法处理它没见过的情况——一旦输入超出规则的设计范围，系统就会给出荒谬的答案。1987年前后，这波热潮在无数企业的亏损中退去，AI进入了第一次"寒冬"。</p>
+
+    <div style="background:#fef2f2;border-radius:10px;padding:14px 18px;margin-top:18px;border-left:3px solid #dc2626">
+      <div style="font-size:10px;font-weight:800;color:#dc2626;letter-spacing:1.5px;margin-bottom:6px">普通人的感知</div>
+      <p style="font-size:13px;color:#7f1d1d;line-height:1.65;margin:0">这个阶段几乎感知不到AI。最接近的体验可能是银行柜员机（ATM）——它只能处理固定操作，输错密码超过三次就锁死，因为背后就是一套死板的判断规则。AI这个词，对普通人来说是科幻小说里才有的东西。</p>
+    </div>
+  </div>
+
+  <!-- ── 小节二：统计学习时代 ── -->
+  <div class="card">
+    <div class="section-label">小节二</div>
+    <h2 class="section-title">换一条路——让机器从数据里找规律</h2>
+    <span class="section-era era-2">统计学习时代 · 1990s—2010s</span>
+
+    <p class="body-text">寒冬期间，一部分研究者悄悄转换了思路。既然规则写不完，那就不写规则——把数据喂给机器，让它自己从数据里归纳。这个思路有个名字，叫机器学习。它的核心逻辑是：给机器看足够多的正例和反例，让它自己发现其中的统计规律，并用这些规律来预测新的输入。</p>
+
+    <div class="example-box">
+      <div class="ex-label">容易混淆的例子</div>
+      1997年，IBM的深蓝计算机击败了国际象棋世界冠军卡斯帕罗夫，轰动全球。但深蓝其实不是典型的机器学习系统——它更像是一台极其强大的搜索引擎，通过穷举每一步棋的所有可能并用评估函数打分来选择最优走法。这是工程上的胜利，是计算能力的胜利，而不是机器真正"学会"了下棋。
+    </div>
+
+    <p class="body-text">真正代表这个时代精神的，是那些默默运行在后台的算法：支持向量机、随机森林、梯度提升树。这些算法不依赖专家规则，而是从数据中寻找统计边界。它们至今仍在运行着大量实际业务——银行的信用评分模型、电商的价格预测系统、保险公司的风险评估模型，背后大概率是某种梯度提升算法。在结构化数据（也就是表格形式的数据）处理上，它们的效果甚至不输于深度学习。</p>
+
+    <p class="body-text">这个时代的机器学习有一个核心瓶颈，叫做特征工程。机器能从数据里找规律，但你得先告诉它从哪些角度去看这份数据。判断一封邮件是否垃圾邮件，你得先手动设计"发件人地址是否可疑"、"关键词出现频率"、"邮件长度"这些维度——这些判断，仍然是人来做的。机器负责拟合数据，人负责理解业务。从某种意义上说，这个时代的AI仍然是人类思维的延伸，只是更快、更准确地执行了人类的判断。</p>
+
+    <div style="background:#fffbeb;border-radius:10px;padding:14px 18px;margin-top:18px;border-left:3px solid #d97706">
+      <div style="font-size:10px;font-weight:800;color:#d97706;letter-spacing:1.5px;margin-bottom:6px">普通人的感知</div>
+      <p style="font-size:13px;color:#78350f;line-height:1.65;margin:0">这个阶段开始能感受到AI了，只是不知道那叫AI。淘宝"猜你喜欢"越来越准、网易邮箱垃圾邮件少了、Google搜索结果越来越相关——背后都是统计学习算法在工作。最直观的感受是：<strong>产品变聪明了，但你还是只能被动接受推荐，没办法主动"指挥"它。</strong></p>
+    </div>
+
+    <!-- 四代AI对比表格 -->
+    <div style="margin-top:24px">
+      <div class="diagram-label" style="text-align:left;margin-bottom:12px">四代AI核心特征对比</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>时代</th>
+            <th>核心逻辑</th>
+            <th>典型代表</th>
+            <th>最大局限</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="era-badge" style="background:#dc2626;display:inline-block"></span>规则时代</td>
+            <td>人写规则，机器执行</td>
+            <td>MYCIN、专家系统</td>
+            <td>规则写不完，无法泛化</td>
+          </tr>
+          <tr>
+            <td><span class="era-badge" style="background:#d97706;display:inline-block"></span>统计学习</td>
+            <td>数据喂机器，机器找规律</td>
+            <td>随机森林、XGBoost</td>
+            <td>特征工程依赖人工设计</td>
+          </tr>
+          <tr>
+            <td><span class="era-badge" style="background:#2563eb;display:inline-block"></span>深度学习</td>
+            <td>神经网络自动提取特征</td>
+            <td>AlexNet、AlphaGo</td>
+            <td>需要海量标注数据</td>
+          </tr>
+          <tr>
+            <td><span class="era-badge" style="background:#7c3aed;display:inline-block"></span>大模型</td>
+            <td>规模带来涌现，通用能力</td>
+            <td>GPT-4、Claude、Gemini</td>
+            <td>算力成本极高、幻觉问题</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 小节三：三条赛道 ── -->
+  <div class="card">
+    <div class="section-label">小节三</div>
+    <h2 class="section-title">深度学习时代——三条赛道同时爆发</h2>
+    <span class="section-era era-3">深度学习爆发 · 2012—2017</span>
+
+    <p class="body-text">2012年是一个分水岭。那一年，一个叫AlexNet的深度神经网络在ImageNet图像识别大赛上以压倒性的优势获胜——错误率从此前最优的26%一下降到了15%。这不是技术上的小幅改进，是质的跃迁。在这之前，研究者已经断断续续地研究神经网络超过五十年；在这之后，几乎所有主流AI研究都转向了深度学习。</p>
+
+    <p class="body-text">但接下来这五年里，AI的进展并不是沿着一条路走的。深度学习像一股浪潮，同时涌进了三个完全不同的研究方向，各自都产出了改变历史的成果，然后在2017年的同一个节点汇合。</p>
+
+    <div class="analogy-box">
+      <div class="al-label">三条赛道的共同本质</div>
+      尽管研究方向不同，这三条赛道在数学上做的是同一件事：<strong>找一个函数 f(x) = y，把输入映射到正确的输出。</strong>视觉赛道的输入是像素、输出是"这是一只猫"；语言赛道的输入是一段句子、输出是下一个词；游戏赛道的输入是棋盘状态、输出是最优落子。深度学习的真正突破不是换了一种数学，而是多层神经网络能<strong>自动学习这个映射的中间表示</strong>——你不需要告诉它"眼睛是椭圆、鼻子是三角"，它自己会从像素层面一层一层往上构建出这些概念。自动提取层级特征，是之前所有方法都做不到的。
+    </div>
+
+    <div style="background:#f0fdf4;border-radius:10px;padding:14px 18px;margin-top:4px;border-left:3px solid #16a34a">
+      <div style="font-size:10px;font-weight:800;color:#16a34a;letter-spacing:1.5px;margin-bottom:6px">普通人的感知</div>
+      <p style="font-size:13px;color:#14532d;line-height:1.65;margin:0">这个阶段AI开始"看得懂"了。手机解锁从输密码变成刷脸（2017年iPhone X）；Siri和小爱同学开始能听懂口语；Google翻译质量突然变好——你第一次觉得机器好像真的理解了语言。但你还是只能用产品，没法直接和AI对话。</p>
+    </div>
+  </div>
+
+  <!-- 三条赛道图 -->
+  <div class="diagram-wrap">
+    <div class="diagram-label">深度学习时代：三条并行赛道汇合示意</div>
+    <svg viewBox="0 0 740 420" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+
+      <!-- 背景 -->
+      <rect width="740" height="420" fill="#f8fafc" rx="10"/>
+
+      <!-- 三列背景 -->
+      <rect x="20" y="16" width="210" height="300" rx="10" fill="#eff6ff" opacity=".7"/>
+      <rect x="265" y="16" width="210" height="300" rx="10" fill="#f0fdf4" opacity=".7"/>
+      <rect x="510" y="16" width="210" height="300" rx="10" fill="#fef3c7" opacity=".7"/>
+
+      <!-- 列标题 -->
+      <rect x="30" y="24" width="190" height="30" rx="6" fill="#2563eb"/>
+      <text x="125" y="43" text-anchor="middle" font-size="12" font-weight="800" fill="white">👁 视觉赛道</text>
+
+      <rect x="275" y="24" width="190" height="30" rx="6" fill="#16a34a"/>
+      <text x="370" y="43" text-anchor="middle" font-size="12" font-weight="800" fill="white">💬 语言赛道</text>
+
+      <rect x="520" y="24" width="190" height="30" rx="6" fill="#d97706"/>
+      <text x="615" y="43" text-anchor="middle" font-size="12" font-weight="800" fill="white">🎮 游戏赛道</text>
+
+      <!-- 视觉赛道事件 -->
+      <rect x="38" y="74" width="172" height="40" rx="6" fill="white" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="124" y="91" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">2012 AlexNet</text>
+      <text x="124" y="107" text-anchor="middle" font-size="10" fill="#64748b">图像识别错误率大跌</text>
+
+      <rect x="38" y="130" width="172" height="40" rx="6" fill="white" stroke="#2563eb" stroke-width="1"/>
+      <text x="124" y="147" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">2015 ResNet 152层</text>
+      <text x="124" y="163" text-anchor="middle" font-size="10" fill="#64748b">识别准确率超越人类</text>
+
+      <rect x="38" y="186" width="172" height="40" rx="6" fill="white" stroke="#2563eb" stroke-width="1"/>
+      <text x="124" y="203" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e3a8a">→ 人脸识别 / 自动驾驶</text>
+      <text x="124" y="219" text-anchor="middle" font-size="10" fill="#64748b">感知系统的基础</text>
+
+      <!-- 语言赛道事件 -->
+      <rect x="283" y="74" width="172" height="40" rx="6" fill="white" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="369" y="91" text-anchor="middle" font-size="11.5" font-weight="700" fill="#14532d">2013 Word2Vec</text>
+      <text x="369" y="107" text-anchor="middle" font-size="10" fill="#64748b">文字变成语义向量</text>
+
+      <rect x="283" y="130" width="172" height="40" rx="6" fill="white" stroke="#16a34a" stroke-width="1"/>
+      <text x="369" y="147" text-anchor="middle" font-size="11.5" font-weight="700" fill="#14532d">2014–15 Seq2Seq</text>
+      <text x="369" y="163" text-anchor="middle" font-size="10" fill="#64748b">谷歌翻译质量跃升</text>
+
+      <rect x="283" y="186" width="172" height="40" rx="6" fill="white" stroke="#16a34a" stroke-width="1"/>
+      <text x="369" y="203" text-anchor="middle" font-size="11.5" font-weight="700" fill="#14532d">→ 机器翻译 / 文本生成</text>
+      <text x="369" y="219" text-anchor="middle" font-size="10" fill="#64748b">语言处理初步成熟</text>
+
+      <!-- 游戏赛道事件 -->
+      <rect x="528" y="74" width="172" height="40" rx="6" fill="white" stroke="#d97706" stroke-width="1.5"/>
+      <text x="614" y="91" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">2013 DQN玩Atari</text>
+      <text x="614" y="107" text-anchor="middle" font-size="10" fill="#64748b">强化学习首次突破</text>
+
+      <rect x="528" y="130" width="172" height="40" rx="6" fill="white" stroke="#d97706" stroke-width="1"/>
+      <text x="614" y="147" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">2016 AlphaGo击败李世石</text>
+      <text x="614" y="163" text-anchor="middle" font-size="10" fill="#64748b">复杂策略学习能力证明</text>
+
+      <rect x="528" y="186" width="172" height="40" rx="6" fill="white" stroke="#d97706" stroke-width="1"/>
+      <text x="614" y="203" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">→ AlphaFold蛋白质折叠</text>
+      <text x="614" y="219" text-anchor="middle" font-size="10" fill="#64748b">科学发现新方向</text>
+
+      <!-- 汇聚箭头 -->
+      <path d="M 124 230 L 124 310 L 370 338" stroke="#2563eb" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+      <path d="M 370 230 L 370 338" stroke="#16a34a" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#arr2)"/>
+      <path d="M 614 230 L 614 310 L 370 338" stroke="#d97706" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#arr3)"/>
+
+      <!-- 箭头定义 -->
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#2563eb"/>
+        </marker>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#16a34a"/>
+        </marker>
+        <marker id="arr3" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#d97706"/>
+        </marker>
+      </defs>
+
+      <!-- 汇合节点 -->
+      <rect x="248" y="338" width="244" height="50" rx="10" fill="#7c3aed"/>
+      <text x="370" y="359" text-anchor="middle" font-size="13" font-weight="800" fill="white">2017 Transformer</text>
+      <text x="370" y="378" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.8)">《Attention is All You Need》</text>
+
+      <!-- 汇合后箭头 -->
+      <path d="M 370 388 L 370 407" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arr4)"/>
+      <defs>
+        <marker id="arr4" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#7c3aed"/>
+        </marker>
+      </defs>
+      <text x="370" y="415" text-anchor="middle" font-size="11" fill="#7c3aed" font-weight="600">→ GPT · BERT · 多模态大模型</text>
+    </svg>
+  </div>
+
+  <!-- 三条赛道表格 -->
+  <div class="card">
+    <div class="diagram-label" style="text-align:left;margin-bottom:12px">三条赛道代表事件一览</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>时间</th><th>👁 视觉赛道</th><th>💬 语言赛道</th><th>🎮 游戏赛道</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2012</td>
+          <td>AlexNet，错误率从26%→15%</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>2013</td>
+          <td>—</td>
+          <td>Word2Vec，语义向量</td>
+          <td>DQN玩Atari游戏</td>
+        </tr>
+        <tr>
+          <td>2014–15</td>
+          <td>VGG / GoogLeNet</td>
+          <td>Seq2Seq / 谷歌神经翻译</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>2015</td>
+          <td>ResNet 152层，超越人类</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>2016</td>
+          <td>—</td>
+          <td>—</td>
+          <td>AlphaGo击败李世石</td>
+        </tr>
+        <tr>
+          <td>2017</td>
+          <td colspan="3" style="text-align:center;background:var(--purple-soft);color:var(--purple);font-weight:700">🔑 Transformer 论文发布——三条赛道汇合</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── 小节四：Transformer合流 ── -->
+  <div class="card">
+    <div class="section-label">小节四</div>
+    <h2 class="section-title">Transformer——三条赛道在这里汇合</h2>
+    <span class="section-era era-4">大模型时代 · 2017—至今</span>
+
+    <p class="body-text">2017年，谷歌发表了一篇论文，标题直接叫《Attention is All You Need》——注意力就是你需要的全部。这个标题既是论文内容的描述，也像是一句宣言。论文提出的Transformer架构，本来只是为了解决机器翻译问题，但它的影响力远远超出了语言处理的边界。</p>
+
+    <p class="body-text">Transformer的核心创新是注意力机制。传统的神经网络处理语言时，会按顺序一个字一个字地读，后面的词对前面词的记忆会逐渐衰减。Transformer打破了这个限制——它同时看所有词，并学会判断每个词应该对其他哪些词给予更多"注意力"。这让模型处理长文本时不再丢失上下文，也让并行计算成为可能，直接解锁了大规模训练的技术瓶颈。</p>
+
+    <div class="analogy-box">
+      <div class="al-label">通俗类比</div>
+      传统模型读文章像背诵：一个字一个字念，念到后面前面的细节已经模糊了。Transformer读文章更像人：整页扫一眼，然后在需要理解某个词的时候，能精准地跳回去参考相关的词。这种"全局注意力"让模型的理解能力产生了质的飞跃。
+    </div>
+
+    <p class="body-text">接下来的事情发生得非常快。2018年，谷歌用Transformer做出了BERT，"预训练+微调"的模式出现了——先在海量通用文本上训练一个大模型，再针对具体任务做少量调整，这让AI能力的部署成本大幅下降。同年，OpenAI推出GPT-1，走的是另一条路：不是理解，而是生成，预测下一个词。</p>
+
+    <p class="body-text">然后是规模的故事。GPT-1有1.17亿参数，GPT-2有15亿，2020年的GPT-3达到了1750亿。但参数量增长本身不是重点——重点是每一次跃升，都带来了一批没有被明确训练过的新能力。研究者给这个现象起了个名字，叫<strong>涌现（Emergence）</strong>。</p>
+
+    <div style="background:#fdf4ff;border:1.5px solid #d8b4fe;border-radius:14px;padding:22px 24px;margin:20px 0">
+      <div style="font-size:11px;font-weight:800;color:#7c3aed;letter-spacing:1.5px;margin-bottom:12px">⚡ 科学界最震惊的事：没人知道为什么</div>
+      <p style="font-size:13.5px;color:#3b0764;line-height:1.75;margin:0 0 12px">OpenAI训练GPT-3的目标只有一个：<strong>预测下一个词</strong>。他们给模型喂了海量文本，让它反复做填空题。就这一个任务，没有别的。</p>
+      <p style="font-size:13.5px;color:#3b0764;line-height:1.75;margin:0 0 12px">但当研究员开始测试时，GPT-3能做三位数加法、能用法语回答英文问题、能写出从未见过格式的代码、能解释隐喻、能续写故事。这些能力没有人设计，也没有出现在训练目标里——它们就这么<strong>自己长出来了</strong>。</p>
+      <p style="font-size:13.5px;color:#3b0764;line-height:1.75;margin:0">更令人不安的是：<strong>没有任何人能解释为什么。</strong>你往神经网络里看，看到的是数以千亿计的数字在互相运算。这些数字代表什么、它们如何组织出"理解语言"的能力——没人说得清。这就是AI领域最著名的"黑箱问题"（Black Box Problem）。我们能观察到输入和输出，能看到它有效，但打不开这个箱子。</p>
+    </div>
+
+    <p class="body-text">这件事在学术界引发了真实的震动。图灵奖得主杰弗里·辛顿（Geoffrey Hinton）——深度学习三位奠基人之一，被称为"AI教父"——在2023年辞去了谷歌的职位。他公开表示，他开始后悔自己一生的工作，因为他们正在建造一种自己无法完全理解的技术。他不是在夸张：即使是亲手设计了这套系统的人，也无法预测它在新的规模下会"长出"什么能力。</p>
+
+    <p class="body-text">对普通人来说，黑箱问题可以这样理解：你雇了一个员工，他交出来的结果又快又好，但如果你问他"你是怎么想到这个答案的"，他说"我也不知道，就是想到了"。大多数时候这不是问题；但偶尔他会给出一个完全错误的答案，而且错得极其自信，你也不知道怎么提前判断哪次会出错。这就是今天所有大模型都有的局限——<strong>涌现带来了能力，也带来了不可预测性</strong>。</p>
+
+    <!-- 参数规模增长图 -->
+    <div style="margin-top:24px">
+      <div class="diagram-label" style="text-align:left;margin-bottom:12px">GPT系列参数规模与涌现能力</div>
+      <svg viewBox="0 0 680 200" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+        <rect width="680" height="200" fill="#fafafa" rx="8"/>
+
+        <!-- Y轴标注 -->
+        <text x="14" y="28" font-size="9" fill="#94a3b8" font-weight="600">参数量</text>
+
+        <!-- GPT-1 -->
+        <rect x="50" y="155" width="80" height="18" rx="4" fill="#e0e7ff"/>
+        <text x="90" y="167" text-anchor="middle" font-size="10" fill="#4338ca" font-weight="700">1.17亿</text>
+        <text x="90" y="185" text-anchor="middle" font-size="10" fill="#64748b">GPT-1 (2018)</text>
+        <text x="90" y="142" text-anchor="middle" font-size="9" fill="#7c3aed">基本语言生成</text>
+
+        <!-- GPT-2 -->
+        <rect x="190" y="120" width="80" height="53" rx="4" fill="#c7d2fe"/>
+        <text x="230" y="151" text-anchor="middle" font-size="10" fill="#3730a3" font-weight="700">15亿</text>
+        <text x="230" y="185" text-anchor="middle" font-size="10" fill="#64748b">GPT-2 (2019)</text>
+        <text x="230" y="107" text-anchor="middle" font-size="9" fill="#7c3aed">连贯长文本生成</text>
+
+        <!-- GPT-3 -->
+        <rect x="330" y="55" width="80" height="118" rx="4" fill="#a5b4fc"/>
+        <text x="370" y="120" text-anchor="middle" font-size="11" fill="#1e1b4b" font-weight="700">1750亿</text>
+        <text x="370" y="185" text-anchor="middle" font-size="10" fill="#64748b">GPT-3 (2020)</text>
+        <text x="370" y="42" text-anchor="middle" font-size="9" fill="#7c3aed">⚡ Few-shot推理涌现</text>
+
+        <!-- GPT-4 -->
+        <rect x="470" y="22" width="80" height="151" rx="4" fill="#7c3aed"/>
+        <text x="510" y="108" text-anchor="middle" font-size="11" fill="white" font-weight="700">万亿级</text>
+        <text x="510" y="125" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.7)">(估计)</text>
+        <text x="510" y="185" text-anchor="middle" font-size="10" fill="#64748b">GPT-4 (2023)</text>
+        <text x="510" y="11" text-anchor="middle" font-size="9" fill="#7c3aed">🌟 多模态+复杂推理</text>
+
+        <!-- 涌现分界线 -->
+        <line x1="310" y1="18" x2="310" y2="175" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="312" y="14" font-size="9" fill="#f43f5e" font-weight="700">← 涌现临界点</text>
+      </svg>
+    </div>
+
+    <p class="body-text" style="margin-top:16px">与此同时，视觉赛道的研究者把Transformer搬到了图像上，做出了Vision Transformer；生成赛道出现了DALL-E和Stable Diffusion。三条独立赛道在Transformer这个统一架构下开始合并。今天的GPT-4、Claude、Gemini，既能看图、又能写字、还能写代码——这不是三个功能的简单堆叠，而是三条赛道七十年积累在同一个框架里融合的结果。</p>
+  </div>
+
+  <!-- ── 小节五：里程碑总结 ── -->
+  <div class="card">
+    <div class="section-label">小节五</div>
+    <h2 class="section-title">那些真正改变一切的里程碑时刻</h2>
+
+    <p class="body-text">把AI七十年的历史压缩成几个节点，真正的转折其实只有那么几次：1956年达特茅斯会议命名了这个领域；2012年AlexNet证明深度学习的路是通的；2017年Transformer提供了统一所有方向的架构基础；2022年11月ChatGPT的发布，让普通人第一次用身体感受到了AI能力的边界在哪里。</p>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="num">5天</div>
+        <div class="label">ChatGPT用户<br>突破100万</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">2个月</div>
+        <div class="label">用户突破<br>1亿</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">3.5年</div>
+        <div class="label">Netflix达到<br>同等规模</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">72年</div>
+        <div class="label">从图灵提问到<br>ChatGPT震动全球</div>
+      </div>
+    </div>
+
+    <p class="body-text">ChatGPT上线的速度不是因为营销做得好，而是因为这次人们真的感受到了不同——它不是一个更聪明的搜索引擎，也不是一个更花哨的问答系统，而是一个能接住几乎任意问题并给出有用回答的系统。这种"接住"的感觉，是七十年技术积累带来的，也是三条赛道汇合后才出现的新能力。</p>
+
+    <p class="body-text">如果你看这段历史里真正关键的技术节点，会发现核心的突破其实发生在最近十年，甚至最近五年。技术积累有它自己的节奏，不是匀速前进的——它会在某个临界点突然加速，然后让所有人都来不及反应。ChatGPT就是那个让所有人措手不及的时刻。</p>
+
+    <div class="divider"></div>
+
+    <h3 style="font-size:17px;font-weight:800;color:var(--ink);margin-bottom:14px">苦涩的教训：精心设计败给了暴力堆砌</h3>
+
+    <p class="body-text">ChatGPT的出现让很多严肃的AI研究者经历了一种复杂的情绪，有个词精准地描述了这种感受——"苦涩的教训"（The Bitter Lesson）。这个词来自强化学习先驱Richard Sutton在2019年写的一篇短文。他总结了七十年AI研究最令人不舒服的规律：每一次，专家们精心设计的领域知识系统，最终都输给了那些什么领域知识都不用、只是把数据和算力堆得更大的通用方法。他说这个教训是"苦涩的"，因为研究者反复相信领域知识能带来优势，然后反复被计算规模打脸。</p>
+
+    <p class="body-text">ChatGPT把这个规律推向了极致。自然语言处理（NLP）领域有一大批研究者，花了十年甚至二十年，精心研究语法树的解析、语义角色的标注、机器翻译的概率模型——每一步都有精妙的数学推导，每篇论文都是对某个子问题的深度钻研。然后OpenAI做了一件粗暴的事：从互联网上抓来海量文字，让模型反复做一件事——猜下一个词。规模足够大之后，所有那些被精心解决的子问题全部被一次性扫平。你精心构建的方程，被一堆数据给淹了。</p>
+
+    <div style="background:#fdf4ff;border:1.5px solid #d8b4fe;border-radius:14px;padding:20px 24px;margin:20px 0">
+      <div style="font-size:11px;font-weight:800;color:#7c3aed;letter-spacing:1.5px;margin-bottom:10px">同样的剧情，在机器人领域重演了一遍</div>
+      <p style="font-size:13.5px;color:#3b0764;line-height:1.75;margin:0 0 12px">波士顿动力成立于1992年，从MIT衍生而出，是全球机器人领域公认的天花板。他们用三十年和顶尖的控制理论专家，精心推导机器人每一个关节的力矩控制、每一步的平衡算法。他们的Spot机器狗，定价74,500美元。</p>
+      <p style="font-size:13.5px;color:#3b0764;line-height:1.75;margin:0 0 12px">2016年，一个叫王兴兴的中国研究生，从大疆离职后创办了宇树科技。他走的路完全不同：用便宜的电机和现成零件，在虚拟仿真环境里同时开8000多个并行模拟，让机器人自己反复摔跤爬起来，训练出来的策略直接迁移到真实机器上。不需要推导方程，让强化学习自己找到解法。</p>
+      <p style="font-size:13.5px;color:#3b0764;line-height:1.75;margin:0">2024年，宇树G1机器人侧空翻的视频疯传。售价：99,000元人民币，约合13,600美元——波士顿动力Atlas定价约320,000美元的二十分之一。同年，宇树占据了全球四足机器人市场将近<strong>70%的份额</strong>。马斯克公开点赞。</p>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:14px;padding:24px 28px;margin-top:4px">
+      <p style="font-size:15px;font-weight:800;color:#fff;line-height:1.6;margin:0 0 10px">打败你的，不一定是更聪明的方案。</p>
+      <p style="font-size:13.5px;color:rgba(255,255,255,.8);line-height:1.72;margin:0 0 10px">可能只是一个数据更多、算力更大、更不怕堆的对手。大模型如此，机器人如此。这个时代最反直觉的规律是：在某些问题上，与其花时间找到"正确的方法"，不如先把暴力方法堆到它的极限，再说别的。</p>
+      <p style="font-size:12px;color:rgba(255,255,255,.45);margin:0">（如果这还不够苦涩：宇树在2024年底把全部训练代码完全开源了。现在任何人都可以免费复制他们的方法。）</p>
+    </div>
+  </div>
+
+  <!-- ── 章节尾部 ── -->
+  <div class="chapter-footer">
+    <div class="footer-title">本章小结</div>
+    <p class="footer-text">AI的历史是一条从规则到统计、从统计到深度学习、从深度学习到大模型的演化链。每一代都不是在取代上一代，而是在上一代的基础上解锁了新的能力层。真正的质变发生了两次：2012年AlexNet证明深度学习可行，2017年Transformer统一了所有方向。而2022年ChatGPT的出现，只是把这场七十年的技术积累，第一次摆在了所有普通人面前。</p>
+    <div class="next-chapter">
+      → 下一章：为什么Transformer和大模型成了分水岭
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

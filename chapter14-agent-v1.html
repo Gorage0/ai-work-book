@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第14章 搭建你的第一个Agent助手</title>
+<style>
+:root {
+  --primary: #2563eb; --primary-soft: #dbeafe;
+  --accent: #f43f5e;  --accent-soft: #ffe4e6;
+  --ink: #0f172a; --ink-mid: #334155; --ink-soft: #64748b;
+  --surface: #f1f5f9; --card: #ffffff; --border: rgba(15,23,42,.07);
+  --orange: #f97316; --orange-soft: #ffedd5;
+  --green: #16a34a;  --green-soft: #dcfce7;
+  --purple: #7c3aed; --purple-soft: #ede9fe;
+  --teal: #0891b2;   --teal-soft: #cffafe;
+  --gold: #d97706;   --gold-soft: #fef3c7;
+  --emerald: #059669; --emerald-soft: #d1fae5;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif; background: var(--surface); color: var(--ink); line-height: 1.75; font-size: 15px; }
+.page { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.chapter-header {
+  background: linear-gradient(135deg, #431407 0%, #9a3412 45%, #c2410c 100%);
+  border-radius: 20px; padding: 48px 44px; color: #fff; margin-bottom: 36px; position: relative; overflow: hidden;
+}
+.chapter-header::before { content:''; position:absolute; top:-40px; right:-40px; width:260px; height:260px; background:radial-gradient(circle,rgba(234,88,12,.4) 0%,transparent 70%); pointer-events:none; }
+.chapter-header::after  { content:''; position:absolute; bottom:-40px; left:10px; width:200px; height:200px; background:radial-gradient(circle,rgba(251,146,60,.2) 0%,transparent 70%); pointer-events:none; }
+.ch-eyebrow { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:14px; }
+.ch-title   { font-size:27px; font-weight:800; line-height:1.25; color:#fff; margin-bottom:16px; }
+.ch-subtitle{ font-size:14px; color:rgba(255,255,255,.65); max-width:560px; line-height:1.65; margin-bottom:24px; }
+.ch-takeaway{ background:rgba(255,255,255,.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:16px 20px; font-size:13.5px; color:rgba(255,255,255,.9); line-height:1.65; position:relative; z-index:1; }
+.ch-takeaway strong { color:#fff; }
+
+.card { background:var(--card); border-radius:16px; border:1px solid var(--border); padding:32px 36px; margin-bottom:24px; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+.section-label { font-size:10.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#ea580c; margin-bottom:8px; }
+.section-title { font-size:21px; font-weight:800; color:var(--ink); line-height:1.3; margin-bottom:6px; }
+.section-pill  { display:inline-block; font-size:12px; font-weight:600; padding:3px 12px; border-radius:20px; margin-bottom:18px; }
+.pill-blue    { background:var(--primary-soft);  color:var(--primary); }
+.pill-green   { background:var(--green-soft);    color:var(--green); }
+.pill-orange  { background:var(--orange-soft);   color:#ea580c; }
+.pill-purple  { background:var(--purple-soft);   color:var(--purple); }
+.pill-teal    { background:var(--teal-soft);     color:var(--teal); }
+.pill-gold    { background:var(--gold-soft);     color:var(--gold); }
+.pill-emerald { background:var(--emerald-soft);  color:var(--emerald); }
+
+.body-text { font-size:14.5px; line-height:1.82; color:var(--ink-mid); margin-bottom:16px; }
+.body-text:last-child { margin-bottom:0; }
+.body-text strong { color:var(--ink); font-weight:700; }
+
+.example-box { background:var(--orange-soft); border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.example-box .ex-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#c2410c; margin-bottom:8px; }
+.example-box p { font-size:13.5px; line-height:1.72; color:#3d1108; margin:0 0 8px; }
+.example-box p:last-child { margin-bottom:0; }
+
+.insight-box { background:#f0f9ff; border-left:3px solid var(--teal); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.insight-box .ins-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--teal); margin-bottom:8px; }
+.insight-box p { font-size:13.5px; line-height:1.72; color:#0c4a6e; margin:0 0 6px; }
+.insight-box p:last-child { margin-bottom:0; }
+
+.warn-box { background:#fff7ed; border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.warn-box .w-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.warn-box p { font-size:13.5px; line-height:1.72; color:#7c2d12; margin:0 0 6px; }
+.warn-box p:last-child { margin-bottom:0; }
+
+.perception-box { background:var(--emerald-soft); border-radius:12px; padding:18px 22px; margin:20px 0; }
+.perception-box .p-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--emerald); margin-bottom:8px; }
+.perception-box p { font-size:13.5px; line-height:1.72; color:#064e3b; margin:0; }
+
+.perception-box-amber { background:var(--gold-soft); border-radius:12px; padding:18px 22px; margin:20px 0; }
+.perception-box-amber .p-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#b45309; margin-bottom:8px; }
+.perception-box-amber p { font-size:13.5px; line-height:1.72; color:#78350f; margin:0; }
+
+.key-box { background:linear-gradient(135deg,var(--emerald-soft),#f0f9ff); border:1.5px solid #6ee7b7; border-radius:12px; padding:18px 22px; margin:18px 0; }
+.key-box .kb-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--emerald); margin-bottom:10px; }
+.key-box p { font-size:13.5px; line-height:1.72; color:#064e3b; margin:0 0 6px; }
+.key-box p:last-child { margin-bottom:0; }
+
+.key-box-amber { background:linear-gradient(135deg,var(--orange-soft),var(--gold-soft)); border:1.5px solid #fb923c; border-radius:12px; padding:18px 22px; margin:18px 0; }
+.key-box-amber .kb-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#c2410c; margin-bottom:10px; }
+.key-box-amber p { font-size:13.5px; line-height:1.72; color:#7c2d12; margin:0 0 6px; }
+.key-box-amber p:last-child { margin-bottom:0; }
+
+.coze-box { background:#fdf4ff; border:1.5px dashed #c084fc; border-radius:12px; padding:18px 22px; margin:22px 0; }
+.coze-box .cz-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#9333ea; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.coze-box p { font-size:13px; line-height:1.72; color:#581c87; margin:0 0 6px; }
+.coze-box p:last-child { margin-bottom:0; }
+
+.code-block { background:#0d1117; border-radius:12px; padding:20px 22px; margin:16px 0; font-family:'Menlo','Consolas','Courier New',monospace; font-size:12px; line-height:1.9; overflow-x:auto; white-space:pre; border:1px solid rgba(255,255,255,.06); }
+.code-block .comment { color:#8b949e; font-style:italic; }
+.code-block .key     { color:#79c0ff; }
+.code-block .fn      { color:#d2a8ff; }
+.code-block .val     { color:#a5f3fc; }
+.code-block .str     { color:#a5d6ff; }
+.code-block .num     { color:#ffa657; }
+.code-block .kw      { color:#ff7b72; }
+.code-block .dim     { color:#6e7681; }
+.code-block .hi      { color:#7ee787; font-weight:bold; }
+.code-block .section { color:#f0883e; font-weight:bold; }
+.code-block .prompt  { color:#e6edf3; }
+
+.code-header { background:#161b22; border-radius:12px 12px 0 0; padding:10px 18px; display:flex; align-items:center; gap:8px; margin-bottom:-2px; border:1px solid rgba(255,255,255,.06); border-bottom:none; }
+.code-header .ch-dot { width:10px; height:10px; border-radius:50%; }
+.code-header .ch-filename { font-size:11.5px; font-weight:700; color:#8b949e; margin-left:4px; font-family:monospace; }
+.code-header .ch-lang { margin-left:auto; font-size:10px; font-weight:700; color:#3fb950; letter-spacing:1px; }
+.code-block-wrap { margin:16px 0; }
+.code-block-wrap .code-block { border-radius:0 0 12px 12px; margin-top:0; }
+
+.step-list { margin:18px 0; }
+.step-row  { display:flex; gap:14px; margin-bottom:20px; align-items:flex-start; }
+.step-num  { width:32px; height:32px; border-radius:50%; background:#ea580c; color:#fff; font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.step-content { flex:1; }
+.step-content .s-title { font-size:14px; font-weight:800; color:var(--ink); margin-bottom:6px; }
+.step-content .s-desc  { font-size:13.5px; line-height:1.75; color:var(--ink-mid); }
+
+.compare-table { width:100%; border-collapse:collapse; margin:18px 0; font-size:13px; }
+.compare-table th { background:#431407; color:#fff; padding:10px 14px; text-align:left; font-size:11px; font-weight:700; letter-spacing:.5px; }
+.compare-table th:first-child { border-radius:8px 0 0 0; }
+.compare-table th:last-child  { border-radius:0 8px 0 0; }
+.compare-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--ink-mid); vertical-align:top; }
+.compare-table tr:last-child td { border-bottom:none; }
+.compare-table tr:nth-child(even) td { background:#f8fafc; }
+.compare-table td:first-child { font-weight:700; color:var(--ink); }
+
+.checklist { margin:16px 0; }
+.cl-row { display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; }
+.cl-row:last-child { margin-bottom:0; }
+.cl-icon { width:22px; height:22px; border-radius:50%; background:#ffedd5; color:#ea580c; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; margin-top:1px; }
+.cl-text { font-size:13.5px; line-height:1.65; color:var(--ink-mid); }
+.cl-text strong { color:var(--ink); }
+
+.divider { height:1px; background:var(--border); margin:28px 0; }
+.svg-wrap { overflow-x:auto; margin:20px 0; }
+.svg-wrap svg { display:block; max-width:100%; height:auto; }
+.svg-caption { font-size:11px; color:var(--ink-soft); text-align:center; margin-top:6px; letter-spacing:.5px; }
+
+.chapter-footer { background:linear-gradient(135deg,var(--orange-soft),var(--gold-soft)); border-radius:16px; padding:28px 32px; margin-top:12px; }
+.footer-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:8px; }
+.footer-text  { font-size:13.5px; color:var(--ink-mid); line-height:1.72; }
+.next-chapter { display:flex; align-items:center; gap:10px; margin-top:16px; font-size:13px; color:#c2410c; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- 章节头部 -->
+<div class="chapter-header">
+  <div class="ch-eyebrow">Part 3 · 第 14 章 · 建立 AI 系统</div>
+  <h1 class="ch-title">搭建你的第一个 Agent 助手<br><span style="font-size:20px;opacity:.75">当工作流碰到边界，Agent 接管</span></h1>
+  <p class="ch-subtitle">第13章的工作流跑到第473份简历时卡住了——那份扫描版 PDF 被默默归档了错误候选人。工作流按规则执行，不会说"我要换一种方式"。这一章要做的事是：给工作流装上判断力，让它遇到意外时自己决定下一步。这个东西有个名字，叫 Agent。</p>
+  <div class="ch-takeaway">
+    <strong>核心方法论：任务委托设计</strong> — Agent 不是高科技玩意，它就是一个带判断逻辑的 Skill 编排器。你把业务规则写成文档，它照着执行；碰到意外，它调用 AI 决定下一步，而不是直接报错退出。主工具依然是 Claude Code，不需要 LangChain，不需要 Coze，只需要一个 orchestrator 脚本 + 若干 Skill 函数 + 一个问 AI 的接口。
+  </div>
+</div>
+
+<!-- §1 工作流的三类边界 -->
+<div class="card">
+  <div class="section-label">小节一</div>
+  <h2 class="section-title">工作流跑到哪里会卡死？</h2>
+  <span class="section-pill pill-orange">承接 Ch13 · 三类边界</span>
+
+  <p class="body-text">第13章结尾留下了一个未解决的问题。处理1023份简历的工作流运行到第473份，遇到一份扫描版 PDF，文字提取返回空字符串，AI 评分输出0分，这份简历被自动归入 C 层归档。整个过程没有报错，工作流继续处理下一份——但那可能是一个很强的候选人，被错误分类了，而你完全不知道。</p>
+
+  <p class="body-text">这个场景精准地描述了工作流的天花板。工作流按照你预先写好的规则执行，它不会说"这条规则在这种情况下不合适，我要换一种方式"。所有应对异常的方式——try/except 跳过、记录错误日志、发邮件通知——都需要你在写脚本时就想到并写进去。真实世界的意外，总是比你预想的更多。</p>
+
+  <p class="body-text">分析工作流在实践中遇到的障碍，大致归入三类。第一类是<strong>格式边界</strong>：输入文件不符合预期——扫描版图片、密码保护的 PDF、特殊编码的 Word 文档。解析函数收到的不是文字，是报错。第二类是<strong>判断边界</strong>：候选人简历里工作经历的时间段有重叠，是跳槽时间的模糊，还是信息造假？工作流里没有"这是一个主观判断"的概念，它只能按规则给分，而这个规则你无法提前写清楚。第三类是<strong>动态边界</strong>：工作流运行到第600份时，用人部门临时修改岗位要求。运行中的固定脚本不会重新读取需求说明，会继续用旧标准处理剩下的423份。</p>
+
+  <div class="example-box">
+    <div class="ex-label">三类边界的代价</div>
+    <p>格式边界的代价是<strong>漏判</strong>——强候选人因文件格式被错误归档，你不知道。判断边界的代价是<strong>误判</strong>——工作流给出一个看似客观的评分，但判断逻辑根本不适用眼前的情况。动态边界的代价是<strong>滞后</strong>——工作流拿着过时的规则处理了几百份，最后发现需要重跑。</p>
+    <p>三类边界有一个共同根源：<strong>工作流的智慧在设计时就被固化了</strong>，遇到设计时没有预料到的情况，只能用最保守的方式处理。</p>
+  </div>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <defs>
+        <marker id="a1" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#94a3b8"/></marker>
+        <marker id="a1g" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#059669"/></marker>
+        <marker id="a1r" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#c2410c"/></marker>
+      </defs>
+      <rect width="720" height="230" rx="14" fill="#f8fafc"/>
+      <!-- 左：工作流 -->
+      <rect x="14" y="14" width="318" height="202" rx="12" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+      <text x="173" y="40" text-anchor="middle" font-size="12" font-weight="800" fill="#c2410c">工作流：固定路径</text>
+      <text x="173" y="56" text-anchor="middle" font-size="10" fill="#9a3412">遇到意外 → 只能报错退出</text>
+      <rect x="103" y="66" width="140" height="26" rx="6" fill="#fff" stroke="#fed7aa" stroke-width="1.2"/>
+      <text x="173" y="84" text-anchor="middle" font-size="10.5" fill="#334155">parse_skill() 解析简历</text>
+      <line x1="173" y1="92" x2="173" y2="108" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="103" y="108" width="140" height="26" rx="6" fill="#fff" stroke="#fed7aa" stroke-width="1.2"/>
+      <text x="173" y="126" text-anchor="middle" font-size="10.5" fill="#334155">score_skill() 候选人评分</text>
+      <line x1="173" y1="134" x2="173" y2="150" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="90" y="150" width="166" height="28" rx="6" fill="#fecaca" stroke="#f87171" stroke-width="1.5"/>
+      <text x="173" y="169" text-anchor="middle" font-size="10.5" font-weight="700" fill="#dc2626">⚠ 扫描PDF → 解析失败</text>
+      <line x1="173" y1="178" x2="173" y2="196" stroke="#f87171" stroke-width="1.5" marker-end="url(#a1r)"/>
+      <text x="173" y="210" text-anchor="middle" font-size="11" font-weight="800" fill="#dc2626">✗ 跳过归档 / 整体退出</text>
+      <!-- 中间箭头 -->
+      <text x="378" y="120" text-anchor="middle" font-size="22" fill="#6ee7b7">→</text>
+      <!-- 右：Agent -->
+      <rect x="398" y="14" width="308" height="202" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="552" y="40" text-anchor="middle" font-size="12" font-weight="800" fill="#059669">Agent：动态路径</text>
+      <text x="552" y="56" text-anchor="middle" font-size="10" fill="#065f46">遇到意外 → AI 判断下一步</text>
+      <rect x="482" y="66" width="140" height="26" rx="6" fill="#fff" stroke="#86efac" stroke-width="1.2"/>
+      <text x="552" y="84" text-anchor="middle" font-size="10.5" fill="#334155">parse_skill() 解析简历</text>
+      <line x1="552" y1="92" x2="552" y2="108" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="469" y="108" width="166" height="28" rx="6" fill="#fecaca" stroke="#f87171" stroke-width="1.5"/>
+      <text x="552" y="127" text-anchor="middle" font-size="10.5" font-weight="700" fill="#dc2626">⚠ 扫描PDF → 解析失败</text>
+      <line x1="552" y1="136" x2="552" y2="152" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="473" y="152" width="158" height="28" rx="6" fill="#fdf4ff" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="552" y="171" text-anchor="middle" font-size="10.5" font-weight="800" fill="#9333ea">ask_claude() AI 判断</text>
+      <line x1="552" y1="180" x2="424" y2="196" stroke="#059669" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#a1g)"/>
+      <line x1="552" y1="180" x2="552" y2="196" stroke="#2563eb" stroke-width="1.2" stroke-dasharray="3,2"/>
+      <line x1="552" y1="180" x2="680" y2="196" stroke="#d97706" stroke-width="1.2" stroke-dasharray="3,2"/>
+      <text x="424" y="210" text-anchor="middle" font-size="9" font-weight="700" fill="#059669">跳过</text>
+      <text x="552" y="210" text-anchor="middle" font-size="9" font-weight="700" fill="#2563eb">标记复核</text>
+      <text x="680" y="210" text-anchor="middle" font-size="9" font-weight="700" fill="#d97706">重试OCR</text>
+      <text x="552" y="222" text-anchor="middle" font-size="9" fill="#065f46">✓ 处理继续，不中断队列</text>
+    </svg>
+  </div>
+  <p class="svg-caption">工作流遇到异常只能报错或跳过；Agent 遇到异常，交给 AI 判断再选择支路继续</p>
+
+  <div class="perception-box">
+    <div class="p-label">✅ 工作流与 Agent 的分水岭</div>
+    <p>工作流是固定剧本：你提前写好所有步骤和分支条件，运行时照剧本执行。Agent 是目标导向：遇到工作流设计时没有预料到的情况，AI 在运行时动态判断下一步。工作流的智慧在设计时；Agent 的智慧在运行时。</p>
+  </div>
+</div>
+
+<!-- §2 最小实现 -->
+<div class="card">
+  <div class="section-label">小节二</div>
+  <h2 class="section-title">Agent 的最小实现：一个 orchestrator 脚本</h2>
+  <span class="section-pill pill-purple">代码实现 · 核心架构</span>
+
+  <p class="body-text">提到 Agent，很多人第一反应是"这需要复杂的框架吧"——LangChain、AutoGPT、各种平台。这是一个误解。Agent 最小的实现是：一个主脚本（orchestrator）+ 若干 Skill 函数 + 一个调用 AI 判断的接口。你在第13章已经有了前两样，现在只需要加上第三样。</p>
+
+  <p class="body-text">orchestrator 本身不做任何业务工作。它的职责只有三件事：从待处理队列里取任务、调用合适的 Skill 函数执行、遇到异常时请示 AI 决策。业务逻辑全部在各个 Skill 函数里，AI 判断全部在一个叫 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px;color:#c2410c;">ask_claude()</code> 的函数里。三个角色分工清晰——任何一个出问题，不影响另外两个。</p>
+
+  <div class="code-block-wrap">
+    <div class="code-header">
+      <div class="ch-dot" style="background:#ef4444;"></div>
+      <div class="ch-dot" style="background:#f59e0b;"></div>
+      <div class="ch-dot" style="background:#22c55e;"></div>
+      <div class="ch-filename">recruit_agent.py — orchestrator 骨架</div>
+      <div class="ch-lang">PYTHON</div>
+    </div>
+    <div class="code-block"><span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> anthropic <span class="kw">import</span> Anthropic
+
+<span class="key">client</span> = Anthropic()
+
+<span class="comment"># ── 角色 ①：核心判断接口，遇到意外就问 AI ────────────────</span>
+<span class="kw">def</span> <span class="fn">ask_claude</span>(<span class="key">situation</span>, <span class="key">options</span>):
+    <span class="key">resp</span> = <span class="key">client</span>.messages.create(
+        model=<span class="str">"claude-opus-4-6"</span>, max_tokens=<span class="num">80</span>,
+        messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>,
+                   <span class="str">"content"</span>: <span class="str">f"情况：{situation}\n选项：{options}\n只回复其中一个选项名称。"</span>}]
+    )
+    <span class="kw">return</span> <span class="key">resp</span>.content[<span class="num">0</span>].text.strip()
+
+<span class="comment"># ── 角色 ②：orchestrator，只做调度，不做业务 ─────────────</span>
+<span class="kw">def</span> <span class="fn">run_agent</span>(<span class="key">resumes_dir</span>):
+    <span class="key">mem</span> = <span class="fn">load_memory</span>()            <span class="comment"># 读取已处理记录 → 见下一节</span>
+    <span class="key">queue</span> = [<span class="key">f</span> <span class="kw">for</span> <span class="key">f</span> <span class="kw">in</span> Path(<span class="key">resumes_dir</span>).glob(<span class="str">"*"</span>)
+             <span class="kw">if</span> str(<span class="key">f</span>) <span class="kw">not in</span> <span class="key">mem</span>[<span class="str">"processed"</span>]]
+
+    <span class="kw">for</span> <span class="key">resume</span> <span class="kw">in</span> <span class="key">queue</span>:
+        <span class="kw">try</span>:
+            <span class="comment"># ── 角色 ③：Skill 函数，来自 Ch12，原封不动 ──────</span>
+            <span class="key">parsed</span> = <span class="fn">parse_skill</span>(<span class="key">resume</span>)
+            <span class="key">score</span>  = <span class="fn">score_skill</span>(<span class="key">parsed</span>)
+            <span class="key">mem</span>[<span class="str">"processed"</span>].append(str(<span class="key">resume</span>))
+
+        <span class="kw">except Exception as</span> <span class="key">e</span>:
+            <span class="comment"># 异常不退出——这里是工作流和 Agent 的分水岭</span>
+            <span class="key">decision</span> = <span class="fn">ask_claude</span>(
+                situation=<span class="str">f"简历 {resume.name} 处理失败：{e}"</span>,
+                options=<span class="str">"跳过 / 标记人工复核 / 重试OCR模式"</span>
+            )
+            <span class="kw">if</span> <span class="str">"人工复核"</span> <span class="kw">in</span> <span class="key">decision</span>:
+                <span class="key">mem</span>[<span class="str">"flagged"</span>].append({<span class="str">"file"</span>: str(<span class="key">resume</span>), <span class="str">"reason"</span>: str(<span class="key">e</span>)})
+
+        <span class="fn">save_memory</span>(<span class="key">mem</span>)            <span class="comment"># 每处理一份立即存盘 → 见下一节</span>
+
+    <span class="kw">return</span> <span class="key">mem</span>[<span class="str">"stats"</span>]</div>
+  </div>
+
+  <p class="body-text">与第13章的工作流脚本相比，实质变化只有一处：把 try/except 里的静默跳过换成了 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px;color:#c2410c;">ask_claude()</code> 调用。Skill 函数、循环逻辑、条件路由，全部原封不动。Agent 是工作流的最小升级，不是推倒重来。</p>
+
+  <p class="body-text">代码里有两行被注释为"见下一节"—— <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px;color:#c2410c;">load_memory()</code> 和 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px;color:#c2410c;">save_memory()</code>。这两个函数决定了 Agent 重启之后的行为：是从第一份简历重跑，还是从第624份继续？答案就在 memory.json 里。</p>
+
+  <div class="key-box-amber">
+    <div class="kb-label">💡 架构原则</div>
+    <p>orchestrator 本身不做业务，只做调度。业务逻辑在 Skill 函数里（可以独立测试、独立更新）；AI 判断在 ask_claude() 里（可以替换模型、调整提示词）。三者解耦，任何一个出问题，不影响另外两个。这才是能长期维护的 Agent 结构。</p>
+  </div>
+</div>
+
+<!-- §3 记忆 -->
+<div class="card">
+  <div class="section-label">小节三</div>
+  <h2 class="section-title">给 Agent 加记忆：memory.json 是什么</h2>
+  <span class="section-pill pill-teal">持久化 · 断点续跑 · 审计追踪</span>
+
+  <p class="body-text">工作流没有记忆，每次运行都从零开始。如果第13章的脚本处理到第623份时电脑关机了，下次启动会重新从第一份开始，前面的工作全部重来。Agent 有了 memory.json 之后，重启会从第624份继续，这叫断点续跑。但记忆的价值远不只是断点续跑。</p>
+
+  <p class="body-text">第一批1023份处理完之后，用人部门又来了第二批342份。工作流版本对两批一视同仁，每次重建评分基准。Agent 版本可以从 memory.json 读取第一批的评分分布，用已有基准校准第二批，让两批评分口径保持一致。这是工作流做不到的跨轮次积累。</p>
+
+  <p class="body-text">还有一个容易被忽视的价值：<strong>审计追踪</strong>。每个被 AI 标记人工复核的候选人，memory.json 里都有一条记录，写明了文件名、被标记的原因、标记时间。HR 负责人随时可以打开这个文件，看到 Agent 做了哪些判断、理由是什么。处理涉及人事决策的任务时，能解释每个结果的来源，这不是可选项，而是必须的。</p>
+
+  <div class="code-block-wrap">
+    <div class="code-header">
+      <div class="ch-dot" style="background:#ef4444;"></div>
+      <div class="ch-dot" style="background:#f59e0b;"></div>
+      <div class="ch-dot" style="background:#22c55e;"></div>
+      <div class="ch-filename">memory.json</div>
+      <div class="ch-lang">JSON</div>
+    </div>
+    <div class="code-block">{
+  <span class="key">"session_id"</span>: <span class="str">"2024-0315-春招季"</span>,
+
+  <span class="comment">// 已处理的简历路径列表（断点续跑：下次启动直接跳过这些）</span>
+  <span class="key">"processed"</span>: [
+    <span class="str">"resumes/张明.pdf"</span>,
+    <span class="str">"resumes/李华.docx"</span>,
+    <span class="dim">"... 共 623 条"</span>
+  ],
+
+  <span class="comment">// AI 判断为需要人工复核的条目（审计追踪：HR 可以查）</span>
+  <span class="key">"flagged_for_review"</span>: [
+    {
+      <span class="key">"file"</span>: <span class="str">"resumes/王某某.pdf"</span>,
+      <span class="key">"reason"</span>: <span class="str">"工作经历时间段有重叠，可能存在填写错误或信息造假"</span>,
+      <span class="key">"flagged_at"</span>: <span class="str">"2024-03-15T09:23:11"</span>
+    }
+  ],
+
+  <span class="comment">// 统计摘要（跨轮次对比：第二批可以参考这里的评分分布）</span>
+  <span class="key">"stats"</span>: {
+    <span class="key">"total_in_queue"</span>: <span class="num">1023</span>,
+    <span class="key">"processed"</span>:     <span class="num">623</span>,
+    <span class="key">"scored"</span>:         <span class="num">601</span>,
+    <span class="key">"flagged"</span>:        <span class="num">22</span>
+  },
+  <span class="key">"last_updated"</span>: <span class="str">"2024-03-15T11:45:33"</span>
+}</div>
+  </div>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 700 100" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <defs><marker id="a2" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#94a3b8"/></marker></defs>
+      <rect width="700" height="100" rx="12" fill="#f8fafc"/>
+      <rect x="10" y="32" width="90" height="34" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+      <text x="55" y="49" text-anchor="middle" font-size="10.5" font-weight="700" fill="#065f46">Agent 启动</text>
+      <text x="55" y="62" text-anchor="middle" font-size="9" fill="#059669">run_agent()</text>
+      <line x1="100" y1="49" x2="124" y2="49" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="124" y="32" width="112" height="34" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+      <text x="180" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#c2410c">读 memory.json</text>
+      <text x="180" y="62" text-anchor="middle" font-size="9" fill="#9a3412">获取已处理列表</text>
+      <line x1="236" y1="49" x2="260" y2="49" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="260" y="32" width="112" height="34" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="316" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#1d4ed8">处理一份简历</text>
+      <text x="316" y="62" text-anchor="middle" font-size="9" fill="#2563eb">Skill + ask_claude()</text>
+      <!-- 中断线 -->
+      <line x1="316" y1="66" x2="316" y2="88" stroke="#f87171" stroke-width="1.2" stroke-dasharray="3,2"/>
+      <text x="316" y="96" text-anchor="middle" font-size="8.5" font-weight="700" fill="#dc2626">任意时刻中断</text>
+      <line x1="372" y1="49" x2="396" y2="49" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="396" y="32" width="112" height="34" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+      <text x="452" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#c2410c">写 memory.json</text>
+      <text x="452" y="62" text-anchor="middle" font-size="9" fill="#9a3412">记录处理结果</text>
+      <line x1="508" y1="49" x2="532" y2="49" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="532" y="32" width="80" height="34" rx="8" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+      <text x="572" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#7c3aed">下一份</text>
+      <text x="572" y="62" text-anchor="middle" font-size="9" fill="#9333ea">循环继续</text>
+      <line x1="612" y1="49" x2="636" y2="49" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="636" y="32" width="58" height="34" rx="8" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="665" y="49" text-anchor="middle" font-size="10" font-weight="700" fill="#059669">完成</text>
+      <text x="665" y="62" text-anchor="middle" font-size="9" fill="#065f46">输出统计</text>
+      <text x="350" y="16" text-anchor="middle" font-size="9" fill="#059669">↓ 重启时读 memory.json，跳过已处理，从断点继续</text>
+    </svg>
+  </div>
+  <p class="svg-caption">memory.json 每处理一份后立即写入，任何时刻中断都能从断点恢复，不会重复处理</p>
+
+  <div class="insight-box">
+    <div class="ins-label">💡 记忆设计原则</div>
+    <p>记忆不是越多越好。processed 列表只存文件路径，不存内容，文件体积可控。flagged 列表存完整记录，审计用途，完整性比体积更重要。stats 存汇总数字，不存明细，快速查看整体进度。有意识地区分"存什么、存多少"，Agent 才容易维护。</p>
+  </div>
+
+  <p class="body-text">到目前为止，HR 招聘这个 Agent 里，四个步骤的顺序是相对固定的：解析简历 → 评分 → 遇到异常再判断。ask_claude() 只在出错时介入，平常不工作。但有一类任务，每走完一步都需要 AI 判断"下一步去哪"——连执行顺序本身也是动态的。这才是 Agent 能力的完整形态。</p>
+</div>
+
+<!-- §4 Skill调Skill -->
+<div class="card">
+  <div class="section-label">小节四</div>
+  <h2 class="section-title">Skill 调 Skill：研报 Agent 案例</h2>
+  <span class="section-pill pill-blue">通用模式 · 动态编排</span>
+
+  <p class="body-text">换一个你可能更熟悉的场景：每周给公司生成竞争对手研究报告。流程看起来清晰——搜索资讯、提取数据、写分析、输出报告——但实际操作中，每个步骤完成后都需要判断"够用吗？"某个公司本周新闻极少，搜索只有两条，是扩大搜索范围还是直接标注"信息不足"？某个财务数据明显异常，是录入错误还是真实情况，需不需要找第二数据源验证？这些判断工作流里没有地方放，只有 Agent 的 ask_claude() 能处理。</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 680 272" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <defs>
+        <marker id="a3" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#94a3b8"/></marker>
+        <marker id="a3g" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#059669"/></marker>
+        <marker id="a3r" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#c2410c"/></marker>
+        <marker id="a3b" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#2563eb"/></marker>
+      </defs>
+      <rect width="680" height="272" rx="14" fill="#f8fafc"/>
+      <!-- 输入 -->
+      <rect x="266" y="12" width="148" height="34" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
+      <text x="340" y="28" text-anchor="middle" font-size="11" font-weight="800" fill="#c2410c">输入：公司名称</text>
+      <text x="340" y="40" text-anchor="middle" font-size="9.5" fill="#9a3412">research_agent.py</text>
+      <!-- S1 search -->
+      <line x1="340" y1="46" x2="340" y2="64" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a3)"/>
+      <rect x="244" y="64" width="192" height="34" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="340" y="80" text-anchor="middle" font-size="11.5" font-weight="800" fill="#1d4ed8">① search_skill()</text>
+      <text x="340" y="92" text-anchor="middle" font-size="10" fill="#2563eb">搜索财报 + 新闻</text>
+      <!-- AI判断1 -->
+      <line x1="340" y1="98" x2="340" y2="116" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a3)"/>
+      <rect x="268" y="116" width="144" height="28" rx="8" fill="#fdf4ff" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="340" y="134" text-anchor="middle" font-size="10.5" font-weight="800" fill="#9333ea">ask_claude() 判断</text>
+      <!-- 分支 -->
+      <line x1="412" y1="130" x2="480" y2="130" stroke="#059669" stroke-width="1.5" marker-end="url(#a3g)"/>
+      <text x="446" y="124" text-anchor="middle" font-size="9.5" font-weight="700" fill="#059669">结果够用</text>
+      <rect x="480" y="114" width="152" height="34" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+      <text x="556" y="130" text-anchor="middle" font-size="11" font-weight="800" fill="#065f46">② extract_skill()</text>
+      <text x="556" y="143" text-anchor="middle" font-size="9.5" fill="#059669">提取关键财务数据</text>
+      <line x1="268" y1="130" x2="160" y2="130" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a3r)"/>
+      <text x="214" y="124" text-anchor="middle" font-size="9.5" font-weight="700" fill="#c2410c">结果不足</text>
+      <rect x="42" y="114" width="118" height="34" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+      <text x="101" y="130" text-anchor="middle" font-size="10" font-weight="700" fill="#9a3412">扩大范围重搜</text>
+      <text x="101" y="143" text-anchor="middle" font-size="9" fill="#c2410c">或标注"信息不足"</text>
+      <!-- AI判断2 -->
+      <line x1="556" y1="148" x2="556" y2="166" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a3)"/>
+      <rect x="484" y="166" width="144" height="28" rx="8" fill="#fdf4ff" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="556" y="184" text-anchor="middle" font-size="10.5" font-weight="800" fill="#9333ea">ask_claude() 判断</text>
+      <line x1="556" y1="194" x2="556" y2="212" stroke="#059669" stroke-width="1.5" marker-end="url(#a3g)"/>
+      <text x="574" y="206" text-anchor="start" font-size="9.5" font-weight="700" fill="#059669">数据正常</text>
+      <rect x="480" y="212" width="152" height="34" rx="8" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+      <text x="556" y="228" text-anchor="middle" font-size="11" font-weight="800" fill="#7c3aed">③ analyze_skill()</text>
+      <text x="556" y="241" text-anchor="middle" font-size="9.5" fill="#9333ea">生成分析段落</text>
+      <line x1="484" y1="180" x2="396" y2="180" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a3r)"/>
+      <text x="440" y="174" text-anchor="middle" font-size="9.5" font-weight="700" fill="#c2410c">数据异常</text>
+      <rect x="280" y="164" width="116" height="34" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+      <text x="338" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="#9a3412">补找第二来源</text>
+      <text x="338" y="193" text-anchor="middle" font-size="9" fill="#c2410c">或标注"数据存疑"</text>
+      <!-- format -->
+      <line x1="556" y1="246" x2="556" y2="258" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a3)"/>
+      <text x="556" y="268" text-anchor="middle" font-size="9.5" font-weight="700" fill="#059669">→ ④ format_skill() → 输出标准研报</text>
+    </svg>
+  </div>
+  <p class="svg-caption">研报 Agent：每个 Skill 之后有 AI 判断节点，路径不是固定的，根据中间结果动态选择</p>
+
+  <p class="body-text">这张图里最关键的元素，不是四个 Skill 节点，而是那两个 ask_claude() 判断节点。正是这两个判断把固定的工作流变成了 Agent。工作流是 1→2→3→4；Agent 是 1→判断→2 或重做1→判断→3 或补充→4。同样的 Skill，加上判断层，能力完全不同。</p>
+
+  <div class="perception-box-amber">
+    <div class="p-label">核心认知</div>
+    <p>Agent 和工作流的本质区别不是技术复杂度，而是"谁在做决策"。工作流里，所有决策在你设计脚本时就做完了；Agent 里，有一部分决策是 AI 在运行时实时做的。你把哪些决策委托给 AI，就定义了这个 Agent 的能力范围。</p>
+  </div>
+
+  <p class="body-text">研报 Agent 里调用了四个 Skill——search、extract、analyze、format。但现在这四个 Skill 还是第12章的卡片形式：一份 Markdown 文档，每次调用都要把提示词手动复制进脚本。Agent 的下一步升级，是让这些卡片变成可以被代码直接 import 的可执行包。</p>
+</div>
+
+<!-- §5 SKILL.md升级 -->
+<div class="card">
+  <div class="section-label">小节五</div>
+  <h2 class="section-title">SKILL.md 升级：从提示词卡片到可执行包</h2>
+  <span class="section-pill pill-emerald">资产沉淀 · 开放标准</span>
+
+  <p class="body-text">第12章建 Skill 卡片时，核心是把经验和判断规则写成可复用的提示词文档。这已经是很大的进步——从每次重新写提示词，到有一份标准卡片可以参考和调用。但卡片终究还是"人读的文档"：你指导 AI 对话时用它，但代码没办法直接 import 它。</p>
+
+  <p class="body-text">现在 Agent 已经在跑了，parse_skill() 和 score_skill() 被 orchestrator 频繁调用。是时候把 Skill 卡片升级为完整的可执行包——让代码加载它、直接运行它，不再靠手动复制提示词。这个标准结构最初由 Anthropic 定义，2025年12月正式成为跨平台开放标准（agentskills.io），被 OpenAI Codex、GitHub Copilot、VS Code、Cursor 等超过50个工具原生采纳。这意味着你今天建的 Skill 包，换工具不需要重建：</p>
+
+  <div class="code-block-wrap">
+    <div class="code-header">
+      <div class="ch-dot" style="background:#ef4444;"></div>
+      <div class="ch-dot" style="background:#f59e0b;"></div>
+      <div class="ch-dot" style="background:#22c55e;"></div>
+      <div class="ch-filename">resume-parse-skill/ 目录结构</div>
+      <div class="ch-lang">SHELL</div>
+    </div>
+    <div class="code-block">resume-parse-skill/
+  ├── <span class="hi">SKILL.md</span>              <span class="comment">← 任务说明 + 调用规范（人读 + 机器读）</span>
+  ├── scripts/
+  │   └── <span class="fn">parse.py</span>          <span class="comment">← 实际执行代码（Claude Code 帮你写）</span>
+  ├── reference/
+  │   └── <span class="key">field-mapping.md</span>  <span class="comment">← 字段映射规则（如：工作经历格式说明）</span>
+  └── assets/
+      └── <span class="str">sample-resume.pdf</span> <span class="comment">← 测试样本（开发和调试用）</span></div>
+  </div>
+
+  <p class="body-text">其中 SKILL.md 本身的格式也值得深入了解。官方 agentskills.io 规范的最小集合极简，只要求两个字段：<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;color:#0891b2;">name</code>（名称）和 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;color:#0891b2;">description</code>（描述）。但 Claude Code、VS Code 等工具在官方基础上扩展了额外字段，让工具能在运行时动态调整行为，不再是纯粹给人看的文档，而是真正意义上人机共读的执行规范：</p>
+
+  <div class="code-block-wrap">
+    <div class="code-header">
+      <div class="ch-dot" style="background:#ef4444;"></div>
+      <div class="ch-dot" style="background:#f59e0b;"></div>
+      <div class="ch-dot" style="background:#22c55e;"></div>
+      <div class="ch-filename">SKILL.md（官方必填 + 工具扩展字段示例）</div>
+      <div class="ch-lang">MARKDOWN</div>
+    </div>
+    <div class="code-block"><span class="dim">---</span>
+<span class="key">name</span>: <span class="str">候选人评分</span>
+<span class="key">description</span>: <span class="str">评估简历与岗位匹配度，输出0-100分 + 复核理由</span>
+<span class="key">version</span>: <span class="str">1.2</span>
+<span class="key">effort</span>: <span class="val">medium</span>       <span class="comment"># 工具扩展字段：low/medium/high，工具据此分配算力</span>
+<span class="key">model</span>: <span class="val">claude-opus-4</span> <span class="comment"># 工具扩展字段：覆盖默认模型（精度优先时用更强模型）</span>
+<span class="key">context</span>: <span class="val">fork</span>        <span class="comment"># 工具扩展字段：fork = 独立子Agent并行执行</span>
+<span class="dim">---</span>
+
+<span class="section"># 候选人评分 Skill</span>
+
+你是一位资深 HR，请根据以下岗位要求评估候选人简历。
+
+<span class="section">## 输入字段</span>
+- <span class="hi">{resume_content}</span>: 简历全文
+- <span class="hi">{job_description}</span>: 岗位要求
+
+<span class="section">## 输出格式</span>
+返回 JSON：
+  <span class="str">"score"</span>: 0-100,
+  <span class="str">"reason"</span>: 判断依据（2-3句话）,
+  <span class="str">"highlights"</span>: [匹配亮点列表],
+  <span class="str">"concerns"</span>: [需关注点列表]
+
+<span class="section">## 评分标准</span>
+85+ 进入下一轮；60-84 备选；60以下不通过</div>
+  </div>
+
+  <div class="warn-box" style="background:#f0fdf4;border-color:#16a34a;margin-top:0;">
+    <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#15803d;margin-bottom:6px;">📌 字段规范说明</div>
+    <p style="font-size:13px;line-height:1.7;color:#14532d;margin:0;"><strong>name</strong> 和 <strong>description</strong> 是 agentskills.io 官方规范要求的必填字段，所有支持该标准的工具都认识它们。<strong>effort、model、context</strong> 是工具生态在官方基础上扩展的字段（如 Claude Code 支持），其他工具可能有不同的扩展字段或不支持这些扩展——迁移工具时请注意确认。</p>
+  </div>
+
+  <p class="body-text">这个扩展字段里最值得关注的是 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;color:#c2410c;">context: fork</code> 字段——它告诉工具把这个 Skill 作为独立子 Agent 并行执行，主流程不用等它完成再继续。当 orchestrator 需要同时对10份简历评分时，加了 fork 的 Skill 会被自动并行化处理，而不是逐一排队。这个能力不需要你改任何代码，只需要在 SKILL.md 里加一行。</p>
+
+  <p class="body-text">这个目录结构有三个层次的用途。对于简单任务，只读 SKILL.md 就够了——任务说明里写清楚输入和输出，调用一行代码就能运行。对于中等复杂的任务，去 reference/ 目录查字段映射规则，理解每个字段的含义和边界情况。对于复杂或定制化的场景，进入 scripts/ 目录直接修改实现代码，加入特殊处理逻辑。</p>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>维度</th>
+        <th>Ch12 Skill 卡片</th>
+        <th>Agent Skill 包</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>存储形式</td>
+        <td>单个 Markdown 文档</td>
+        <td>目录包，含代码和参考资料</td>
+      </tr>
+      <tr>
+        <td>调用方式</td>
+        <td>复制粘贴提示词到 AI 对话</td>
+        <td>代码直接 import，一行调用</td>
+      </tr>
+      <tr>
+        <td>可测试性</td>
+        <td>人工测试，难以批量验证</td>
+        <td>有 assets/ 样本，可自动化测试</td>
+      </tr>
+      <tr>
+        <td>可移植性</td>
+        <td>只能在你熟悉的 AI 工具里用</td>
+        <td>任何支持 Agent Skills 规范的平台都能运行</td>
+      </tr>
+      <tr>
+        <td>团队共享</td>
+        <td>发一个文档链接</td>
+        <td>发目录路径，别人能直接调用，行为一致</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box">
+    <div class="ins-label">不被工具绑定：这不再是未来承诺</div>
+    <p>2025年12月，Agent Skills 规范正式成为开放标准，OpenAI Codex、GitHub Copilot、VS Code、Cursor 已经原生支持这个目录结构。这意味着：同一个 Skill 包，Claude Code 能加载，VS Code 也能加载，明年出现的新工具大概率也能直接用。你积累的是可移植的能力资产，而不是某个厂商的配置文件。</p>
+    <p>一个简单的判断标准：如果某个工具要求你把 Skill 只存在它自己的格式或平台里，那你在用它的同时也在给自己上锁。标准化的 Skill 包打破了这个锁。</p>
+  </div>
+</div>
+
+<!-- §6 三层决策树 -->
+<div class="card">
+  <div class="section-label">小节六</div>
+  <h2 class="section-title">三层选择决策树：Prompt、工作流、还是 Agent？</h2>
+  <span class="section-pill pill-gold">判断框架 · 三层选择</span>
+
+  <p class="body-text">到这里，你已经掌握了三层工具：Prompt（第6章）、工作流（第13章）、Agent（本章）。每层都有自己最适合的场景，用错了层次不是工具不好，是工具选错了。下面这个决策树，是遇到任何新任务时的第一个判断框架。</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <defs>
+        <marker id="a4" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#94a3b8"/></marker>
+        <marker id="a4o" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#c2410c"/></marker>
+      </defs>
+      <rect width="700" height="320" rx="14" fill="#f8fafc"/>
+
+      <!-- Q1 -->
+      <rect x="230" y="12" width="240" height="42" rx="10" fill="#0f172a"/>
+      <text x="350" y="30" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">这个任务需要重复执行吗？</text>
+      <text x="350" y="46" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.6)">同样的步骤，要做很多次</text>
+
+      <!-- 否 → Prompt -->
+      <line x1="230" y1="33" x2="136" y2="33" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a4)"/>
+      <text x="183" y="27" text-anchor="middle" font-size="10" font-weight="700" fill="#64748b">不需要重复</text>
+      <rect x="28" y="15" width="108" height="38" rx="10" fill="#dbeafe" stroke="#93c5fd" stroke-width="2"/>
+      <text x="82" y="32" text-anchor="middle" font-size="13" font-weight="800" fill="#1d4ed8">Prompt</text>
+      <text x="82" y="46" text-anchor="middle" font-size="9.5" fill="#2563eb">直接 AI 对话完成</text>
+
+      <!-- 是 → Q2 -->
+      <line x1="350" y1="54" x2="350" y2="78" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a4)"/>
+      <text x="358" y="71" font-size="10" font-weight="700" fill="#64748b">需要重复</text>
+
+      <!-- Q2 -->
+      <rect x="188" y="78" width="324" height="42" rx="10" fill="#0f172a"/>
+      <text x="350" y="96" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">执行路径能提前写清楚吗？</text>
+      <text x="350" y="110" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.6)">每一步做什么、分支条件怎么写</text>
+
+      <!-- 是 → 工作流 -->
+      <line x1="188" y1="99" x2="136" y2="99" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a4)"/>
+      <text x="162" y="93" text-anchor="middle" font-size="10" font-weight="700" fill="#64748b">能写清楚</text>
+      <rect x="14" y="80" width="122" height="38" rx="10" fill="#dcfce7" stroke="#86efac" stroke-width="2"/>
+      <text x="75" y="97" text-anchor="middle" font-size="13" font-weight="800" fill="#15803d">工作流</text>
+      <text x="75" y="111" text-anchor="middle" font-size="9.5" fill="#059669">Python 脚本自动执行</text>
+
+      <!-- 否 → Q3 -->
+      <line x1="350" y1="120" x2="350" y2="144" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a4)"/>
+      <text x="358" y="137" font-size="10" font-weight="700" fill="#64748b">路径会变</text>
+
+      <!-- Q3 -->
+      <rect x="164" y="144" width="372" height="42" rx="10" fill="#0f172a"/>
+      <text x="350" y="162" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">中途需要根据结果调整策略吗？</text>
+      <text x="350" y="176" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.6)">遇到意外、需要重试、中间结果影响后续步骤</text>
+
+      <!-- 否 → 工作流加分支 -->
+      <line x1="164" y1="165" x2="136" y2="165" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a4)"/>
+      <text x="150" y="158" text-anchor="middle" font-size="9.5" font-weight="700" fill="#64748b">相对固定</text>
+      <rect x="14" y="146" width="122" height="38" rx="10" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+      <text x="75" y="163" text-anchor="middle" font-size="11" font-weight="800" fill="#15803d">工作流</text>
+      <text x="75" y="177" text-anchor="middle" font-size="9" fill="#059669">增加条件分支</text>
+
+      <!-- 是 → Agent -->
+      <line x1="350" y1="186" x2="350" y2="210" stroke="#c2410c" stroke-width="2" marker-end="url(#a4o)"/>
+      <text x="358" y="203" font-size="10" font-weight="700" fill="#c2410c">需要动态判断</text>
+      <rect x="200" y="210" width="300" height="48" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="2.5"/>
+      <text x="350" y="230" text-anchor="middle" font-size="15" font-weight="800" fill="#c2410c">Agent</text>
+      <text x="350" y="248" text-anchor="middle" font-size="10" fill="#9a3412">orchestrator + Skill + ask_claude()</text>
+
+      <!-- 底部示例 -->
+      <rect x="14" y="276" width="200" height="36" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.2"/>
+      <text x="114" y="291" text-anchor="middle" font-size="9.5" font-weight="800" fill="#1d4ed8">Prompt 典型场景</text>
+      <text x="114" y="305" text-anchor="middle" font-size="9" fill="#2563eb">写一封邮件 / 总结会议纪要</text>
+
+      <rect x="250" y="276" width="200" height="36" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1.2"/>
+      <text x="350" y="291" text-anchor="middle" font-size="9.5" font-weight="800" fill="#15803d">工作流 典型场景</text>
+      <text x="350" y="305" text-anchor="middle" font-size="9" fill="#059669">批量简历筛选 / 每周报告生成</text>
+
+      <rect x="486" y="276" width="200" height="36" rx="8" fill="#ffedd5" stroke="#fb923c" stroke-width="1.2"/>
+      <text x="586" y="291" text-anchor="middle" font-size="9.5" font-weight="800" fill="#c2410c">Agent 典型场景</text>
+      <text x="586" y="305" text-anchor="middle" font-size="9" fill="#9a3412">竞品研究报告 / 异常检测</text>
+    </svg>
+  </div>
+  <p class="svg-caption">遇到新任务先判断是否重复，再判断路径是否固定，再判断是否需要运行时动态决策</p>
+
+  <p class="body-text">这个决策树还有一个隐含的用法：帮你抵制"用 Agent 解决所有问题"的冲动。能用 Prompt 解决的任务，就用 Prompt；工作流够用的，就不要用 Agent。工具越复杂，维护成本越高，出错时越难排查。<strong>刚好够用，是最好的方案。</strong></p>
+</div>
+
+<!-- §7 行动清单 -->
+<div class="card">
+  <div class="section-label">小节七</div>
+  <h2 class="section-title">从零启动你的第一个 Agent</h2>
+  <span class="section-pill pill-orange">四步改造 · 行动清单</span>
+
+  <p class="body-text">你现在手上已经有一条跑通的工作流脚本了——这是第13章的成果。把它升级为 Agent，只需要四步改造。每一步都是在现有代码基础上做加法，不需要推倒重写。</p>
+
+  <div class="step-list">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="s-title">找到所有的 pass 和 raise Exception</div>
+        <div class="s-desc">打开你的工作流脚本，搜索 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px;color:#c2410c;">pass</code>、<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px;color:#c2410c;">raise</code>、<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px;color:#c2410c;">continue</code>。这些地方就是工作流遇到异常时的"放弃点"——把每一个放弃点改成 ask_claude() 调用，就是 Agent 要接管的判断点。判断点越少越好，只在真正需要主观判断的地方加。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="s-title">实现 ask_claude() 函数</div>
+        <div class="s-desc">参考本章 §2 的代码，给脚本加一个 ask_claude(situation, options) 函数。situation 描述遇到了什么情况，options 列出可选的处理方式，让 AI 只回复一个选项名称，便于代码解析。这个函数不需要复杂，30行以内。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="s-title">加入 memory.json 读写</div>
+        <div class="s-desc">在脚本开头加 load_memory()，在每次循环末尾加 save_memory()。不需要设计完整的数据结构，先只存两样东西：已处理条目的标识符（断点续跑用）和被标记条目的完整记录（审计追踪用）。其他字段用到了再加。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="s-title">把常用 Skill 整理成可执行包</div>
+        <div class="s-desc">把第12章的 Skill 卡片升级为 §5 描述的目录结构——SKILL.md + scripts/ + reference/。先从最常用的那个开始，不需要一次全做。每完成一个，脚本里就能用 import 直接调用，不用再手动复制提示词。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="coze-box">
+    <div class="cz-label">🔷 Coze 适用场景</div>
+    <p>前四步完成的 Agent 跑在你自己的电脑上，每次需要手动启动。如果你需要以下三种能力，这时候引入 Coze 才是合理的选择：<strong>定时触发</strong>——每天早上8点自动运行，不需要你手动执行命令；<strong>消息推送</strong>——运行完成后把结果自动发到飞书群或企微；<strong>团队共享</strong>——让不会使用 Claude Code 的同事也能触发一次 Agent 运行。</p>
+    <p>Coze 解决的是"部署和分发"问题，不是"构建判断逻辑"的问题。核心的 orchestrator 代码、Skill 函数、memory.json，依然建议用 Claude Code 维护。工具选对了位置，两者配合比单独用任何一个都强。</p>
+  </div>
+
+  <div class="key-box-amber">
+    <div class="kb-label">本章核心认知</div>
+    <p>非技术出身的领域专家，离自己做专业 Agent 只剩隔着一层窗户纸——把你的专业经验和工作流程，用文档形式写清楚，Agent 就能照着执行。HR 知道什么样的候选人值得人工复核，分析师知道什么样的数据需要二次验证，这些专业判断力写成 SKILL.md 之后，就变成了 Agent 的业务规则。</p>
+    <p>AI 时代真正的竞争力不是写代码，而是<strong>把业务判断力固化成系统的能力</strong>。从第6章到第14章走过的这条路——Prompt → Skill → 工作流 → Agent——每一步不是工具变复杂了，而是你固化业务判断力的粒度越来越细、能力越来越强。</p>
+  </div>
+</div>
+
+<!-- 章节结尾 -->
+<div class="chapter-footer">
+  <div class="footer-title">本章交付物检查</div>
+  <div class="checklist">
+    <div class="cl-row">
+      <div class="cl-icon">✓</div>
+      <div class="cl-text"><strong>识别了判断点：</strong>在第13章的工作流脚本里找到了所有 pass/raise/continue，知道哪些是 Agent 要接管的位置</div>
+    </div>
+    <div class="cl-row">
+      <div class="cl-icon">✓</div>
+      <div class="cl-text"><strong>实现了 ask_claude()：</strong>工作流脚本加上了 AI 判断接口，至少一个异常处理变成了 AI 决策而不是静默跳过</div>
+    </div>
+    <div class="cl-row">
+      <div class="cl-icon">✓</div>
+      <div class="cl-text"><strong>加入了 memory.json：</strong>脚本支持断点续跑，有审计追踪记录，重启不会从头开始</div>
+    </div>
+    <div class="cl-row">
+      <div class="cl-icon">✓</div>
+      <div class="cl-text"><strong>升级了至少一个 Skill 包：</strong>第12章的某个 Skill 卡片变成了有 SKILL.md + scripts/ 的完整目录包，可以被代码直接调用</div>
+    </div>
+    <div class="cl-row">
+      <div class="cl-icon">✓</div>
+      <div class="cl-text"><strong>能做三层判断：</strong>遇到新任务，能说清楚"这是 Prompt 够用的，还是需要工作流，还是需要 Agent"</div>
+    </div>
+  </div>
+  <p class="footer-text" style="margin-top:16px;">你现在有了 Skill 库、工作流和 Agent，三样加在一起是你个人的 AI 系统。下一章要问的问题是：这套系统如何从"你一个人用"变成"整个团队共用"？个人 Skill 怎么变成团队标准？个人 Agent 怎么让没有技术背景的同事也能调用？</p>
+  <div class="next-chapter">→ 下一章：团队 AI 协作——从个人系统到团队标准，标准化扩散法</div>
+</div>
+
+</div><!-- .page -->
+</body>
+</html>

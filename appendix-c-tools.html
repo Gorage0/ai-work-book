@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>附录C：AI工具场景索引</title>
+<style>
+:root {
+  --primary: #f97316;
+  --primary-soft: #ffedd5;
+  --ink: #0f172a;
+  --ink-mid: #334155;
+  --ink-soft: #64748b;
+  --surface: #f1f5f9;
+  --card: #ffffff;
+  --border: rgba(15,23,42,.07);
+  --blue: #2563eb;
+  --blue-soft: #dbeafe;
+  --green: #16a34a;
+  --green-soft: #dcfce7;
+  --purple: #7c3aed;
+  --purple-soft: #ede9fe;
+  --teal: #0891b2;
+  --teal-soft: #cffafe;
+  --red: #dc2626;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  background: var(--surface);
+  color: var(--ink);
+  line-height: 1.75;
+  font-size: 15px;
+}
+.page { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* ── 头部 ── */
+.appendix-header {
+  background: linear-gradient(135deg, #0f172a 0%, #431407 45%, #1c0a00 100%);
+  border-radius: 20px;
+  padding: 52px 44px 44px;
+  color: #fff;
+  margin-bottom: 36px;
+  position: relative;
+  overflow: hidden;
+}
+.appendix-header::before {
+  content: '';
+  position: absolute;
+  top: -50px; right: -30px;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(249,115,22,.3) 0%, transparent 65%);
+  pointer-events: none;
+}
+.appendix-header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -20px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(234,88,12,.2) 0%, transparent 65%);
+  pointer-events: none;
+}
+.ah-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: rgba(253,186,116,.7); margin-bottom: 14px; }
+.ah-title { font-size: 32px; font-weight: 900; line-height: 1.2; color: #fff; margin-bottom: 14px; position: relative; z-index: 1; }
+.ah-title .accent {
+  background: linear-gradient(135deg, #fdba74 0%, #fcd34d 50%, #86efac 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.ah-subtitle { font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.65; max-width: 540px; position: relative; z-index: 1; margin-bottom: 24px; }
+.ah-source {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 10px; padding: 10px 18px;
+  font-size: 12px; color: rgba(255,255,255,.65);
+  position: relative; z-index: 1;
+}
+.ah-source a { color: #fdba74; text-decoration: none; font-weight: 600; }
+
+/* ── 卡片 ── */
+.card {
+  background: var(--card); border-radius: 16px; border: 1px solid var(--border);
+  padding: 32px 36px; margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(15,23,42,.06);
+}
+.section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; }
+.section-title { font-size: 21px; font-weight: 800; color: var(--ink); line-height: 1.3; margin-bottom: 18px; }
+.body-text { font-size: 14.5px; line-height: 1.85; color: var(--ink-mid); margin-bottom: 16px; }
+.body-text strong { color: var(--ink); font-weight: 700; }
+
+/* ── 场景分区 ── */
+.scene-section { margin-bottom: 32px; }
+.scene-section:last-child { margin-bottom: 0; }
+.scene-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+.scene-icon { font-size: 22px; }
+.scene-title { font-size: 17px; font-weight: 800; color: var(--ink); }
+.scene-desc { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+
+/* ── 工具卡片网格 ── */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+@media (max-width: 640px) { .tools-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 420px) { .tools-grid { grid-template-columns: 1fr; } }
+
+.tool-card {
+  border-radius: 12px;
+  padding: 16px 16px;
+  border: 1.5px solid transparent;
+  transition: transform .15s;
+}
+.tool-card:hover { transform: translateY(-2px); }
+
+/* 颜色主题 */
+.tc-global { background: #eff6ff; border-color: #bfdbfe; }
+.tc-cn     { background: #fff7ed; border-color: #fed7aa; }
+.tc-both   { background: #f0fdf4; border-color: #bbf7d0; }
+
+.tool-name { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.tool-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+.tool-tag {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .3px;
+  padding: 1px 6px; border-radius: 4px; text-transform: uppercase;
+}
+.tag-free    { background: #dcfce7; color: #15803d; }
+.tag-paid    { background: #fef9c3; color: #854d0e; }
+.tag-freemium{ background: #e0e7ff; color: #4338ca; }
+.tag-cn      { background: #fee2e2; color: #b91c1c; }
+.tag-global  { background: #dbeafe; color: #1d4ed8; }
+.tool-desc { font-size: 12px; line-height: 1.6; color: var(--ink-mid); }
+.tool-best  { font-size: 11px; font-weight: 700; color: var(--ink-soft); margin-top: 8px; }
+.tc-global .tool-best { color: var(--blue); }
+.tc-cn .tool-best     { color: #c2410c; }
+.tc-both .tool-best   { color: var(--green); }
+
+/* ── 对比大表格 ── */
+.compare-table-wrap { overflow-x: auto; margin-top: 8px; }
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 12.5px; min-width: 640px;
+}
+.compare-table th {
+  background: #0f172a; color: #fff; text-align: left;
+  padding: 11px 14px; font-size: 11px; font-weight: 700;
+  letter-spacing: .5px; text-transform: uppercase; white-space: nowrap;
+}
+.compare-table th:first-child { border-radius: 10px 0 0 0; }
+.compare-table th:last-child  { border-radius: 0 10px 0 0; }
+.compare-table td {
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+  color: var(--ink-mid); vertical-align: middle; line-height: 1.5;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:nth-child(even) td { background: #f8fafc; }
+.ct-name { font-weight: 800; color: var(--ink); font-size: 13px; white-space: nowrap; }
+.ct-region {
+  font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+  text-transform: uppercase; display: inline-block;
+}
+.ct-cn     { background: #fef9c3; color: #854d0e; }
+.ct-global { background: #dbeafe; color: #1d4ed8; }
+.ct-both   { background: #dcfce7; color: #15803d; }
+.check  { color: #16a34a; font-weight: 900; font-size: 15px; }
+.partial{ color: #d97706; font-weight: 700; font-size: 13px; }
+.cross  { color: #dc2626; font-weight: 900; font-size: 15px; }
+
+/* ── 提示框 ── */
+.tip-box {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;
+  padding: 16px 20px; margin: 20px 0 0;
+}
+.tip-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.tip-text { font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); }
+.tip-text strong { color: var(--ink); }
+.tip-box.orange { background: #fff7ed; border-color: #fed7aa; }
+.tip-box.orange .tip-text { color: #7c2d12; }
+
+/* ── 导航 ── */
+.page-nav {
+  display: flex; justify-content: space-between; align-items: center; padding-top: 8px;
+}
+.nav-link {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+  color: var(--blue); text-decoration: none; font-weight: 600;
+  padding: 10px 18px; border-radius: 24px; border: 1.5px solid var(--blue-soft);
+  background: var(--blue-soft); transition: all .2s;
+}
+.nav-link:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 头部 -->
+  <div class="appendix-header">
+    <p class="ah-eyebrow">Appendix C · 附录C</p>
+    <h1 class="ah-title">AI 工具<br><span class="accent">场景索引手册</span></h1>
+    <p class="ah-subtitle">按白领工作场景分类整理，覆盖7大场景、30+主流工具，含国内外对比，找到最适合你的那一个</p>
+    <div class="ah-source">
+      <span>🔍</span>
+      <span>素材来源：<a href="https://github.com/ai-collection/ai-collection" target="_blank">ai-collection</a>（改编）· 国内工具自研整理 · 2026年版本</span>
+    </div>
+  </div>
+
+  <!-- 使用说明 -->
+  <div class="card">
+    <div class="section-label">How to Use · 使用说明</div>
+    <div class="section-title">怎么用这份索引</div>
+    <p class="body-text">
+      这份索引按照白领日常工作中最常见的7个场景分类。每个场景列出3-5个工具，区分国际工具（🌐）和国内工具（🇨🇳），并注明是否需要付费。<strong>找到你当前卡住的那个工作场景，直接看对应区块就行。</strong>
+    </p>
+    <p class="body-text">
+      所有工具都经过基本验证，在中国大陆网络环境下可访问的国内工具特别标注。最后一张对比表可以帮助你在通用大模型之间做选择。
+    </p>
+    <div class="tip-box orange">
+      <span class="tip-icon">⚡</span>
+      <span class="tip-text"><strong>快速选择建议：</strong>如果你在中国大陆，日常工作首选 <strong>DeepSeek + Kimi</strong> 的组合——DeepSeek 思维能力强，适合分析推理；Kimi 长文档处理好，适合阅读整理。两者均有免费额度。</span>
+    </div>
+  </div>
+
+  <!-- 场景一：写作与文案 -->
+  <div class="card">
+    <div class="scene-section">
+      <div class="scene-header">
+        <span class="scene-icon">✍️</span>
+        <div>
+          <div class="scene-title">写作与文案</div>
+          <div class="scene-desc">邮件、报告、提案、公告、社媒文案、PPT 文字</div>
+        </div>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-card tc-global">
+          <div class="tool-name">ChatGPT</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">全能写作助手，写作风格多样，中英文俱佳。GPT-4o 免费版已够用。</div>
+          <div class="tool-best">💪 最强项：通用写作、长文</div>
+        </div>
+        <div class="tool-card tc-global">
+          <div class="tool-name">Claude</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">文字质感细腻，特别擅长专业报告、分析文章和有逻辑层次的长文。</div>
+          <div class="tool-best">💪 最强项：专业报告、分析文章</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">Kimi</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">月之暗面出品，中文写作自然地道，支持超长上下文（200k tokens），适合长文档。</div>
+          <div class="tool-best">💪 最强项：中文长文、文档整理</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">豆包</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-free">免费</span>
+          </div>
+          <div class="tool-desc">字节跳动出品，对话自然流畅，社媒文案风格把握准确，适合小红书/微信内容。</div>
+          <div class="tool-best">💪 最强项：社媒文案、短视频脚本</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">通义千问</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-free">免费</span>
+          </div>
+          <div class="tool-desc">阿里出品，与企业版钉钉深度集成，适合企业内部文档写作和汇报材料。</div>
+          <div class="tool-best">💪 最强项：企业文档、钉钉集成</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 场景二：数据分析 -->
+  <div class="card">
+    <div class="scene-section">
+      <div class="scene-header">
+        <span class="scene-icon">📊</span>
+        <div>
+          <div class="scene-title">数据分析与表格处理</div>
+          <div class="scene-desc">Excel 分析、数据洞察、图表解读、数据清洗</div>
+        </div>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-card tc-global">
+          <div class="tool-name">ChatGPT<br>Advanced Data</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-paid">付费</span>
+          </div>
+          <div class="tool-desc">上传 Excel/CSV，用自然语言提问分析，自动生成图表。ChatGPT Plus 专属功能。</div>
+          <div class="tool-best">💪 最强项：交互式数据探索</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">DeepSeek</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/API</span>
+          </div>
+          <div class="tool-desc">深度求索出品，数学推理和逻辑分析极强，免费版已有强大的数据分析能力。</div>
+          <div class="tool-best">💪 最强项：逻辑推理、公式推导</div>
+        </div>
+        <div class="tool-card tc-global">
+          <div class="tool-name">Julius AI</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">专为数据分析设计，上传文件后可用自然语言分析，自动生成可视化图表。</div>
+          <div class="tool-best">💪 最强项：数据可视化生成</div>
+        </div>
+        <div class="tool-card tc-global">
+          <div class="tool-name">Microsoft<br>Copilot (Excel)</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-paid">企业版</span>
+          </div>
+          <div class="tool-desc">直接嵌入 Excel，用自然语言操作数据，生成数据透视表，不需要切换工具。</div>
+          <div class="tool-best">💪 最强项：Excel 原生集成</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">WPS AI</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">集成在 WPS 表格中，支持中文自然语言操作数据，适合国内企业 WPS 用户。</div>
+          <div class="tool-best">💪 最强项：WPS 原生集成</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 场景三：会议与沟通 -->
+  <div class="card">
+    <div class="scene-section">
+      <div class="scene-header">
+        <span class="scene-icon">🎙️</span>
+        <div>
+          <div class="scene-title">会议记录与沟通整理</div>
+          <div class="scene-desc">会议录音转文字、生成纪要、邮件起草、信息提炼</div>
+        </div>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-card tc-global">
+          <div class="tool-name">Otter.ai</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">实时会议转录 + AI 摘要，支持 Zoom/Teams/Google Meet 自动录入，英文为主。</div>
+          <div class="tool-best">💪 最强项：英文会议实时转录</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">飞书妙记</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">飞书会议原生功能，中文识别准确率高，自动生成会议纪要并同步到飞书文档。</div>
+          <div class="tool-best">💪 最强项：飞书生态中文会议</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">腾讯会议 AI</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">腾讯会议内置 AI 总结，会议结束后自动生成纪要，国内用户最广泛的会议工具。</div>
+          <div class="tool-best">💪 最强项：国内企业会议场景</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">讯飞听见</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">科大讯飞出品，中文语音识别技术最强，支持多人分角色转录，纪要质量高。</div>
+          <div class="tool-best">💪 最强项：中文多人会议转录</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 场景四：PPT与演示 -->
+  <div class="card">
+    <div class="scene-section">
+      <div class="scene-header">
+        <span class="scene-icon">🎨</span>
+        <div>
+          <div class="scene-title">PPT 与演示文稿</div>
+          <div class="scene-desc">一键生成 PPT、美化设计、内容整理成幻灯片</div>
+        </div>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-card tc-global">
+          <div class="tool-name">Gamma</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">输入主题或大纲，几秒生成设计精美的幻灯片，支持中文，视觉效果远超传统模板。</div>
+          <div class="tool-best">💪 最强项：设计感最强的 AI PPT</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">AiPPT / 美图AI</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">国产 AI PPT 工具，中文主题生成效果好，免费额度较大，适合快速出稿。</div>
+          <div class="tool-best">💪 最强项：中文场景快速出稿</div>
+        </div>
+        <div class="tool-card tc-global">
+          <div class="tool-name">Copilot (PowerPoint)</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-paid">企业版</span>
+          </div>
+          <div class="tool-desc">Microsoft 365 企业版内置，根据 Word 文档直接生成 PPT，与现有文档无缝集成。</div>
+          <div class="tool-best">💪 最强项：Word→PPT 转换</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">讯飞智文</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">科大讯飞出品，输入文字即生成图文并茂的幻灯片，支持文档一键转 PPT。</div>
+          <div class="tool-best">💪 最强项：文档转 PPT</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 场景五：搜索与研究 -->
+  <div class="card">
+    <div class="scene-section">
+      <div class="scene-header">
+        <span class="scene-icon">🔍</span>
+        <div>
+          <div class="scene-title">搜索与信息研究</div>
+          <div class="scene-desc">联网搜索、市场调研、竞品分析、行业资讯</div>
+        </div>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-card tc-global">
+          <div class="tool-name">Perplexity</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">AI 搜索引擎，实时联网，每个回答附带可信来源链接，研究和调研首选工具。</div>
+          <div class="tool-best">💪 最强项：有来源的 AI 搜索</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">秘塔 AI 搜索</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-free">免费</span>
+          </div>
+          <div class="tool-desc">国内最好用的 AI 搜索工具，中文搜索结果质量高，附来源引用，完全免费。</div>
+          <div class="tool-best">💪 最强项：国内中文 AI 搜索</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">Kimi（联网版）</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">支持联网搜索+长文档阅读，一次性上传多份 PDF 进行对比分析，研究效率高。</div>
+          <div class="tool-best">💪 最强项：多文档对比研究</div>
+        </div>
+        <div class="tool-card tc-global">
+          <div class="tool-name">ChatGPT（联网版）</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">GPT-4o 支持联网搜索，对于国际市场调研和英文资料研究效果最佳。</div>
+          <div class="tool-best">💪 最强项：国际资讯研究</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 场景六：编程与自动化 -->
+  <div class="card">
+    <div class="scene-section">
+      <div class="scene-header">
+        <span class="scene-icon">💻</span>
+        <div>
+          <div class="scene-title">编程辅助与自动化</div>
+          <div class="scene-desc">写代码、调试、Excel 公式、自动化脚本、爬虫</div>
+        </div>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-card tc-global">
+          <div class="tool-name">GitHub Copilot</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">嵌入 VS Code 的 AI 编程助手，代码补全和生成是目前最强的，开发者必备。</div>
+          <div class="tool-best">💪 最强项：IDE 内代码补全</div>
+        </div>
+        <div class="tool-card tc-global">
+          <div class="tool-name">Claude Code</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-paid">付费</span>
+          </div>
+          <div class="tool-desc">终端运行的 AI 编程 Agent，能自主完成复杂的多步骤编程任务，执行能力最强。</div>
+          <div class="tool-best">💪 最强项：自主完成完整任务</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">DeepSeek（API）</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/API</span>
+          </div>
+          <div class="tool-desc">代码能力与 GPT-4 相当，API 价格极低，适合非程序员偶尔需要写脚本的场景。</div>
+          <div class="tool-best">💪 最强项：低成本代码生成</div>
+        </div>
+        <div class="tool-card tc-both">
+          <div class="tool-name">Cursor</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">AI 原生编辑器，把整个项目代码库喂给 AI，理解上下文能力极强，受职业开发者喜爱。</div>
+          <div class="tool-best">💪 最强项：整项目代码理解</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 场景七：图像与创意 -->
+  <div class="card">
+    <div class="scene-section">
+      <div class="scene-header">
+        <span class="scene-icon">🖼️</span>
+        <div>
+          <div class="scene-title">图像生成与视觉创意</div>
+          <div class="scene-desc">配图、封面设计、产品图、品牌视觉</div>
+        </div>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-card tc-global">
+          <div class="tool-name">Midjourney</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-paid">付费</span>
+          </div>
+          <div class="tool-desc">目前风格最出众的 AI 绘画工具，艺术感强，特别适合高质量配图和视觉创意。</div>
+          <div class="tool-best">💪 最强项：艺术风格图像</div>
+        </div>
+        <div class="tool-card tc-global">
+          <div class="tool-name">DALL-E 3 (ChatGPT)</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-global">国际</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">ChatGPT 内置，文字→图像直接生成，理解复杂描述能力强，最容易上手。</div>
+          <div class="tool-best">💪 最强项：易用性、语义理解</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">即梦 AI</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">字节跳动出品，中文描述生成效果好，支持图片生成视频，免费额度充足。</div>
+          <div class="tool-best">💪 最强项：国内中文图像/视频</div>
+        </div>
+        <div class="tool-card tc-cn">
+          <div class="tool-name">文心一格</div>
+          <div class="tool-tags">
+            <span class="tool-tag tag-cn">国内</span>
+            <span class="tool-tag tag-freemium">免费/付费</span>
+          </div>
+          <div class="tool-desc">百度出品，支持国风、插画等多种风格，商业授权清晰，适合需要版权安全的场景。</div>
+          <div class="tool-best">💪 最强项：国风风格、版权安全</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主流大模型横向对比表 -->
+  <div class="card">
+    <div class="section-label">Comparison · 对比表</div>
+    <div class="section-title">主流大模型横向对比（2026年版）</div>
+    <p class="body-text" style="margin-bottom:16px;">
+      选择大模型时，对照你最常用的场景选就行。没有"最好"的模型，只有"最适合这个场景"的模型。
+    </p>
+
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>模型</th>
+            <th>地区</th>
+            <th>写作</th>
+            <th>推理/分析</th>
+            <th>代码</th>
+            <th>联网</th>
+            <th>中文</th>
+            <th>免费使用</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="ct-name">GPT-4o</span><br><span style="font-size:11px;color:#64748b;">OpenAI</span></td>
+            <td><span class="ct-region ct-global">国际</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="check">有限免费</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-name">Claude 3.5+</span><br><span style="font-size:11px;color:#64748b;">Anthropic</span></td>
+            <td><span class="ct-region ct-global">国际</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="check">有限免费</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-name">Gemini 1.5</span><br><span style="font-size:11px;color:#64748b;">Google</span></td>
+            <td><span class="ct-region ct-global">国际</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="check">有限免费</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-name">DeepSeek V3</span><br><span style="font-size:11px;color:#64748b;">深度求索</span></td>
+            <td><span class="ct-region ct-cn">国内</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="check">✓✓</span></td>
+            <td><span class="check">基本免费</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-name">Kimi k1.5</span><br><span style="font-size:11px;color:#64748b;">月之暗面</span></td>
+            <td><span class="ct-region ct-cn">国内</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓✓</span></td>
+            <td><span class="check">有限免费</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-name">豆包</span><br><span style="font-size:11px;color:#64748b;">字节跳动</span></td>
+            <td><span class="ct-region ct-cn">国内</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓✓</span></td>
+            <td><span class="check">基本免费</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-name">通义千问</span><br><span style="font-size:11px;color:#64748b;">阿里云</span></td>
+            <td><span class="ct-region ct-cn">国内</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="partial">△</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓✓</span></td>
+            <td><span class="check">有限免费</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11.5px; color:#94a3b8; margin-top:12px; line-height:1.6;">
+      ✓✓ = 特别强；✓ = 优秀；△ = 一般；联网 = 实时搜索能力。评估基于2026年初各模型公开能力，仅供参考，模型能力持续更新。
+    </p>
+
+    <div class="tip-box" style="margin-top:20px; margin-bottom:0;">
+      <span class="tip-icon">🔄</span>
+      <span class="tip-text"><strong>工具更新很快：</strong>AI 工具领域变化极快，建议每3个月重新评估一次你的工具组合。本索引会随书本更新版本同步更新。有最新发现欢迎反馈。</span>
+    </div>
+  </div>
+
+  <!-- 导航 -->
+  <div class="page-nav">
+    <a class="nav-link" href="appendix-b-skill-template.html">← 附录B：Skill 模板</a>
+    <a class="nav-link" href="index.html">返回目录</a>
+  </div>
+
+</div>
+</body>
+</html>

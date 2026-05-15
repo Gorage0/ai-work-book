@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第10C章 高级篇——让 HTML 工具可编辑、可维护、可交付</title>
+<style>
+:root {
+  --primary: #2563eb; --primary-soft: #dbeafe;
+  --accent: #f43f5e;  --accent-soft: #ffe4e6;
+  --ink: #0f172a; --ink-mid: #334155; --ink-soft: #64748b;
+  --surface: #f1f5f9; --card: #ffffff; --border: rgba(15,23,42,.07);
+  --orange: #f97316; --orange-soft: #ffedd5;
+  --green: #16a34a;  --green-soft: #dcfce7;
+  --purple: #7c3aed; --purple-soft: #ede9fe;
+  --teal: #0891b2;   --teal-soft: #cffafe;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif; background: var(--surface); color: var(--ink); line-height: 1.75; font-size: 15px; }
+.page { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.chapter-header {
+  background: linear-gradient(135deg, #7c2d12 0%, #9a3412 40%, #7c3aed 100%);
+  border-radius: 20px; padding: 48px 44px; color: #fff; margin-bottom: 36px; position: relative; overflow: hidden;
+}
+.chapter-header::before { content:''; position:absolute; top:-40px; right:-40px; width:240px; height:240px; background:radial-gradient(circle,rgba(124,58,237,.4) 0%,transparent 70%); pointer-events:none; }
+.chapter-header::after  { content:''; position:absolute; bottom:-30px; left:20px; width:200px; height:200px; background:radial-gradient(circle,rgba(249,115,22,.2) 0%,transparent 70%); pointer-events:none; }
+.ch-eyebrow { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:14px; }
+.ch-title   { font-size:27px; font-weight:800; line-height:1.25; color:#fff; margin-bottom:16px; }
+.ch-subtitle{ font-size:14px; color:rgba(255,255,255,.65); max-width:560px; line-height:1.65; margin-bottom:24px; }
+.ch-takeaway{ background:rgba(255,255,255,.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:16px 20px; font-size:13.5px; color:rgba(255,255,255,.9); line-height:1.65; position:relative; z-index:1; }
+.ch-takeaway strong { color:#fff; }
+
+.series-nav { display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
+.series-btn { padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; border:1.5px solid; }
+.series-btn.active   { background:var(--purple); color:#fff; border-color:var(--purple); }
+.series-btn.inactive { background:#fff; color:var(--ink-soft); border-color:var(--border); }
+
+.card { background:var(--card); border-radius:16px; border:1px solid var(--border); padding:32px 36px; margin-bottom:24px; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+.section-label { font-size:10.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--primary); margin-bottom:8px; }
+.section-title { font-size:21px; font-weight:800; color:var(--ink); line-height:1.3; margin-bottom:6px; }
+.section-pill  { display:inline-block; font-size:12px; font-weight:600; padding:3px 12px; border-radius:20px; margin-bottom:18px; }
+.pill-blue   { background:var(--primary-soft); color:var(--primary); }
+.pill-green  { background:var(--green-soft);   color:var(--green); }
+.pill-orange { background:var(--orange-soft);  color:var(--orange); }
+.pill-purple { background:var(--purple-soft);  color:var(--purple); }
+.pill-teal   { background:var(--teal-soft);    color:var(--teal); }
+
+.body-text { font-size:14.5px; line-height:1.82; color:var(--ink-mid); margin-bottom:16px; }
+.body-text:last-child { margin-bottom:0; }
+.body-text strong { color:var(--ink); font-weight:700; }
+
+.example-box { background:var(--orange-soft); border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.example-box .ex-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.example-box p { font-size:13.5px; line-height:1.72; color:#3d1108; margin:0 0 8px; }
+.example-box p:last-child { margin-bottom:0; }
+
+.insight-box { background:#f0f9ff; border-left:3px solid var(--teal); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.insight-box .ins-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--teal); margin-bottom:8px; }
+.insight-box p { font-size:13.5px; line-height:1.72; color:#0c4a6e; margin:0 0 6px; }
+.insight-box p:last-child { margin-bottom:0; }
+
+.warn-box { background:#fff7ed; border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.warn-box .w-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.warn-box p { font-size:13.5px; line-height:1.72; color:#7c2d12; margin:0 0 6px; }
+.warn-box p:last-child { margin-bottom:0; }
+
+.perception-box { background:var(--green-soft); border-radius:12px; padding:18px 22px; margin:20px 0; }
+.perception-box .p-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--green); margin-bottom:8px; }
+.perception-box p { font-size:13.5px; line-height:1.72; color:#14532d; margin:0; }
+
+.code-block { background:#1e293b; border-radius:10px; padding:16px 20px; margin:16px 0; font-family:'Menlo','Consolas','Courier New',monospace; font-size:12px; line-height:1.85; overflow-x:auto; white-space:pre; }
+.code-block .comment { color:#475569; font-style:italic; }
+.code-block .key     { color:#86efac; }
+.code-block .val     { color:#fde68a; }
+.code-block .tag     { color:#7dd3fc; }
+.code-block .str     { color:#fde68a; }
+.code-block .dim     { color:#94a3b8; }
+
+.prompt-box { background:#1e293b; border-radius:12px; padding:18px 22px; margin:18px 0; }
+.prompt-box .pb-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#7dd3fc; margin-bottom:10px; }
+.prompt-box p { font-size:13px; line-height:1.78; color:#e2e8f0; margin:0 0 8px; }
+.prompt-box p:last-child { margin:0; }
+.prompt-box .note { color:#94a3b8; }
+
+.four-layer { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0; }
+.layer-card { border-radius:12px; padding:14px 16px; }
+.lc-1 { background:#f0f9ff; border:1px solid #93c5fd; }
+.lc-2 { background:#fdf4ff; border:1px solid #d8b4fe; }
+.lc-3 { background:#fff7ed; border:1px solid #fed7aa; }
+.lc-4 { background:#f8fafc; border:1px solid #cbd5e1; }
+.layer-card .lc-label { font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+.lc-1 .lc-label { color:#1d4ed8; }
+.lc-2 .lc-label { color:#7c3aed; }
+.lc-3 .lc-label { color:#c2410c; }
+.lc-4 .lc-label { color:#64748b; }
+.layer-card .lc-name { font-size:14px; font-weight:800; color:var(--ink); margin-bottom:6px; }
+.layer-card .lc-what { font-size:12.5px; color:var(--ink-mid); line-height:1.6; margin-bottom:6px; }
+.layer-card .lc-eg   { font-size:11.5px; color:var(--ink-soft); }
+.layer-card .lc-freq { font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; display:inline-block; margin-top:6px; }
+.lc-1 .lc-freq { background:var(--primary-soft); color:var(--primary); }
+.lc-2 .lc-freq { background:var(--purple-soft); color:var(--purple); }
+.lc-3 .lc-freq { background:var(--orange-soft); color:var(--orange); }
+.lc-4 .lc-freq { background:#f1f5f9; color:#64748b; }
+
+.file-tree { background:#1e293b; border-radius:12px; padding:16px 20px; margin:16px 0; font-family:'Menlo','Consolas','Courier New',monospace; font-size:12.5px; line-height:2; }
+.ft-dir  { color:#7dd3fc; font-weight:700; }
+.ft-file { color:#86efac; }
+.ft-desc { color:#64748b; font-style:italic; font-size:11px; }
+.ft-indent { padding-left:20px; }
+.ft-indent2 { padding-left:40px; }
+
+.mock-window { background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(15,23,42,.08); margin:18px 0; }
+.mock-top { height:36px; background:#f8fafc; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 14px; gap:6px; }
+.mock-dot { width:10px; height:10px; border-radius:50%; }
+.mock-body { padding:16px; }
+
+.version-list { background:#f8fafc; border-radius:12px; border:1px solid var(--border); overflow:hidden; margin:16px 0; }
+.version-row { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--border); }
+.version-row:last-child { border-bottom:none; }
+.vr-name { font-size:13px; font-weight:700; color:var(--ink); font-family:monospace; }
+.vr-desc { font-size:12px; color:var(--ink-soft); }
+.vr-tag  { font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; }
+.vr-active { background:var(--green-soft); color:var(--green); }
+.vr-old    { background:#f1f5f9; color:var(--ink-soft); }
+.vr-final  { background:var(--primary-soft); color:var(--primary); }
+
+.edit-panel-demo { display:grid; grid-template-columns:1.1fr .9fr; gap:12px; }
+.ep-preview { border:1px solid var(--border); border-radius:10px; padding:12px; }
+.ep-editor  { border:1px solid var(--border); border-radius:10px; padding:12px; background:#f8fafc; }
+.ep-label   { font-size:10px; font-weight:800; letter-spacing:1px; color:var(--ink-soft); text-transform:uppercase; margin-bottom:8px; }
+.ep-field   { background:#fff; border:1px solid var(--border); border-radius:6px; padding:8px 10px; margin-bottom:8px; font-size:12px; color:var(--ink-mid); }
+.ep-field-label { font-size:10px; font-weight:700; color:var(--ink-soft); margin-bottom:3px; }
+
+.checklist { margin:16px 0; }
+.check-row { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.check-row:last-child { border-bottom:none; }
+.check-icon { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; margin-top:2px; }
+.ci-yes { background:var(--green-soft); color:var(--green); }
+.ci-no  { background:#fff7ed; color:var(--orange); }
+.check-text { font-size:13px; color:var(--ink-mid); line-height:1.6; }
+.check-text strong { color:var(--ink); }
+
+.divider { height:1px; background:var(--border); margin:28px 0; }
+.svg-wrap { overflow-x:auto; margin:20px 0; }
+.svg-wrap svg { display:block; max-width:100%; height:auto; }
+.svg-caption { font-size:11px; color:var(--ink-soft); text-align:center; margin-top:6px; letter-spacing:.5px; }
+
+.chapter-footer { background:linear-gradient(135deg,var(--purple-soft),var(--orange-soft)); border-radius:16px; padding:28px 32px; margin-top:12px; }
+.footer-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:8px; }
+.footer-text  { font-size:13.5px; color:var(--ink-mid); line-height:1.72; }
+.next-chapter { display:flex; align-items:center; gap:10px; margin-top:16px; font-size:13px; color:var(--primary); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- 系列导航 -->
+<div class="series-nav">
+  <div class="series-btn inactive">📘 10A · 入门篇</div>
+  <div class="series-btn inactive">📗 10B · 进阶篇</div>
+  <div class="series-btn active">📙 10C · 高级篇 · 可编辑与可维护</div>
+</div>
+
+<!-- ── 章节头部 ── -->
+<div class="chapter-header">
+  <div class="ch-eyebrow">Part 2 · 第 10 章 C · HTML 工具高级</div>
+  <h1 class="ch-title">让工具可编辑、可维护、可交付<br><span style="font-size:20px;opacity:.75">从"一次性页面"进化为"可维护系统"</span></h1>
+  <p class="ch-subtitle">很多人做 HTML 工具的第一版很快，但领导说"再改一版"时就开始痛苦——AI 每次从头改，越改越乱，最后连自己都看不懂了。这一章解决一个核心问题：怎么从一开始就把工具做成可以反复修改、可以版本切换、可以交接给别人的"轻量系统"。</p>
+  <div class="ch-takeaway">
+    <strong>核心认知：</strong>HTML 难改，不是因为它是代码；而是因为大多数人第一次就没把它做成系统。真正好改的 HTML 工具，让人改的是"参数和配置"，而不是"代码"。配置驱动 + 文件分层 + 版本管理，是让工具从"交一次"变成"用一年"的关键。
+  </div>
+</div>
+
+<!-- ── 小节一：核心问题 ── -->
+<div class="card">
+  <div class="section-label">小节一</div>
+  <h2 class="section-title">为什么第一次做出来很快，改到第三版就乱</h2>
+  <span class="section-pill pill-orange">问题诊断 · 根本原因</span>
+
+  <p class="body-text">这是使用 HTML 工具的人几乎无一例外都会遇到的情况：第一次生成，感觉 AI 太厉害了，10 分钟出了个漂亮页面；领导看了让改两处，第二次还行；等到第三次、第四次修改，AI 开始和自己前面生成的代码打架，改了这里坏了那里，最后整页重新生成，新版本比旧版本还乱。</p>
+
+  <p class="body-text">这个问题的根本原因不是 AI 不够好，也不是 HTML 太难改，而是：<strong>所有可变的内容——标题、数字、模块顺序、颜色主题、说明文字——都被混在了一份 HTML 文件里，没有任何分层</strong>。这样的文件，领导哪怕只是改一句标题，AI 也得理解整页结构才能精准定位，出错概率随修改次数指数上升。</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 700 170" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <rect width="700" height="170" rx="14" fill="#f8fafc"/>
+
+      <!-- 无结构版本 -->
+      <rect x="16" y="16" width="310" height="138" rx="12" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+      <text x="171" y="42" text-anchor="middle" font-size="12" font-weight="800" fill="#c2410c">❌ 一坨代码（无结构）</text>
+      <rect x="32" y="54" width="278" height="80" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+      <text x="171" y="76" text-anchor="middle" font-size="10" fill="#92400e">标题"2025Q3收入预测" ↕ 图表联动逻辑</text>
+      <text x="171" y="94" text-anchor="middle" font-size="10" fill="#92400e">↕ 计算公式 ↕ 颜色配置 ↕ 结论文字</text>
+      <text x="171" y="112" text-anchor="middle" font-size="10" fill="#92400e">↕ 模块顺序 ↕ 数据数组 ↕ 样式</text>
+      <text x="171" y="148" text-anchor="middle" font-size="10" font-weight="700" fill="#dc2626">改标题 → 整页重理解 → 容易出错</text>
+
+      <!-- 箭头 -->
+      <text x="370" y="92" text-anchor="middle" font-size="20" fill="#94a3b8">→</text>
+
+      <!-- 分层版本 -->
+      <rect x="394" y="16" width="290" height="138" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="539" y="42" text-anchor="middle" font-size="12" font-weight="800" fill="#15803d">✅ 分层设计（有结构）</text>
+      <rect x="410" y="52" width="258" height="20" rx="4" fill="#dbeafe"/>
+      <text x="539" y="66" text-anchor="middle" font-size="10" font-weight="700" fill="#1d4ed8">config.js — 标题/数字/顺序/显隐</text>
+      <rect x="410" y="76" width="258" height="20" rx="4" fill="#dcfce7"/>
+      <text x="539" y="90" text-anchor="middle" font-size="10" font-weight="700" fill="#15803d">data/ — 数据文件（Excel/CSV）</text>
+      <rect x="410" y="100" width="258" height="20" rx="4" fill="#ede9fe"/>
+      <text x="539" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#7c3aed">index.html — 页面壳（只负责渲染）</text>
+      <text x="539" y="148" text-anchor="middle" font-size="10" font-weight="700" fill="#16a34a">改标题 → 只改config → 页面自动更新</text>
+    </svg>
+  </div>
+  <p class="svg-caption">同一个 HTML 工具，"一坨代码"vs"分层设计"——改动第3次时的体验天壤之别</p>
+
+  <p class="body-text">解法不是"让 AI 更小心地改"，而是从第一次生成时就把工具设计成"分层结构"：<strong>可变的内容（标题、数字、顺序）提取到配置层，数据独立存放，页面只负责渲染。</strong>这样，改标题只需要改配置里的一行字符串，页面自动更新，AI 不需要理解整页逻辑。</p>
+</div>
+
+<!-- ── 小节二：四层结构 ── -->
+<div class="card">
+  <div class="section-label">小节二</div>
+  <h2 class="section-title">HTML 工具的四层结构——领导最常改的在哪层</h2>
+  <span class="section-pill pill-blue">工程思维 · 分层模型</span>
+
+  <p class="body-text">从工程角度看，一个 HTML 报告工具本质上由四层构成。理解这四层，你就能判断"这次修改发生在哪层"，以及"这层应该怎么设计才好改"。</p>
+
+  <div class="four-layer">
+    <div class="layer-card lc-1">
+      <div class="lc-label">最常被改</div>
+      <div class="lc-name">内容层</div>
+      <div class="lc-what">标题、结论文字、数字、标签名称、说明文案、页脚备注</div>
+      <div class="lc-eg">例："2025Q3收入预测"改成"2025H2经营展望"</div>
+      <div class="lc-freq">修改频率：每次汇报都可能改</div>
+    </div>
+    <div class="layer-card lc-2">
+      <div class="lc-label">偶尔被改</div>
+      <div class="lc-name">结构层</div>
+      <div class="lc-what">模块顺序、某块提前或隐藏、卡片数量增减、页面分区调整</div>
+      <div class="lc-eg">例："结论区提到最前面，图表区放后面"</div>
+      <div class="lc-freq">修改频率：几次汇报后调整一次</div>
+    </div>
+    <div class="layer-card lc-3">
+      <div class="lc-label">偶尔被改</div>
+      <div class="lc-name">样式层</div>
+      <div class="lc-what">颜色主题、字号大小、卡片间距、强调色、暗色/亮色切换</div>
+      <div class="lc-eg">例："换成更稳重的深色主题，适合董事会汇报"</div>
+      <div class="lc-freq">修改频率：面向不同受众时调整</div>
+    </div>
+    <div class="layer-card lc-4">
+      <div class="lc-label">尽量不要改</div>
+      <div class="lc-name">逻辑层</div>
+      <div class="lc-what">计算公式、联动逻辑、数据关联关系、图表渲染算法</div>
+      <div class="lc-eg">例：收入计算公式、滑块联动触发逻辑</div>
+      <div class="lc-freq">修改频率：业务逻辑变化时才改</div>
+    </div>
+  </div>
+
+  <p class="body-text">这个分层揭示了一个关键洞察：<strong>大多数汇报修改，只发生在内容层和结构层；真正需要"重构"的，通常只有逻辑层</strong>。这意味着，如果你把内容层和结构层做成可配置的，90% 以上的修改请求都不需要 AI 重写代码——你自己改几行配置就行了。</p>
+
+  <div class="insight-box">
+    <div class="ins-label">判断标准</div>
+    <p>看一个工具设计得好不好，有一个简单测试：<strong>领导说"把标题改一下"</strong>——你需要打开 HTML 代码找到 h1 标签改字符串（差），还是打开 config.js 改 title 变量的值（好），还是直接在页面里的编辑框里改（最好）？改一个标题的难度，折射出整个工具的可维护性设计水平。</p>
+  </div>
+</div>
+
+<!-- ── 小节三：配置驱动 ── -->
+<div class="card">
+  <div class="section-label">小节三</div>
+  <h2 class="section-title">配置驱动——让人改参数，不是改代码</h2>
+  <span class="section-pill pill-purple">核心原则 · 实现方法</span>
+
+  <p class="body-text">配置驱动是让 HTML 工具可维护的核心原则，说起来很简单：<strong>把高频会变的内容提取出来，放进一个"配置对象"，页面根据配置渲染，而不是把内容直接写死在 HTML 里</strong>。改内容时只改配置，页面自动跟着变，完全不需要接触 HTML 和 JavaScript 的逻辑代码。</p>
+
+  <p class="body-text">用最简单的例子说明：以前你在 HTML 里写 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px">&lt;h1&gt;2025年Q3收入预测&lt;/h1&gt;</code>，改标题要打开 HTML 文件找到这行。配置驱动的做法是：</p>
+
+  <div class="code-block"><span class="comment">// config.js —— 所有可变内容集中在这里</span>
+<span class="tag">const</span> <span class="key">CONFIG</span> = {
+  <span class="dim">// 内容层配置</span>
+  <span class="key">title</span>:       <span class="str">"2025年Q3收入预测"</span>,        <span class="comment">// ← 改这里</span>
+  <span class="key">subtitle</span>:    <span class="str">"战略会汇报 · 财务部"</span>,
+  <span class="key">reportDate</span>:  <span class="str">"2025年9月"</span>,
+
+  <span class="dim">// 核心指标</span>
+  <span class="key">metrics</span>: {
+    <span class="key">revenueTarget</span>: <span class="val">416</span>,         <span class="comment">// 亿元</span>
+    <span class="key">growthRate</span>:    <span class="val">0.143</span>,        <span class="comment">// 14.3%</span>
+    <span class="key">confidence</span>:   <span class="val">0.74</span>,
+  },
+
+  <span class="dim">// 结构层配置（控制模块显隐和顺序）</span>
+  <span class="key">modules</span>: {
+    <span class="key">showOverview</span>:  <span class="val">true</span>,
+    <span class="key">showScenario</span>:  <span class="val">true</span>,
+    <span class="key">showRiskNote</span>:  <span class="val">false</span>,        <span class="comment">// ← 这次汇报先隐藏风险说明</span>
+    <span class="key">moduleOrder</span>:  [<span class="str">"overview"</span>, <span class="str">"charts"</span>, <span class="str">"scenario"</span>],
+  },
+
+  <span class="dim">// 样式层配置</span>
+  <span class="key">theme</span>: <span class="str">"dark"</span>,                    <span class="comment">// "light" | "dark"</span>
+  <span class="key">accentColor</span>: <span class="str">"#2563eb"</span>,
+};
+  </div>
+
+  <p class="body-text">有了这个配置文件，每次汇报前的准备工作简化成：打开 config.js，改几个值，保存，刷新浏览器。整个过程不需要接触 HTML 结构或 JavaScript 逻辑，也不需要重新找 Claude。更重要的是，这个配置文件比整页 HTML 代码小得多，就算你把配置文件发给 Claude 说"帮我改几处"，Claude 也能精准定位，不会误伤其他地方。</p>
+
+  <div class="prompt-box">
+    <div class="pb-label">让 AI 生成"可配置版本"的提示词关键词</div>
+    <p>请把页面按<span style="color:#fde68a">"可维护系统"</span>来生成，而不是一次性静态页面。具体要求：</p>
+    <p>① 所有可编辑的标题、数字、结论文案、模块显隐状态，<span style="color:#fde68a">都集中到页面顶部的一个 CONFIG 对象</span>里，注释写清楚每个字段的含义<br>
+    ② 每个页面模块要有明确的 id 和注释标签，便于 AI 后续精准定位修改<br>
+    ③ 数据数组单独放在 DATA 对象里，和页面渲染逻辑分离<br>
+    ④ 复杂的计算联动逻辑<span style="color:#fde68a">加上"请勿修改"注释</span>，保护核心逻辑不被误改<br>
+    ⑤ 整个 HTML 文件的结构按"配置区 → 数据区 → 逻辑区 → 渲染区"的顺序组织</p>
+  </div>
+</div>
+
+<!-- ── 小节四：版本管理 ── -->
+<div class="card">
+  <div class="section-label">小节四</div>
+  <h2 class="section-title">版本管理——领导说"还是第一版好"时，你能立刻切回去</h2>
+  <span class="section-pill pill-teal">版本控制 · 防止失控</span>
+
+  <p class="body-text">配置驱动带来了一个意想不到的额外好处：版本管理变得极其简单。以前做 Word 文档，"上一个版本"意味着 Ctrl+Z 到死，或者找到三天前备份的 "报告_v3_最终_领导改_真最终.docx"。现在，有了 config.js，每次汇报前保存一份配置文件就是一个版本，切换版本只需要替换配置文件。</p>
+
+  <div class="version-list">
+    <div class="version-row">
+      <div>
+        <div class="vr-name">config_v1_初版.js</div>
+        <div class="vr-desc">2025-09-12 · 首次提交给CFO审阅的版本</div>
+      </div>
+      <div class="vr-tag vr-old">归档</div>
+    </div>
+    <div class="version-row">
+      <div>
+        <div class="vr-name">config_v2_CFO反馈.js</div>
+        <div class="vr-desc">2025-09-14 · 按CFO意见调整了情景假设和风险说明</div>
+      </div>
+      <div class="vr-tag vr-old">归档</div>
+    </div>
+    <div class="version-row">
+      <div>
+        <div class="vr-name">config_v3_董事会版.js</div>
+        <div class="vr-desc">2025-09-18 · 董事会汇报版本，隐藏细节、突出结论</div>
+      </div>
+      <div class="vr-tag vr-final">当前使用</div>
+    </div>
+    <div class="version-row" style="background:#f0fdf4">
+      <div>
+        <div class="vr-name">config_v4_运营共享版.js</div>
+        <div class="vr-desc">2025-09-20 · 发给运营团队的版本，显示执行层细节</div>
+      </div>
+      <div class="vr-tag vr-active">进行中</div>
+    </div>
+  </div>
+
+  <p class="body-text">注意这里还有一个隐藏价值：<strong>同一套 HTML 页面壳 + 不同的配置文件，可以针对不同受众生成不同版本</strong>。董事会版隐藏操作细节、突出宏观结论；运营团队版显示执行层数字和风险提示；外部投资者版隐藏内部口径。切换不同配置文件，就是切换不同受众版本——整个过程比重新做一份 PPT 快十倍。</p>
+
+  <div class="example-box">
+    <div class="ex-label">真实场景</div>
+    <p>财务总监老赵的收入预测工具经历了四轮修改。第一轮 CFO 看了觉得情景假设太乐观，改了参数；第二轮改了风险说明；第三轮准备董事会汇报，把执行细节隐藏了；最后运营团队要一个包含执行层细节的版本。</p>
+    <p>因为有了配置驱动，老赵的每次修改都只是改了一个 config.js 文件，5分钟以内。更重要的是，董事会现场 CEO 突然说"我更想先看之前那个有细节的版本"——老赵直接替换了一个配置文件，10秒内切换完成，现场毫无尴尬。</p>
+  </div>
+</div>
+
+<!-- ── 小节五：文件分层 ── -->
+<div class="card">
+  <div class="section-label">小节五</div>
+  <h2 class="section-title">文件分层——页面、配置、数据、说明，各归各位</h2>
+  <span class="section-pill pill-blue">文件架构 · 分工设计</span>
+
+  <p class="body-text">当工具变复杂或需要长期维护时，把所有东西塞进一个 HTML 文件的弊端就会完全暴露。正确的做法是按职责分离：每类文件只做一件事，改某一类内容只改对应类型的文件。</p>
+
+  <div class="file-tree">
+<span class="ft-dir">📁 revenue-forecast/</span>
+<span class="ft-indent"><span class="ft-file">📄 index.html</span>      <span class="ft-desc">← 页面壳，只负责渲染，不含业务逻辑</span></span>
+<span class="ft-indent"><span class="ft-file">📄 config.js</span>       <span class="ft-desc">← 标题/顺序/显隐/主题/版本信息</span></span>
+<span class="ft-indent"><span class="ft-dir">📁 data/</span></span>
+<span class="ft-indent2"><span class="ft-file">📄 quarterly.csv</span>   <span class="ft-desc">← 季度数据，直接从Excel导出更新</span></span>
+<span class="ft-indent2"><span class="ft-file">📄 scenarios.json</span>  <span class="ft-desc">← 三个情景的假设参数</span></span>
+<span class="ft-indent"><span class="ft-dir">📁 assets/</span></span>
+<span class="ft-indent2"><span class="ft-file">📄 logo.png</span>        <span class="ft-desc">← 公司logo</span></span>
+<span class="ft-indent"><span class="ft-file">📄 README.md</span>       <span class="ft-desc">← 怎么更新数据/怎么改版本/注意事项</span></span>
+  </div>
+
+  <p class="body-text">这个结构带来了清晰的分工：<strong>更新数据</strong>只改 data/ 里的文件（通常直接从 Excel 另存为 CSV 覆盖）；<strong>改标题和顺序</strong>只改 config.js；<strong>改页面样式和交互逻辑</strong>才需要动 index.html。不同的人可以只负责自己的层，互不干扰。</p>
+
+  <p class="body-text">README.md 是经常被忽略但最重要的文件。它解决的问题是：<strong>两个月后，你自己也忘了怎么改，或者你离职了，接手的同事不知道从哪里下手</strong>。一份好的 README 不需要长，只需要三件事：如何更新数据、如何切换版本、哪些地方不能随便改（受保护的计算逻辑）。</p>
+
+  <div class="prompt-box">
+    <div class="pb-label">让 AI 一次生成分层版本的提示词</div>
+    <p>请不要只输出一个 index.html。请按以下分块一起生成这个工具的完整文件结构：</p>
+    <p>① <span style="color:#86efac">index.html</span>：页面壳，只负责渲染，不要把可变内容写死在里面<br>
+    ② <span style="color:#86efac">config.js</span>：所有可变内容，包括标题、摘要、数字、模块显隐状态、主题设置<br>
+    ③ <span style="color:#86efac">data/quarterly.csv</span>：季度数据，格式参考我提供的示例数据<br>
+    ④ <span style="color:#86efac">README.md</span>：说明如何更新数据、如何切换版本、哪些文件不能随便修改</p>
+    <p>确保 index.html 通过 CONFIG 对象读取 config.js 中的所有配置，页面任何可见文字和数字都不要写死，全部从配置中渲染。</p>
+  </div>
+
+  <div class="warn-box">
+    <div class="w-label">实际操作提示</div>
+    <p>分层文件结构在 Claude 网页版的聊天里有一个现实限制：浏览器出于安全限制，HTML 文件不能直接读取本地 CSV 文件（文件系统访问受限）。完整的分层方案需要在 Claude Code 本地模式下运行，或者让 index.html 通过"上传按钮"读取用户选择的 CSV 文件。对于简单的工具，可以把数据放在 HTML 文件内的 DATA 对象里，不用独立 CSV 文件。</p>
+  </div>
+</div>
+
+<!-- ── 小节六：编辑面板 ── -->
+<div class="card">
+  <div class="section-label">小节六</div>
+  <h2 class="section-title">内嵌编辑面板——让汇报现场实时改，不需要打开代码</h2>
+  <span class="section-pill pill-orange">高级功能 · 汇报现场神器</span>
+
+  <p class="body-text">配置驱动的终极形态是：把配置界面直接内嵌在工具页面里。这样，汇报现场领导说"把这块提前"或"这个数字再突出一点"，你不用打开任何代码文件，直接在页面侧边的编辑面板里点几下，页面实时更新，汇报完全不中断。</p>
+
+  <div class="mock-window">
+    <div class="mock-top">
+      <div class="mock-dot" style="background:#fb7185"></div>
+      <div class="mock-dot" style="background:#fbbf24"></div>
+      <div class="mock-dot" style="background:#34d399"></div>
+      <span style="font-size:11px;color:#64748b;margin-left:8px">收入预测 · 编辑模式（仅管理员可见）</span>
+    </div>
+    <div class="mock-body">
+      <div class="edit-panel-demo">
+        <div class="ep-preview">
+          <div class="ep-label">📊 报告预览（实时）</div>
+          <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px;margin-bottom:8px">
+            <div style="font-size:11px;color:#64748b;font-weight:700">页面标题</div>
+            <div style="font-size:16px;font-weight:800;color:#0f172a;margin-top:2px">2025年Q3收入预测</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin-bottom:8px">
+            <div style="font-size:11px;color:#64748b;font-weight:700">结论摘要</div>
+            <div style="font-size:12px;color:#334155;margin-top:4px;line-height:1.6">预测全年收入416亿，较去年+14.3%，完成目标可能性约74%。</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <div style="background:#eff6ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;color:#1d4ed8">总览 ✓</div>
+            <div style="background:#eff6ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;color:#1d4ed8">图表 ✓</div>
+            <div style="background:#f1f5f9;border-radius:6px;padding:4px 8px;font-size:10px;color:#64748b">风险 ○</div>
+          </div>
+        </div>
+        <div class="ep-editor">
+          <div class="ep-label">⚙ 编辑面板</div>
+          <div class="ep-field">
+            <div class="ep-field-label">页面标题</div>
+            2025年Q3收入预测
+          </div>
+          <div class="ep-field">
+            <div class="ep-field-label">摘要说明</div>
+            预测全年收入416亿...
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="font-size:10px;font-weight:700;color:#64748b;margin-bottom:4px">模块显隐</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;justify-content:space-between;font-size:11px;background:#fff;padding:4px 8px;border-radius:4px;border:1px solid #e2e8f0"><span>总览区</span><span style="color:#16a34a;font-weight:700">显示</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;background:#fff;padding:4px 8px;border-radius:4px;border:1px solid #e2e8f0"><span>图表区</span><span style="color:#16a34a;font-weight:700">显示</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;background:#fff;padding:4px 8px;border-radius:4px;border:1px solid #e2e8f0"><span>风险说明</span><span style="color:#94a3b8;font-weight:700">隐藏</span></div>
+            </div>
+          </div>
+          <div style="background:#fee2e2;border-radius:6px;padding:6px 8px;font-size:10px;color:#dc2626;font-weight:700">🔒 计算逻辑受保护（不在此处修改）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="body-text">这个编辑面板不是什么复杂的后台系统，而是在 HTML 页面里加一个侧边栏，里面放几个输入框、勾选框和开关。用户在这里改值，JavaScript 实时更新页面渲染。<strong>受保护的计算逻辑区域在面板里明确标注"不在此处修改"</strong>，避免汇报现场误操作破坏核心逻辑。</p>
+
+  <p class="body-text">编辑面板支持的修改类型应该围绕"领导最常改什么"来设计——而不是越全越好。根据实际汇报经验，高频修改类型只有四种：<strong>文案类</strong>（换标题/换结论措辞）、<strong>顺序类</strong>（某块提前/某块压缩）、<strong>权重类</strong>（这个数字要更突出）、<strong>增删类</strong>（临时加风险提示/隐藏某个模块）。只需要把这四类开放出来，就能处理 95% 的现场修改需求。</p>
+</div>
+
+<!-- ── 小节七：可交付标准 ── -->
+<div class="card">
+  <div class="section-label">小节七</div>
+  <h2 class="section-title">可交付标准——三个问题判断工具是否真正可维护</h2>
+  <span class="section-pill pill-green">交付标准 · 自检清单</span>
+
+  <p class="body-text">在把工具交给其他人使用或长期维护之前，有三个问题可以帮你判断它是否达到了真正可维护的标准。这三个问题来自大量实际工具使用反馈，覆盖了维护中最常见的失控点：</p>
+
+  <div style="background:#f8fafc;border-radius:12px;padding:20px;border:1px solid var(--border);margin:18px 0">
+    <div style="font-size:13.5px;font-weight:800;color:var(--ink);margin-bottom:14px">三个自检问题</div>
+    <div class="checklist">
+      <div class="check-row">
+        <div class="check-icon ci-yes">①</div>
+        <div class="check-text"><strong>哪些内容以后一定会被改？</strong>——这些内容抽成了配置，还是写死在 HTML 里？如果是后者，每次修改都要找代码，出错率随修改次数累积。判断标准：更新数据/改标题不需要打开 HTML 代码。</div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon ci-yes">②</div>
+        <div class="check-text"><strong>哪些内容只是被展示，不该和页面结构混在一起？</strong>——数据（季度数字、人员名单、指标值）是否独立存放？如果数据和 HTML 混在一起，每次数据更新都是一次"改代码"，不是"更新数据"。判断标准：换一份数据不需要 AI 介入。</div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon ci-yes">③</div>
+        <div class="check-text"><strong>别人接手时，能不能在 3 分钟内看懂怎么改？</strong>——有没有 README 说明？配置文件有没有注释？受保护的逻辑有没有标注？如果没有，你一旦离职或者交接，接手的人只能从头找 AI 重新生成，之前所有的迭代积累全部浪费。</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="body-text">三个问题全部通过，你的工具才算真正完成了"从页面到系统"的进化。一个"一次性页面"，做完就锁死了，每次修改都是一次痛苦；一个"可维护系统"，交付之后还能继续成长——下次更新数据5分钟，下次调整配置2分钟，下次切版本10秒。</p>
+
+  <div class="perception-box">
+    <div class="p-label">最终认知</div>
+    <p>HTML 难改，不是因为它是代码。Word 也难改——改了第17版之后你还记得第3版的结论是什么吗？HTML 难改，是因为大多数人第一次就没把它做成系统。而做成系统的代价，其实只是在第一次生成时多写一段提示词，让 AI 帮你把配置抽出来、文件分好层、README 写清楚。总额外时间：20分钟。换来的，是之后每次修改都比从头重做快几十倍。这个投入回报比，是这本书里最高的。</p>
+  </div>
+</div>
+
+<!-- ── 小节八：三章总结 ── -->
+<div class="card">
+  <div class="section-label">小节八 · 系列总结</div>
+  <h2 class="section-title">第10章三篇合并来看：HTML 工具的完整成长路径</h2>
+  <span class="section-pill pill-purple">系列收口 · 路径全图</span>
+
+  <p class="body-text">回顾这三章，它们描述的是同一件事的三个阶段：</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <rect width="700" height="160" rx="14" fill="#f8fafc"/>
+
+      <rect x="16"  y="20" width="200" height="120" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+      <text x="116" y="48" text-anchor="middle" font-size="11" font-weight="800" fill="#1d4ed8">10A · 入门篇</text>
+      <text x="116" y="70" text-anchor="middle" font-size="13" font-weight="800" fill="#1e3a8a">会做</text>
+      <text x="116" y="90" text-anchor="middle" font-size="10.5" fill="#2563eb">认知转变</text>
+      <text x="116" y="106" text-anchor="middle" font-size="10.5" fill="#2563eb">第一个工具</text>
+      <text x="116" y="122" text-anchor="middle" font-size="10.5" fill="#2563eb">提示词模板</text>
+
+      <text x="258" y="82" text-anchor="middle" font-size="18" fill="#94a3b8">→</text>
+
+      <rect x="270" y="20" width="160" height="120" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="350" y="48" text-anchor="middle" font-size="11" font-weight="800" fill="#15803d">10B · 进阶篇</text>
+      <text x="350" y="70" text-anchor="middle" font-size="13" font-weight="800" fill="#14532d">会用好</text>
+      <text x="350" y="90" text-anchor="middle" font-size="10.5" fill="#16a34a">报告产品化</text>
+      <text x="350" y="106" text-anchor="middle" font-size="10.5" fill="#16a34a">参数推演</text>
+      <text x="350" y="122" text-anchor="middle" font-size="10.5" fill="#16a34a">汇报现场演示</text>
+
+      <text x="472" y="82" text-anchor="middle" font-size="18" fill="#94a3b8">→</text>
+
+      <rect x="484" y="20" width="200" height="120" rx="12" fill="#fdf4ff" stroke="#d8b4fe" stroke-width="2"/>
+      <text x="584" y="48" text-anchor="middle" font-size="11" font-weight="800" fill="#7c3aed">10C · 高级篇</text>
+      <text x="584" y="70" text-anchor="middle" font-size="13" font-weight="800" fill="#4c1d95">会持续用</text>
+      <text x="584" y="90" text-anchor="middle" font-size="10.5" fill="#7c3aed">配置驱动</text>
+      <text x="584" y="106" text-anchor="middle" font-size="10.5" fill="#7c3aed">文件分层</text>
+      <text x="584" y="122" text-anchor="middle" font-size="10.5" fill="#7c3aed">可交付系统</text>
+    </svg>
+  </div>
+  <p class="svg-caption">三篇的递进关系：会做 → 会用好 → 会持续用</p>
+
+  <p class="body-text">大多数人用 AI 生成 HTML 工具，停留在"会做"阶段——能出一个漂亮的页面，但改到第三版就痛苦，发给别人就失联。真正的竞争力在"会持续用"这个阶段：你做出的工具，三个月后还能轻松更新数据；你离职后，接手的同事看了 README 三分钟就能继续维护；你的工具文件夹，每次汇报都在复用同一套壳和逻辑，只是换配置和数据。这是本书里所有技能里，综合 ROI 最高的一个。</p>
+</div>
+
+<!-- ── 章节结尾卡片 ── -->
+<div class="chapter-footer">
+  <div class="footer-title">第10章三篇核心带走</div>
+  <div class="footer-text">HTML 工具的三层成长：①会做（用提示词模板生成工具，保存 .html，双击打开）→②会用好（设计四模块结构，加入参数推演能力，让汇报能现场演示）→③会持续用（配置驱动，文件分层，版本管理，README 写好，让工具可交付可维护）。三个阶段，最后一个最值钱，也最容易被忽略。</div>
+  <div class="next-chapter">→ 下一章：重构你的个人工作流——用流程审计法，识别日常哪些环节该让 AI 系统性接管</div>
+</div>
+
+</div><!-- end .page -->
+</body>
+</html>

@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第13章 搭建你的第一条自动化工作流</title>
+<style>
+:root {
+  --primary: #2563eb; --primary-soft: #dbeafe;
+  --accent: #f43f5e;  --accent-soft: #ffe4e6;
+  --ink: #0f172a; --ink-mid: #334155; --ink-soft: #64748b;
+  --surface: #f1f5f9; --card: #ffffff; --border: rgba(15,23,42,.07);
+  --orange: #f97316; --orange-soft: #ffedd5;
+  --green: #16a34a;  --green-soft: #dcfce7;
+  --purple: #7c3aed; --purple-soft: #ede9fe;
+  --teal: #0891b2;   --teal-soft: #cffafe;
+  --gold: #d97706;   --gold-soft: #fef3c7;
+  --emerald: #059669; --emerald-soft: #d1fae5;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif; background: var(--surface); color: var(--ink); line-height: 1.75; font-size: 15px; }
+.page { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.chapter-header {
+  background: linear-gradient(135deg, #052e16 0%, #065f46 45%, #0f4c5c 100%);
+  border-radius: 20px; padding: 48px 44px; color: #fff; margin-bottom: 36px; position: relative; overflow: hidden;
+}
+.chapter-header::before { content:''; position:absolute; top:-40px; right:-40px; width:260px; height:260px; background:radial-gradient(circle,rgba(5,150,105,.45) 0%,transparent 70%); pointer-events:none; }
+.chapter-header::after  { content:''; position:absolute; bottom:-40px; left:10px; width:200px; height:200px; background:radial-gradient(circle,rgba(8,145,178,.25) 0%,transparent 70%); pointer-events:none; }
+.ch-eyebrow { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:14px; }
+.ch-title   { font-size:27px; font-weight:800; line-height:1.25; color:#fff; margin-bottom:16px; }
+.ch-subtitle{ font-size:14px; color:rgba(255,255,255,.65); max-width:560px; line-height:1.65; margin-bottom:24px; }
+.ch-takeaway{ background:rgba(255,255,255,.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:16px 20px; font-size:13.5px; color:rgba(255,255,255,.9); line-height:1.65; position:relative; z-index:1; }
+.ch-takeaway strong { color:#fff; }
+
+.card { background:var(--card); border-radius:16px; border:1px solid var(--border); padding:32px 36px; margin-bottom:24px; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+.section-label { font-size:10.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--emerald); margin-bottom:8px; }
+.section-title { font-size:21px; font-weight:800; color:var(--ink); line-height:1.3; margin-bottom:6px; }
+.section-pill  { display:inline-block; font-size:12px; font-weight:600; padding:3px 12px; border-radius:20px; margin-bottom:18px; }
+.pill-blue    { background:var(--primary-soft);  color:var(--primary); }
+.pill-green   { background:var(--green-soft);    color:var(--green); }
+.pill-orange  { background:var(--orange-soft);   color:var(--orange); }
+.pill-purple  { background:var(--purple-soft);   color:var(--purple); }
+.pill-teal    { background:var(--teal-soft);     color:var(--teal); }
+.pill-gold    { background:var(--gold-soft);     color:var(--gold); }
+.pill-emerald { background:var(--emerald-soft);  color:var(--emerald); }
+
+.body-text { font-size:14.5px; line-height:1.82; color:var(--ink-mid); margin-bottom:16px; }
+.body-text:last-child { margin-bottom:0; }
+.body-text strong { color:var(--ink); font-weight:700; }
+
+.example-box { background:var(--orange-soft); border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.example-box .ex-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.example-box p { font-size:13.5px; line-height:1.72; color:#3d1108; margin:0 0 8px; }
+.example-box p:last-child { margin-bottom:0; }
+
+.insight-box { background:#f0f9ff; border-left:3px solid var(--teal); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.insight-box .ins-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--teal); margin-bottom:8px; }
+.insight-box p { font-size:13.5px; line-height:1.72; color:#0c4a6e; margin:0 0 6px; }
+.insight-box p:last-child { margin-bottom:0; }
+
+.warn-box { background:#fff7ed; border-left:3px solid var(--orange); border-radius:0 10px 10px 0; padding:16px 18px; margin:18px 0; }
+.warn-box .w-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.warn-box p { font-size:13.5px; line-height:1.72; color:#7c2d12; margin:0 0 6px; }
+.warn-box p:last-child { margin-bottom:0; }
+
+.perception-box { background:var(--emerald-soft); border-radius:12px; padding:18px 22px; margin:20px 0; }
+.perception-box .p-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--emerald); margin-bottom:8px; }
+.perception-box p { font-size:13.5px; line-height:1.72; color:#064e3b; margin:0; }
+
+.key-box { background:linear-gradient(135deg,var(--emerald-soft),#f0f9ff); border:1.5px solid #6ee7b7; border-radius:12px; padding:18px 22px; margin:18px 0; }
+.key-box .kb-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--emerald); margin-bottom:10px; }
+.key-box p { font-size:13.5px; line-height:1.72; color:#064e3b; margin:0 0 6px; }
+.key-box p:last-child { margin-bottom:0; }
+
+/* Coze 备注框 */
+.coze-box { background:#fdf4ff; border:1.5px dashed #c084fc; border-radius:12px; padding:18px 22px; margin:22px 0; }
+.coze-box .cz-label { font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#9333ea; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.coze-box p { font-size:13px; line-height:1.72; color:#581c87; margin:0 0 6px; }
+.coze-box p:last-child { margin-bottom:0; }
+.coze-node-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:10px 0; }
+.coze-node { background:#fff; border:1.5px solid #c084fc; border-radius:8px; padding:5px 12px; font-size:12px; font-weight:700; color:#7c3aed; }
+.coze-arrow { font-size:16px; color:#c084fc; }
+
+.code-block { background:#0d1117; border-radius:12px; padding:20px 22px; margin:16px 0; font-family:'Menlo','Consolas','Courier New',monospace; font-size:12px; line-height:1.9; overflow-x:auto; white-space:pre; border:1px solid rgba(255,255,255,.06); }
+.code-block .comment { color:#8b949e; font-style:italic; }
+.code-block .key     { color:#79c0ff; }
+.code-block .fn      { color:#d2a8ff; }
+.code-block .val     { color:#a5f3fc; }
+.code-block .str     { color:#a5d6ff; }
+.code-block .num     { color:#ffa657; }
+.code-block .kw      { color:#ff7b72; }
+.code-block .dim     { color:#6e7681; }
+.code-block .hi      { color:#7ee787; font-weight:bold; }
+.code-block .section { color:#f0883e; font-weight:bold; }
+.code-block .prompt  { color:#e6edf3; }
+
+.code-header { background:#161b22; border-radius:12px 12px 0 0; padding:10px 18px; display:flex; align-items:center; gap:8px; margin-bottom:-2px; border:1px solid rgba(255,255,255,.06); border-bottom:none; }
+.code-header .ch-dot { width:10px; height:10px; border-radius:50%; }
+.code-header .ch-filename { font-size:11.5px; font-weight:700; color:#8b949e; margin-left:4px; font-family:monospace; }
+.code-header .ch-lang { margin-left:auto; font-size:10px; font-weight:700; color:#3fb950; letter-spacing:1px; }
+.code-block-wrap { margin:16px 0; }
+.code-block-wrap .code-block { border-radius:0 0 12px 12px; margin-top:0; }
+
+.step-list { margin:18px 0; }
+.step-row  { display:flex; gap:14px; margin-bottom:20px; align-items:flex-start; }
+.step-num  { width:32px; height:32px; border-radius:50%; background:var(--emerald); color:#fff; font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.step-num-blue { background:var(--primary); }
+.step-content { flex:1; }
+.step-content .s-title { font-size:14px; font-weight:800; color:var(--ink); margin-bottom:6px; }
+.step-content .s-desc  { font-size:13.5px; line-height:1.75; color:var(--ink-mid); }
+
+.flow-pipe { display:flex; flex-direction:column; gap:0; margin:20px 0; }
+.flow-node { border-radius:12px; padding:14px 18px; position:relative; }
+.flow-arrow { text-align:center; font-size:20px; color:#94a3b8; line-height:1.4; }
+.fn-trigger { background:#f0fdf4; border:1.5px solid #86efac; }
+.fn-process { background:#eff6ff; border:1.5px solid #93c5fd; }
+.fn-llm     { background:#f5f3ff; border:1.5px solid #c4b5fd; }
+.fn-cond    { background:#fff7ed; border:1.5px solid #fed7aa; }
+.fn-loop    { background:#fdf4ff; border:1.5px solid #e9d5ff; }
+.fn-output  { background:var(--emerald-soft); border:1.5px solid #6ee7b7; }
+.flow-node .fn-badge { font-size:10px; font-weight:800; letter-spacing:1px; padding:2px 8px; border-radius:4px; display:inline-block; margin-bottom:6px; }
+.fn-trigger .fn-badge { background:#dcfce7; color:#15803d; }
+.fn-process .fn-badge { background:#dbeafe; color:#1d4ed8; }
+.fn-llm     .fn-badge { background:#ede9fe; color:#7c3aed; }
+.fn-cond    .fn-badge { background:#fed7aa; color:#c2410c; }
+.fn-loop    .fn-badge { background:#f3e8ff; color:#9333ea; }
+.fn-output  .fn-badge { background:#a7f3d0; color:#065f46; }
+.flow-node .fn-title { font-size:13.5px; font-weight:800; color:var(--ink); margin-bottom:4px; }
+.flow-node .fn-desc  { font-size:12.5px; color:var(--ink-mid); line-height:1.62; }
+.flow-node .fn-code  { font-size:11.5px; font-family:monospace; color:var(--ink-soft); margin-top:5px; background:rgba(0,0,0,.04); padding:4px 8px; border-radius:4px; }
+
+.tier-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:20px 0; }
+.tier-box { border-radius:12px; padding:16px 14px; text-align:center; }
+.tier-1 { background:var(--primary-soft);  border:1.5px solid #93c5fd; }
+.tier-2 { background:var(--emerald-soft);  border:1.5px solid #6ee7b7; }
+.tier-3 { background:var(--gold-soft);     border:1.5px solid #fcd34d; }
+.tier-box .t-emoji { font-size:22px; margin-bottom:6px; }
+.tier-box .t-name  { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:6px; }
+.tier-box .t-who   { font-size:11px; font-weight:700; margin-bottom:6px; }
+.tier-1 .t-who { color:var(--primary); }
+.tier-2 .t-who { color:var(--emerald); }
+.tier-3 .t-who { color:var(--gold); }
+.tier-box .t-desc  { font-size:11.5px; line-height:1.6; color:var(--ink-soft); }
+
+.pattern-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+.pattern-card { border-radius:12px; padding:16px 18px; border:1.5px solid var(--border); background:#fff; }
+.pattern-card .pc-num   { font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px; }
+.pattern-card .pc-name  { font-size:14px; font-weight:800; color:var(--ink); margin-bottom:6px; }
+.pattern-card .pc-flow  { font-size:11.5px; font-family:monospace; background:var(--surface); padding:6px 10px; border-radius:6px; color:var(--ink-mid); margin-bottom:8px; }
+.pattern-card .pc-scene { font-size:12.5px; color:var(--ink-soft); line-height:1.6; }
+
+.compare-table { width:100%; border-collapse:collapse; margin:18px 0; font-size:13px; }
+.compare-table th { background:#0d1117; color:#e6edf3; padding:10px 14px; text-align:left; font-size:11px; font-weight:700; letter-spacing:.5px; }
+.compare-table th:first-child { border-radius:8px 0 0 0; }
+.compare-table th:last-child  { border-radius:0 8px 0 0; }
+.compare-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--ink-mid); vertical-align:top; }
+.compare-table tr:last-child td { border-bottom:none; }
+.compare-table tr:nth-child(even) td { background:#f8fafc; }
+.compare-table td:first-child { font-weight:700; color:var(--ink); }
+
+.skill-migrate { display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:start; margin:20px 0; }
+.sm-box { border-radius:12px; padding:16px 18px; }
+.sm-left  { background:var(--purple-soft); border:1.5px solid #c4b5fd; }
+.sm-right { background:var(--emerald-soft); border:1.5px solid #6ee7b7; }
+.sm-arrow { display:flex; align-items:center; justify-content:center; font-size:24px; color:#94a3b8; padding-top:20px; }
+.sm-box .sm-label { font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+.sm-left  .sm-label { color:var(--purple); }
+.sm-right .sm-label { color:var(--emerald); }
+.sm-box .sm-content { font-size:12px; font-family:monospace; line-height:1.7; color:var(--ink-mid); }
+.sm-box .sm-field { font-size:11.5px; font-weight:700; color:var(--ink); margin-top:8px; margin-bottom:2px; }
+
+.checklist { margin:16px 0; }
+.cl-row { display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; }
+.cl-row:last-child { margin-bottom:0; }
+.cl-icon { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; margin-top:1px; }
+.cl-done { background:var(--emerald-soft); }
+.cl-text { font-size:13.5px; line-height:1.65; color:var(--ink-mid); }
+.cl-text strong { color:var(--ink); }
+
+.divider { height:1px; background:var(--border); margin:28px 0; }
+.svg-wrap { overflow-x:auto; margin:20px 0; }
+.svg-wrap svg { display:block; max-width:100%; height:auto; }
+.svg-caption { font-size:11px; color:var(--ink-soft); text-align:center; margin-top:6px; letter-spacing:.5px; }
+
+.chapter-footer { background:linear-gradient(135deg,var(--emerald-soft),var(--teal-soft)); border-radius:16px; padding:28px 32px; margin-top:12px; }
+.footer-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:8px; }
+.footer-text  { font-size:13.5px; color:var(--ink-mid); line-height:1.72; }
+.next-chapter { display:flex; align-items:center; gap:10px; margin-top:16px; font-size:13px; color:var(--emerald); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ── 章节头部 ── -->
+<div class="chapter-header">
+  <div class="ch-eyebrow">Part 3 · 第 13 章 · 建立 AI 系统</div>
+  <h1 class="ch-title">搭建你的第一条自动化工作流<br><span style="font-size:20px;opacity:.75">用 Claude Code 把 Skill 串成流水线——触发一次，自动跑完</span></h1>
+  <p class="ch-subtitle">第12章建好了 Skill 库，每次用 AI 不再从零想提示词。但每个步骤还是你手动触发、手动推进。这一章要做一件事：让这些步骤自己流转起来——你只负责给输入，剩下的交给工作流。</p>
+  <div class="ch-takeaway">
+    <strong>核心方法论：流程节点拆解</strong> — 把任何重复性工作分解成三段：触发（什么条件启动）→ 处理（每一步做什么，放入 Skill 提示词）→ 输出（结果去哪里）。用 Claude Code 写 Python 脚本把这三段串起来，一次运行，全程自动。主工具是 Claude Code，它比任何可视化平台都更灵活、更强大，而且你已经在第9章和第11章用过它了。
+  </div>
+</div>
+
+<!-- ── 小节一：你其实已经在做工作流了 ── -->
+<div class="card">
+  <div class="section-label">小节一</div>
+  <h2 class="section-title">你其实已经在做工作流了——只是还没串起来</h2>
+  <span class="section-pill pill-emerald">承上启下 · 认知升级</span>
+
+  <p class="body-text">回想第11章的 HR 招聘案例：设计了一条7步流程，每一步标注了自动化级别。回想第12章：建好了"简历解析 Skill"和"候选人评分 Skill"，有标准输入字段、有提示词主体、有预期输出格式。</p>
+
+  <p class="body-text">现在的状态是：每次来新一批简历，你要手动打开 AI 工具，粘贴第一份简历调用解析 Skill，把结果复制出来，再粘贴去调用评分 Skill，把评分结果记录到表格……重复1023次。Skill 解决了"每次不用重新想提示词"，但没有解决"每次还是需要你手动推进"的问题。</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <rect width="700" height="200" rx="14" fill="#f8fafc"/>
+
+      <!-- 左：手动推进 -->
+      <rect x="16" y="18" width="305" height="164" rx="12" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+      <text x="168" y="44" text-anchor="middle" font-size="12.5" font-weight="800" fill="#c2410c">现状：手动调用 Skill</text>
+      <text x="168" y="64" text-anchor="middle" font-size="10.5" fill="#9a3412">每一步都需要你来触发</text>
+
+      <rect x="34" y="76" width="268" height="22" rx="5" fill="#fff" stroke="#fcd34d" stroke-width="1"/>
+      <text x="168" y="92" text-anchor="middle" font-size="10.5" fill="#64748b">你 → 粘贴简历 → 调用解析Skill</text>
+      <text x="168" y="110" text-anchor="middle" font-size="14" fill="#94a3b8">↓ 你来复制粘贴结果</text>
+      <rect x="34" y="118" width="268" height="22" rx="5" fill="#fff" stroke="#fcd34d" stroke-width="1"/>
+      <text x="168" y="134" text-anchor="middle" font-size="10.5" fill="#64748b">你 → 粘贴结果 → 调用评分Skill</text>
+      <text x="168" y="156" text-anchor="middle" font-size="11" fill="#c2410c">✗ 1023份 = 你手动操作1023次</text>
+      <text x="168" y="174" text-anchor="middle" font-size="10.5" fill="#9a3412">Skill节省了思考，没节省动作</text>
+
+      <!-- 箭头 -->
+      <text x="364" y="108" text-anchor="middle" font-size="22" fill="#6ee7b7">→</text>
+
+      <!-- 右：工作流 -->
+      <rect x="386" y="18" width="298" height="164" rx="12" fill="#f0fdf4" stroke="#6ee7b7" stroke-width="2"/>
+      <text x="535" y="44" text-anchor="middle" font-size="12.5" font-weight="800" fill="#059669">工作流：自动流转</text>
+      <text x="535" y="64" text-anchor="middle" font-size="10.5" fill="#065f46">触发一次，步骤自动执行</text>
+
+      <rect x="404" y="76" width="260" height="22" rx="5" fill="#fff" stroke="#6ee7b7" stroke-width="1"/>
+      <text x="534" y="92" text-anchor="middle" font-size="10.5" fill="#64748b">输入：简历文件夹路径（一次）</text>
+      <text x="534" y="110" text-anchor="middle" font-size="14" fill="#6ee7b7">↓ 自动循环</text>
+      <rect x="404" y="118" width="260" height="22" rx="5" fill="#fff" stroke="#6ee7b7" stroke-width="1"/>
+      <text x="534" y="134" text-anchor="middle" font-size="10.5" fill="#64748b">自动：解析 → 评分 → 分级 → 汇总</text>
+      <text x="534" y="156" text-anchor="middle" font-size="11" fill="#059669">✓ 1023份 = 你操作1次</text>
+      <text x="534" y="174" text-anchor="middle" font-size="10.5" fill="#065f46">等结果就好，中途不用介入</text>
+    </svg>
+  </div>
+  <p class="svg-caption">工作流的核心价值：把"每次都要你推进"变成"触发一次自动完成"</p>
+
+  <p class="body-text">工作流要解决的就是这个问题。它不是一个新概念，本质上就是一段代码——把你手动操作的步骤顺序，写成程序让计算机自动执行。好消息是：<strong>你不需要自己会编程，Claude Code 会帮你写</strong>。你只需要描述清楚每一步做什么，它生成代码、你运行，工作流就跑起来了。</p>
+</div>
+
+<!-- ── 小节二：Skill / 工作流 / Agent 三层区别 ── -->
+<div class="card">
+  <div class="section-label">小节二</div>
+  <h2 class="section-title">Skill、工作流、Agent——三层能力的真实边界</h2>
+  <span class="section-pill pill-blue">认知框架 · 三层区别</span>
+
+  <p class="body-text">第6章介绍过这三个概念，当时还比较抽象。现在经历了 Ch9 到 Ch12，可以用更准确的方式讲清楚它们的边界——核心区别不是复杂度，而是<strong>谁来决定下一步</strong>。</p>
+
+  <div class="tier-grid">
+    <div class="tier-box tier-1">
+      <div class="t-emoji">🔧</div>
+      <div class="t-name">Skill</div>
+      <div class="t-who">你来推进</div>
+      <div class="t-desc">一次调用、一个任务。你填输入，你触发，你看结果。每一次都需要你主动操作。</div>
+    </div>
+    <div class="tier-box tier-2">
+      <div class="t-emoji">⚙️</div>
+      <div class="t-name">工作流</div>
+      <div class="t-who">触发器来推进</div>
+      <div class="t-desc">多步骤串联，固定顺序执行。触发一次后不需要你介入，步骤自动流转到结束。</div>
+    </div>
+    <div class="tier-box tier-3">
+      <div class="t-emoji">🤖</div>
+      <div class="t-name">Agent</div>
+      <div class="t-who">AI 来推进</div>
+      <div class="t-desc">AI 自主判断下一步做什么，根据中途结果动态选择路径，不是固定流程。</div>
+    </div>
+  </div>
+
+  <p class="body-text">工作流和 Agent 的根本区别在于：工作流的路径是你提前设计好的，每一步做什么是固定的；Agent 的路径是 AI 临时决定的，它会根据上一步的结果判断下一步该用哪个工具、该走哪条分支。</p>
+
+  <div class="insight-box">
+    <div class="ins-label">📌 什么时候该升级到 Agent</div>
+    <p>工作流应付得了大多数重复性工作。<strong>当你发现工作流需要根据中间结果做出"无法提前写成规则"的判断时</strong>——比如"这份简历信息残缺，需要去候选人领英主页补全资料"——这时候工作流力不从心，该考虑 Agent 了。第14章专门讲这个。</p>
+  </div>
+</div>
+
+<!-- ── 小节三：学习新工具的通用方法 ── -->
+<div class="card">
+  <div class="section-label">小节三</div>
+  <h2 class="section-title">面对任何新工具都不焦虑——学习新工具五步法</h2>
+  <span class="section-pill pill-teal">元能力 · 通用方法</span>
+
+  <p class="body-text">从第9章开始，这本书用的主要工具已经是 Claude Code。这一章的工作流也用它来实现。有人会问：Claude Code 不是写代码用的吗？我不是程序员，能用吗？</p>
+
+  <p class="body-text">面对这类问题，先用一套通用框架来想清楚——这套方法适用于任何你以后遇到的 AI 新工具：</p>
+
+  <div class="step-list">
+    <div class="step-row">
+      <div class="step-num step-num-blue">1</div>
+      <div class="step-content">
+        <div class="s-title">搞清楚它是哪一层能力</div>
+        <div class="s-desc">Claude Code 是"AI 辅助执行环境"——它能帮你写代码、直接在本地运行、读写文件、调用 API。它不是聊天工具，而是可以帮你做事的执行工具。对应本书框架：它是工作流层的执行引擎，可以运行任何你能描述清楚的工作流。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num step-num-blue">2</div>
+      <div class="step-content">
+        <div class="s-title">找它的最小可用场景，先跑通一个</div>
+        <div class="s-desc">不要从最复杂的功能开始。Claude Code 的最小可用场景：打开终端，输入一个任务描述，看它生成并运行代码。第9章处理 Excel 表格时就是这个模式——你描述需求，它写 Python，你看结果。工作流只是更长的任务描述。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num step-num-blue">3</div>
+      <div class="step-content">
+        <div class="s-title">理解它的输入和输出格式</div>
+        <div class="s-desc">Claude Code 的输入是自然语言描述（你告诉它做什么）+ 本地文件（它可以直接读取）。输出是代码执行结果，可以是终端打印、文件写入、HTML 报告等任何你指定的格式。和对话 AI 的区别是：它能直接操作你电脑上的文件，不需要复制粘贴。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num step-num-blue">4</div>
+      <div class="step-content">
+        <div class="s-title">用自己的真实任务套进去</div>
+        <div class="s-desc">本章用 HR 招聘案例——1023份简历、三个岗位、已经建好了解析 Skill 和评分 Skill。把这个真实场景用 Claude Code 跑一遍，比任何教程都学得快。</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num step-num-blue">5</div>
+      <div class="step-content">
+        <div class="s-title">判断它值不值得进入你的常用工具栈</div>
+        <div class="s-desc">跑完本章案例之后，你自然会有判断。Claude Code 的核心优势：灵活（任何 Python 能做的它都能做）、直连本地文件、不依赖第三方平台、免费（在 Claude 订阅内）。核心局限：需要安装 Claude Code 客户端、工作流触发要手动运行（不能定时自动触发，除非配合系统定时任务）。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="key-box">
+    <div class="kb-label">🔑 关键认知：你不需要懂代码，你需要懂业务</div>
+    <p>Claude Code 帮你写代码，你负责告诉它业务逻辑——每一步做什么、用什么规则判断、结果存在哪里。第11章你已经把业务逻辑想清楚了（7步流程图），第12章把操作单元建好了（Skill卡片）。这一章的工作就是把这两样东西交给 Claude Code，让它翻译成可运行的代码。</p>
+  </div>
+</div>
+
+<!-- ── 小节四：工作流三段式框架 ── -->
+<div class="card">
+  <div class="section-label">小节四</div>
+  <h2 class="section-title">工作流三段式框架——触发 → 处理 → 输出</h2>
+  <span class="section-pill pill-emerald">核心框架 · 通用骨架</span>
+
+  <p class="body-text">所有工作流，不管多复杂，都由三段组成。在动手之前先把这三段想清楚，是避免后期反复修改的最有效方式。</p>
+
+  <div class="flow-pipe">
+    <div class="flow-node fn-trigger">
+      <span class="fn-badge">触发层 TRIGGER</span>
+      <div class="fn-title">什么条件下启动这条工作流</div>
+      <div class="fn-desc">手动运行（你执行脚本）/ 定时触发（系统计划任务）/ 文件变化（新文件到来）/ 外部事件（邮件到达、API 调用）。本章案例用手动触发：你把简历文件夹路径传给脚本，它开始工作。</div>
+      <div class="fn-code">python recruit_workflow.py --folder ./resumes/ --positions JD_config.yaml</div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node fn-process">
+      <span class="fn-badge">处理层 PROCESS</span>
+      <div class="fn-title">每一步做什么——这里放你的 Skill</div>
+      <div class="fn-desc">处理层由一个或多个步骤组成，每个步骤有明确的输入和输出。AI 处理步骤 = 把 Skill 提示词放进代码调用 API；规则处理步骤 = 用 if/else 做分类判断；数据处理步骤 = 读取、清洗、格式转换。</div>
+      <div class="fn-code">Step1: 解析简历文本 → Step2: AI评分 → Step3: 按分数分级</div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node fn-output">
+      <span class="fn-badge">输出层 OUTPUT</span>
+      <div class="fn-title">结果去哪里、以什么格式呈现</div>
+      <div class="fn-desc">终端打印 / 写入 Excel 或 CSV / 生成 HTML 报告（第10章的技能直接用上）/ 发送邮件 / 推送到飞书。本章案例：生成一份 HTML 推荐报告，每个候选人有评分和推荐理由，按岗位分组展示。</div>
+      <div class="fn-code">output: recruitment_report_2026.html（可直接在浏览器打开/打印）</div>
+    </div>
+  </div>
+
+  <p class="body-text">在用 Claude Code 实现工作流之前，建议先在纸上或文档里把这三段写清楚。越具体越好——"处理层"需要精确到每一步的输入和输出是什么，而不是"处理简历"这种模糊描述。写清楚之后，交给 Claude Code 的任务描述质量会高很多，生成的代码通常一两次就能跑通。</p>
+</div>
+
+<!-- ── 小节五：主案例——HR 招聘工作流完整实现 ── -->
+<div class="card">
+  <div class="section-label">小节五</div>
+  <h2 class="section-title">主案例：用 Claude Code 把 HR 招聘工作流跑起来</h2>
+  <span class="section-pill pill-emerald">完整案例 · 从设计到运行</span>
+
+  <p class="body-text">回到第11章的场景：收到1023份简历，三个岗位（产品经理/数据分析师/运营专员），需要完成初筛、评分、分级、生成推荐报告。第11章设计了流程，第12章建好了 Skill。现在把它真正跑起来。</p>
+
+  <p class="body-text"><strong>第一步：在纸上把三段式写清楚。</strong></p>
+
+  <div class="flow-pipe">
+    <div class="flow-node fn-trigger">
+      <span class="fn-badge">触发</span>
+      <div class="fn-title">手动运行，传入简历文件夹 + 岗位配置</div>
+      <div class="fn-code">输入：resumes/ 文件夹（PDF/Word）+ positions.yaml（三个岗位的评分标准）</div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node fn-llm">
+      <span class="fn-badge">处理 Step 1 · AI节点</span>
+      <div class="fn-title">简历结构化解析（Skill → 代码）</div>
+      <div class="fn-desc">对每份简历调用 Claude API，传入"简历解析 Skill"提示词，输出结构化 JSON（姓名/学历/工作经历/技能）</div>
+      <div class="fn-code">输入：简历文本 → 输出：parsed_resume.json</div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node fn-cond">
+      <span class="fn-badge">处理 Step 2 · 规则节点</span>
+      <div class="fn-title">硬性条件过滤（不用 AI，用规则）</div>
+      <div class="fn-desc">学历不符 / 工作年限不符 → 直接归入"不符合"池，不再调用 AI 评分（省 token 成本）</div>
+      <div class="fn-code">输入：parsed_resume.json → 输出：pass_list / reject_list</div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node fn-llm">
+      <span class="fn-badge">处理 Step 3 · AI节点</span>
+      <div class="fn-title">综合评分（Skill → 代码）</div>
+      <div class="fn-desc">对通过初筛的简历，调用"候选人评分 Skill"提示词，按岗位评分标准输出打分 JSON（各维度分数+亮点+风险）</div>
+      <div class="fn-code">输入：pass_list + 岗位评分标准 → 输出：scored_candidates.json</div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node fn-output">
+      <span class="fn-badge">输出</span>
+      <div class="fn-title">生成 HTML 推荐报告（第10章技能上场）</div>
+      <div class="fn-desc">把评分结果渲染成可交互 HTML 报告，按岗位分组，候选人按分数排序，有评分详情和推荐理由</div>
+      <div class="fn-code">输出：recruitment_report.html（浏览器打开即用，可打印为PDF）</div>
+    </div>
+  </div>
+
+  <p class="body-text"><strong>第二步：把设计交给 Claude Code，让它写代码。</strong>给 Claude Code 的任务描述示例：</p>
+
+  <div class="code-block-wrap">
+    <div class="code-header">
+      <div class="ch-dot" style="background:#ef4444;"></div>
+      <div class="ch-dot" style="background:#f59e0b;"></div>
+      <div class="ch-dot" style="background:#22c55e;"></div>
+      <div class="ch-filename">给 Claude Code 的任务描述</div>
+      <div class="ch-lang">PROMPT</div>
+    </div>
+    <div class="code-block"><span class="prompt">帮我写一个 Python 工作流脚本 recruit_workflow.py，实现以下功能：
+
+【输入】
+- 命令行参数：--folder（简历文件夹路径）--config（YAML配置文件路径）
+- 支持 PDF 和 Word 格式的简历文件
+
+【处理步骤】
+Step1：读取文件夹里的所有简历，提取纯文本内容
+
+Step2：对每份简历调用 Claude API（claude-opus-4-5），
+使用以下提示词解析结构化信息：
+</span><span class="str">"""
+请从以下简历文本中提取信息，以JSON格式返回：
+{"name","education":{"level","school","major"},
+ "work_years","experiences":[...],"skills":[...]}
+"""</span><span class="prompt">
+
+Step3：按 YAML 配置文件里的硬性条件过滤
+（学历、工作年限不符合的直接归入reject_list）
+
+Step4：对通过初筛的简历，再次调用 Claude API，
+使用以下评分提示词：
+</span><span class="str">"""
+你是资深招聘官。请对候选人进行综合评分（0-100分）。
+岗位要求：{position_requirements}
+候选人信息：{parsed_resume}
+请输出JSON：{"total_score","dimensions":{...},"highlight","risk"}
+"""</span><span class="prompt">
+
+Step5：把所有评分结果整合，生成 HTML 报告
+- 按岗位分组展示
+- 每个岗位内按 total_score 倒序排列
+- 展示每人的分数条、亮点和风险标注
+- 报告风格参考现代商务感，深色头部，白色卡片
+
+【输出】
+- recruitment_report.html（主报告）
+- results.json（原始数据，备份用）
+- run.log（每步耗时和处理数量）
+
+【依赖】
+使用 anthropic Python SDK，需要读取环境变量 ANTHROPIC_API_KEY
+用 PyPDF2 读 PDF，用 python-docx 读 Word 文件</span></div>
+  </div>
+
+  <p class="body-text">Claude Code 收到这段描述，会生成完整的 Python 脚本。下面是它生成的核心代码结构，让你理解整体逻辑（完整文件由 Claude Code 生成，你不需要自己写）：</p>
+
+  <div class="code-block-wrap">
+    <div class="code-header">
+      <div class="ch-dot" style="background:#ef4444;"></div>
+      <div class="ch-dot" style="background:#f59e0b;"></div>
+      <div class="ch-dot" style="background:#22c55e;"></div>
+      <div class="ch-filename">recruit_workflow.py</div>
+      <div class="ch-lang">PYTHON</div>
+    </div>
+    <div class="code-block"><span class="kw">import</span> <span class="key">anthropic</span>, <span class="key">json</span>, <span class="key">yaml</span>, <span class="key">argparse</span>
+<span class="kw">from</span> <span class="key">pathlib</span> <span class="kw">import</span> <span class="key">Path</span>
+
+<span class="comment"># ── 初始化 Claude 客户端 ──────────────────────────</span>
+<span class="key">client</span> = <span class="fn">anthropic.Anthropic</span>()   <span class="comment"># 自动读取 ANTHROPIC_API_KEY</span>
+
+<span class="comment"># ── Skill 提示词（直接从第12章 Skill 卡片迁移）──────</span>
+<span class="key">PARSE_SKILL</span> = <span class="str">"""
+请从以下简历文本中提取结构化信息，以JSON格式返回：
+{
+  "name": "姓名",
+  "education": {"level": "学历", "school": "学校", "major": "专业"},
+  "work_years": 工作年限数字,
+  "experiences": [{"company","title","duration_months"}],
+  "skills": ["技能列表"]
+}
+只返回JSON，不要其他文字。
+"""</span>
+
+<span class="key">SCORE_SKILL</span> = <span class="str">"""
+你是资深招聘官，请对以下候选人进行综合评分（0-100分）。
+
+岗位要求：{requirements}
+候选人信息：{resume_json}
+
+评分维度（各占权重）：
+- 学历匹配度（20%）
+- 工作经验相关性（35%）
+- 技能符合度（25%）
+- 成长潜力（20%）
+
+请以JSON格式返回，只返回JSON：
+{"total_score": 85, "dimensions": {"edu":18,"exp":30,"skill":22,"growth":15},
+ "highlight": "核心优势一句话", "risk": "主要风险一句话"}
+"""</span>
+
+<span class="comment"># ── Step 1：解析简历 ────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">parse_resume</span>(<span class="key">text</span>):
+    <span class="key">response</span> = <span class="key">client</span>.<span class="fn">messages.create</span>(
+        <span class="key">model</span>=<span class="str">"claude-opus-4-5"</span>,
+        <span class="key">max_tokens</span>=<span class="num">1024</span>,
+        <span class="key">messages</span>=[{<span class="str">"role"</span>: <span class="str">"user"</span>,
+                     <span class="str">"content"</span>: <span class="key">PARSE_SKILL</span> + <span class="str">"\n\n简历内容：\n"</span> + <span class="key">text</span>}]
+    )
+    <span class="kw">return</span> <span class="fn">json.loads</span>(<span class="key">response</span>.<span class="key">content</span>[<span class="num">0</span>].<span class="key">text</span>)
+
+<span class="comment"># ── Step 2：硬性条件过滤（规则，不用 AI）────────────</span>
+<span class="kw">def</span> <span class="fn">hard_filter</span>(<span class="key">parsed</span>, <span class="key">requirements</span>):
+    <span class="kw">if</span> <span class="key">parsed</span>[<span class="str">"work_years"</span>] < <span class="key">requirements</span>[<span class="str">"min_years"</span>]:
+        <span class="kw">return False</span>, <span class="str">"工作年限不足"</span>
+    <span class="kw">if</span> <span class="key">parsed</span>[<span class="str">"education"</span>][<span class="str">"level"</span>] <span class="kw">not in</span> <span class="key">requirements</span>[<span class="str">"edu_levels"</span>]:
+        <span class="kw">return False</span>, <span class="str">"学历不符"</span>
+    <span class="kw">return True</span>, <span class="str">"通过初筛"</span>
+
+<span class="comment"># ── Step 3：AI 综合评分 ─────────────────────────</span>
+<span class="kw">def</span> <span class="fn">score_candidate</span>(<span class="key">parsed</span>, <span class="key">position_requirements</span>):
+    <span class="key">prompt</span> = <span class="key">SCORE_SKILL</span>.<span class="fn">format</span>(
+        <span class="key">requirements</span>=<span class="fn">json.dumps</span>(<span class="key">position_requirements</span>, <span class="key">ensure_ascii</span>=<span class="kw">False</span>),
+        <span class="key">resume_json</span>=<span class="fn">json.dumps</span>(<span class="key">parsed</span>, <span class="key">ensure_ascii</span>=<span class="kw">False</span>)
+    )
+    <span class="key">response</span> = <span class="key">client</span>.<span class="fn">messages.create</span>(
+        <span class="key">model</span>=<span class="str">"claude-opus-4-5"</span>, <span class="key">max_tokens</span>=<span class="num">512</span>,
+        <span class="key">messages</span>=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="key">prompt</span>}]
+    )
+    <span class="kw">return</span> <span class="fn">json.loads</span>(<span class="key">response</span>.<span class="key">content</span>[<span class="num">0</span>].<span class="key">text</span>)
+
+<span class="comment"># ── 主工作流：串联所有步骤 ─────────────────────────</span>
+<span class="kw">def</span> <span class="fn">run_workflow</span>(<span class="key">folder</span>, <span class="key">config</span>):
+    <span class="key">results</span> = []
+    <span class="key">files</span> = <span class="fn">list</span>(<span class="key">Path</span>(<span class="key">folder</span>).<span class="fn">glob</span>(<span class="str">"*.pdf"</span>)) + <span class="fn">list</span>(<span class="key">Path</span>(<span class="key">folder</span>).<span class="fn">glob</span>(<span class="str">"*.docx"</span>))
+    <span class="fn">print</span>(<span class="str">f"找到 {len(files)} 份简历，开始处理..."</span>)
+
+    <span class="kw">for</span> <span class="key">i</span>, <span class="key">f</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="key">files</span>):
+        <span class="key">text</span> = <span class="fn">extract_text</span>(<span class="key">f</span>)           <span class="comment"># 提取文本</span>
+        <span class="key">parsed</span> = <span class="fn">parse_resume</span>(<span class="key">text</span>)      <span class="comment"># Step1: 解析</span>
+        <span class="key">ok</span>, <span class="key">reason</span> = <span class="fn">hard_filter</span>(<span class="key">parsed</span>, <span class="key">config</span>[<span class="str">"requirements"</span>])  <span class="comment"># Step2: 过滤</span>
+        <span class="kw">if not</span> <span class="key">ok</span>:
+            <span class="key">results</span>.<span class="fn">append</span>({..., <span class="str">"status"</span>: <span class="str">"rejected"</span>, <span class="str">"reason"</span>: <span class="key">reason</span>})
+            <span class="kw">continue</span>
+        <span class="key">score</span> = <span class="fn">score_candidate</span>(<span class="key">parsed</span>, <span class="key">config</span>[<span class="str">"scoring"</span>])  <span class="comment"># Step3: 评分</span>
+        <span class="key">results</span>.<span class="fn">append</span>({..., <span class="str">"status"</span>: <span class="str">"scored"</span>, <span class="str">"score"</span>: <span class="key">score</span>})
+        <span class="fn">print</span>(<span class="str">f"[{i+1}/{len(files)}] {parsed['name']} → {score['total_score']}分"</span>)
+
+    <span class="fn">generate_html_report</span>(<span class="key">results</span>)   <span class="comment"># Step4: 生成报告</span>
+    <span class="fn">print</span>(<span class="str">"✅ 完成！报告已生成：recruitment_report.html"</span>)</div>
+  </div>
+
+  <div class="insight-box">
+    <div class="ins-label">💡 注意代码里的两处关键</div>
+    <p><strong>PARSE_SKILL 和 SCORE_SKILL</strong> 这两个变量直接对应第12章 Skill 卡片的"提示词主体"字段，原封不动粘贴进来。Skill 卡片的"输入字段"变成了代码里的 <code style="background:#e0f2fe;padding:1px 4px;border-radius:3px;">format()</code> 替换的变量。这就是"Skill 变节点"的全部操作——复制提示词、填进代码框架。</p>
+    <p style="margin-top:6px;">另一处是 <code style="background:#e0f2fe;padding:1px 4px;border-radius:3px;">hard_filter</code> 函数——规则类步骤不需要调用 AI，用 Python 直接判断，速度快、成本低。只有真正需要语言理解能力的步骤才调用 Claude API。</p>
+  </div>
+</div>
+
+<!-- ── 小节六：Skill 变节点——迁移逻辑 ── -->
+<div class="card">
+  <div class="section-label">小节六</div>
+  <h2 class="section-title">Skill 变节点——从卡片到代码只有一步</h2>
+  <span class="section-pill pill-purple">核心操作 · 迁移逻辑</span>
+
+  <p class="body-text">上一节的代码里有一个关键操作，值得单独拆出来讲清楚：<strong>第12章的 Skill 卡片是怎么变成工作流里的 AI 处理节点的？</strong></p>
+
+  <div class="skill-migrate">
+    <div class="sm-box sm-left">
+      <div class="sm-label">第12章 · Skill 卡片</div>
+      <div class="sm-field">📥 输入字段</div>
+      <div class="sm-content">{简历文本原文}
+{岗位名称}
+{评分标准配置}</div>
+      <div class="sm-field">📝 提示词主体</div>
+      <div class="sm-content">你是资深招聘官。
+请对以下候选人评分...
+岗位要求：{requirements}
+候选人：{resume_json}
+输出JSON：{total_score...}</div>
+      <div class="sm-field">📤 预期输出格式</div>
+      <div class="sm-content">JSON，含 total_score、
+dimensions、highlight、risk</div>
+    </div>
+    <div class="sm-arrow">→</div>
+    <div class="sm-box sm-right">
+      <div class="sm-label">第13章 · 代码节点</div>
+      <div class="sm-field">📥 函数参数</div>
+      <div class="sm-content">parsed_resume  # 结构化简历
+position_reqs  # 岗位配置yaml</div>
+      <div class="sm-field">📝 提示词变量（原封不动）</div>
+      <div class="sm-content">SCORE_SKILL = """
+你是资深招聘官...
+岗位要求：{requirements}
+候选人：{resume_json}
+输出JSON：{total_score...}
+"""</div>
+      <div class="sm-field">📤 返回值处理</div>
+      <div class="sm-content">json.loads(response)
+# 解析成字典直接用</div>
+    </div>
+  </div>
+
+  <p class="body-text">迁移只需要三个动作：① 把"提示词主体"原文复制，赋值给一个 Python 变量；② 把"输入字段"的占位符改成 <code style="background:#f1f5f9;padding:2px 5px;border-radius:3px;font-size:12px;">.format(key=value)</code> 的格式；③ 把"预期输出格式"改成 <code style="background:#f1f5f9;padding:2px 5px;border-radius:3px;font-size:12px;">json.loads()</code> 解析。其他都是固定模板，Claude Code 会帮你填。</p>
+
+  <p class="body-text">这个迁移逻辑说明了 Skill 库为什么是工作流的基础：建 Skill 库时逼着你把"输入字段"和"输出格式"想清楚，这两个字段恰好就是代码里节点函数的"参数"和"返回值"——格式对了，迁移是机械操作，不需要任何额外思考。</p>
+</div>
+
+<!-- ── 小节七：批量处理——循环节点 ── -->
+<div class="card">
+  <div class="section-label">小节七</div>
+  <h2 class="section-title">批量处理1023份简历——循环让工作流规模化</h2>
+  <span class="section-pill pill-teal">批量执行 · 循环节点</span>
+
+  <p class="body-text">单份简历的处理逻辑验证通了之后，扩展到1023份只需要加一个循环。这是工作流相比手动操作最大的价值所在：手动操作的成本随数量线性增长，代码循环的成本几乎不变。</p>
+
+  <div class="code-block-wrap">
+    <div class="code-header">
+      <div class="ch-dot" style="background:#ef4444;"></div>
+      <div class="ch-dot" style="background:#f59e0b;"></div>
+      <div class="ch-dot" style="background:#22c55e;"></div>
+      <div class="ch-filename">批量处理 + 进度显示 + 错误容忍</div>
+      <div class="ch-lang">PYTHON</div>
+    </div>
+    <div class="code-block"><span class="kw">import</span> <span class="key">time</span>, <span class="key">logging</span>
+
+<span class="kw">def</span> <span class="fn">run_batch</span>(<span class="key">files</span>, <span class="key">config</span>):
+    <span class="key">results</span>, <span class="key">errors</span> = [], []
+    <span class="key">passed</span>, <span class="key">rejected</span>, <span class="key">scored</span> = <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>
+
+    <span class="kw">for</span> <span class="key">i</span>, <span class="key">file</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="key">files</span>, <span class="num">1</span>):
+        <span class="kw">try</span>:
+            <span class="comment"># 每份简历走完整的处理流程</span>
+            <span class="key">text</span>   = <span class="fn">extract_text</span>(<span class="key">file</span>)
+            <span class="key">parsed</span> = <span class="fn">parse_resume</span>(<span class="key">text</span>)
+            <span class="key">ok</span>, <span class="key">reason</span> = <span class="fn">hard_filter</span>(<span class="key">parsed</span>, <span class="key">config</span>)
+
+            <span class="kw">if not</span> <span class="key">ok</span>:
+                <span class="key">rejected</span> += <span class="num">1</span>
+                <span class="key">results</span>.<span class="fn">append</span>({<span class="str">"file"</span>: <span class="key">file</span>.<span class="key">name</span>, <span class="str">"status"</span>: <span class="str">"rejected"</span>,
+                                  <span class="str">"reason"</span>: <span class="key">reason</span>})
+            <span class="kw">else</span>:
+                <span class="key">score</span> = <span class="fn">score_candidate</span>(<span class="key">parsed</span>, <span class="key">config</span>)
+                <span class="key">scored</span> += <span class="num">1</span>
+                <span class="key">results</span>.<span class="fn">append</span>({<span class="str">"file"</span>: <span class="key">file</span>.<span class="key">name</span>, <span class="str">"status"</span>: <span class="str">"scored"</span>,
+                                  <span class="str">"name"</span>: <span class="key">parsed</span>[<span class="str">"name"</span>], <span class="key">**score</span>})
+
+            <span class="comment"># 实时进度</span>
+            <span class="fn">print</span>(<span class="str">f"\r处理中 {i}/{len(files)} | 通过:{scored} 淘汰:{rejected}"</span>,
+                  <span class="key">end</span>=<span class="str">""</span>, <span class="key">flush</span>=<span class="kw">True</span>)
+            <span class="key">time</span>.<span class="fn">sleep</span>(<span class="num">0.3</span>)   <span class="comment"># 避免 API 限速</span>
+
+        <span class="kw">except</span> <span class="key">Exception</span> <span class="kw">as</span> <span class="key">e</span>:
+            <span class="key">errors</span>.<span class="fn">append</span>({<span class="str">"file"</span>: <span class="key">file</span>.<span class="key">name</span>, <span class="str">"error"</span>: <span class="fn">str</span>(<span class="key">e</span>)})
+            <span class="comment"># 单份出错不影响其他简历继续处理</span>
+
+    <span class="fn">print</span>(<span class="str">f"\n✅ 完成：{scored}份评分 | {rejected}份淘汰 | {len(errors)}份出错"</span>)
+    <span class="kw">return</span> <span class="key">results</span>, <span class="key">errors</span></div>
+  </div>
+
+  <p class="body-text">上面代码里有两个设计值得注意。第一是<strong>错误容忍</strong>：把每份简历的处理放在 try/except 里，单份出错不会让整个工作流崩溃，出错的文件记录在 errors 列表里，事后单独处理。处理1023份文件时，总会有几份格式损坏或内容异常的，错误容忍让工作流的鲁棒性大大提升。</p>
+
+  <p class="body-text">第二是 <code style="background:#f1f5f9;padding:2px 5px;border-radius:3px;font-size:12px;">time.sleep(0.3)</code>——每处理一份简历后等待0.3秒。Claude API 有并发限制，不加延迟的话批量请求很容易触发限速错误。这类"工程细节"是 Claude Code 知道的，你不需要自己想，在任务描述里提一句"注意 API 限速"它就会处理好。</p>
+
+  <div class="warn-box">
+    <div class="w-label">⚠️ 批量处理的成本意识</div>
+    <p>1023份简历，每份调用两次 Claude API（解析+评分），大约是2000次 API 调用。按当前 Claude API 定价，这个量级的成本大约在几十元人民币。在正式运行前，可以先用10-20份简历测试，确认逻辑正确、成本符合预期，再跑全量。Claude Code 可以帮你提前估算成本——告诉它"帮我估算处理1000份简历大概需要多少token，费用是多少"即可。</p>
+  </div>
+</div>
+
+<!-- ── 小节八：条件分支——让工作流有判断力 ── -->
+<div class="card">
+  <div class="section-label">小节八</div>
+  <h2 class="section-title">条件分支——让工作流根据结果走不同路径</h2>
+  <span class="section-pill pill-orange">条件节点 · 分级路由</span>
+
+  <p class="body-text">基础工作流是线性的：每份简历都走同样的路径。加入条件分支之后，工作流可以根据评分结果自动分级处理，不同分数段的候选人走不同后续流程。</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif">
+      <rect width="680" height="260" rx="14" fill="#f8fafc"/>
+
+      <!-- 评分结果节点 -->
+      <rect x="260" y="16" width="160" height="40" rx="8" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1.5"/>
+      <text x="340" y="41" text-anchor="middle" font-size="12" font-weight="800" fill="#7c3aed">AI 评分结果</text>
+
+      <!-- 判断菱形 -->
+      <polygon points="340,72 390,104 340,136 290,104" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+      <text x="340" y="100" text-anchor="middle" font-size="10.5" font-weight="800" fill="#c2410c">分数判断</text>
+      <text x="340" y="116" text-anchor="middle" font-size="10" fill="#9a3412">total_score</text>
+
+      <!-- 箭头从评分到判断 -->
+      <line x1="340" y1="56" x2="340" y2="72" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- 三条分支 -->
+      <!-- 左：≥85 推荐 -->
+      <line x1="290" y1="104" x2="120" y2="104" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="120" y1="104" x2="120" y2="150" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="200" y="98" text-anchor="middle" font-size="10" font-weight="800" fill="#16a34a">≥ 85分</text>
+      <rect x="50" y="150" width="140" height="52" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+      <text x="120" y="172" text-anchor="middle" font-size="11.5" font-weight="800" fill="#15803d">🌟 直推终面</text>
+      <text x="120" y="190" text-anchor="middle" font-size="10" fill="#16a34a">自动生成推荐信</text>
+
+      <!-- 中：70-84 复核 -->
+      <line x1="340" y1="136" x2="340" y2="150" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="360" y="147" font-size="10" font-weight="800" fill="#2563eb">70-84</text>
+      <rect x="265" y="150" width="150" height="52" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="340" y="172" text-anchor="middle" font-size="11.5" font-weight="800" fill="#1d4ed8">👀 人工复核</text>
+      <text x="340" y="190" text-anchor="middle" font-size="10" fill="#2563eb">加入待定池，HR确认</text>
+
+      <!-- 右：<70 归档 -->
+      <line x1="390" y1="104" x2="560" y2="104" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="560" y1="104" x2="560" y2="150" stroke="#dc2626" stroke-width="1.5"/>
+      <text x="476" y="98" text-anchor="middle" font-size="10" font-weight="800" fill="#dc2626">&lt; 70分</text>
+      <rect x="490" y="150" width="140" height="52" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+      <text x="560" y="172" text-anchor="middle" font-size="11.5" font-weight="800" fill="#c2410c">📁 自动归档</text>
+      <text x="560" y="190" text-anchor="middle" font-size="10" fill="#c2410c">记录备案，本轮不推进</text>
+
+      <!-- 三条汇合到报告 -->
+      <line x1="120" y1="202" x2="120" y2="230" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="340" y1="202" x2="340" y2="230" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="560" y1="202" x2="560" y2="230" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="120" y1="230" x2="560" y2="230" stroke="#94a3b8" stroke-width="1.5"/>
+      <line x1="340" y1="230" x2="340" y2="246" stroke="#94a3b8" stroke-width="1.5"/>
+      <rect x="270" y="246" width="140" height="10" rx="3" fill="#a7f3d0"/>
+      <text x="340" y="255" text-anchor="middle" font-size="9.5" font-weight="700" fill="#065f46">汇总 → HTML 报告</text>
+
+      <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#94a3b8"/></marker></defs>
+    </svg>
+  </div>
+  <p class="svg-caption">条件分支：评分结果自动路由到三条后续处理路径</p>
+
+  <p class="body-text">在代码里实现这个分支只需要几行 if/elif/else：</p>
+
+  <div class="code-block-wrap">
+    <div class="code-header">
+      <div class="ch-dot" style="background:#ef4444;"></div>
+      <div class="ch-dot" style="background:#f59e0b;"></div>
+      <div class="ch-dot" style="background:#22c55e;"></div>
+      <div class="ch-filename">条件分支路由</div>
+      <div class="ch-lang">PYTHON</div>
+    </div>
+    <div class="code-block"><span class="kw">def</span> <span class="fn">route_candidate</span>(<span class="key">candidate</span>):
+    <span class="key">score</span> = <span class="key">candidate</span>[<span class="str">"total_score"</span>]
+
+    <span class="kw">if</span> <span class="key">score</span> >= <span class="num">85</span>:
+        <span class="key">candidate</span>[<span class="str">"tier"</span>] = <span class="str">"A"</span>
+        <span class="key">candidate</span>[<span class="str">"action"</span>] = <span class="str">"直推终面"</span>
+        <span class="key">candidate</span>[<span class="str">"recommend_letter"</span>] = <span class="fn">generate_recommend_letter</span>(<span class="key">candidate</span>)
+
+    <span class="kw">elif</span> <span class="key">score</span> >= <span class="num">70</span>:
+        <span class="key">candidate</span>[<span class="str">"tier"</span>] = <span class="str">"B"</span>
+        <span class="key">candidate</span>[<span class="str">"action"</span>] = <span class="str">"人工复核"</span>
+        <span class="comment"># 加入待定池，HR 手动确认后推进</span>
+
+    <span class="kw">else</span>:
+        <span class="key">candidate</span>[<span class="str">"tier"</span>] = <span class="str">"C"</span>
+        <span class="key">candidate</span>[<span class="str">"action"</span>] = <span class="str">"归档备案"</span>
+
+    <span class="kw">return</span> <span class="key">candidate</span>
+
+<span class="comment"># A层推荐信也用 Skill——用 Claude Code 写一个 generate_recommend_letter Skill</span>
+<span class="kw">def</span> <span class="fn">generate_recommend_letter</span>(<span class="key">candidate</span>):
+    <span class="key">prompt</span> = <span class="str">f"""
+    请为以下 A 级候选人写一份简短推荐意见（150字以内），供面试官参考。
+    候选人亮点：{candidate['highlight']}
+    评分：{candidate['total_score']}分
+    请直接输出推荐意见文字，不要有其他内容。
+    """</span>
+    <span class="comment"># 调用 Claude API，返回推荐意见文字</span>
+    ...</div>
+  </div>
+
+  <p class="body-text">条件分支的强大之处是：它让工作流变成一个主动分拣系统，不同质量的输入自动走不同路径，后续处理量大幅减少。1023份简历经过条件分支之后，HR 只需要人工确认 B 层的待定池（通常50-100人），A 层已经自动准备好了推荐信，C 层自动归档不需要看。</p>
+</div>
+
+<!-- ── 小节九：五种通用工作流模式 ── -->
+<div class="card">
+  <div class="section-label">小节九</div>
+  <h2 class="section-title">五种通用工作流模式——你的场景是哪种</h2>
+  <span class="section-pill pill-gold">模式识别 · 通用结构</span>
+
+  <p class="body-text">HR 招聘工作流是"多步串联 + 条件分支 + 批量循环"的组合。但实际上大多数工作流只需要五种基础模式中的一种或两种。看完这五种，你就能判断自己想搭的工作流属于哪种结构。</p>
+
+  <div class="pattern-grid">
+    <div class="pattern-card">
+      <div class="pc-num">模式一</div>
+      <div class="pc-name">单路径</div>
+      <div class="pc-flow">输入 → AI处理 → 输出</div>
+      <div class="pc-scene">最简单的形式。适合：格式转换、文档摘要、周报生成、邮件润色。一个输入、一步 AI 处理、一个输出。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pc-num">模式二</div>
+      <div class="pc-name">多步串联</div>
+      <div class="pc-flow">输入 → Skill1 → Skill2 → Skill3 → 输出</div>
+      <div class="pc-scene">前一步的输出是后一步的输入。适合：简历解析→评分→生成推荐语；资讯获取→摘要→分析影响。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pc-num">模式三</div>
+      <div class="pc-name">条件分支</div>
+      <div class="pc-flow">处理 → 判断条件 → A路径 / B路径</div>
+      <div class="pc-scene">根据中间结果走不同后续。适合：评分分级路由、数据异常检测处理、不同类型内容的差异化处理。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pc-num">模式四</div>
+      <div class="pc-name">批量循环</div>
+      <div class="pc-flow">列表 → for each → 处理单条 → 汇总</div>
+      <div class="pc-scene">对一组数据重复执行同样处理。适合：批量简历、批量合同审核、批量商品描述生成、多城市数据汇总。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pc-num">模式五</div>
+      <div class="pc-name">并行合并</div>
+      <div class="pc-flow">输入 → 并行处理A + B → 合并结果</div>
+      <div class="pc-scene">同时处理多路输入，最后合并。适合：多竞品同时分析后对比、多数据源聚合报告、多语言内容同时生成。</div>
+    </div>
+  </div>
+
+  <p class="body-text">HR 招聘案例是模式二 + 模式三 + 模式四的组合：每份简历走模式二（串联处理），有条件分支（模式三）路由，外层是批量循环（模式四）。大多数复杂工作流都是这几种基础模式的组合，掌握了五种模式，你就能分析任意工作流的结构。</p>
+
+  <div class="example-box">
+    <div class="ex-label">举一反三：其他场景套哪种模式</div>
+    <p><strong>竞品快报工作流：</strong>输入竞品URL列表 → 批量循环（模式四）→ 每个URL走：提取正文 → AI摘要 → 分析影响（模式二）→ 合并生成一份内参（模式五合并步骤）</p>
+    <p><strong>月度数据复盘：</strong>输入数据文件 → 数据清洗 → AI分析 → 条件判断：达标/未达标走不同结论路径（模式三）→ 生成HTML报告（模式一输出）</p>
+    <p><strong>合同批量审核：</strong>合同文件夹 → 批量循环（模式四）→ 每份：提取关键条款 → AI识别风险点 → 风险评级（模式三分支）→ 汇总风险报告</p>
+  </div>
+</div>
+
+<!-- ── 小节十：Coze 替代方案 ── -->
+<div class="card">
+  <div class="section-label">小节十</div>
+  <h2 class="section-title">不想写代码？Coze 拖拉拽也能实现同样的事</h2>
+  <span class="section-pill pill-purple">可视化替代 · Coze 方案</span>
+
+  <p class="body-text">Claude Code 是本书推荐的主工具，原因很直接：它更灵活（任何 Python 能做的都能做）、可以直接操作本地文件、不需要额外注册账号、已经在前几章用过。但如果你确实不想接触任何代码界面，有一个可视化的替代方案：<strong>Coze</strong>（字节跳动出品，网页端，完全免费，无需安装）。</p>
+
+  <p class="body-text">Coze 的工作流是把上面讲的所有步骤变成可拖拉拽的节点，逻辑完全一样，只是操作界面不同。HR 招聘工作流在 Coze 里的节点排列：</p>
+
+  <div class="coze-box">
+    <div class="cz-label">
+      <span>🟣</span>
+      Coze 工作流节点对照（与代码版本一一对应）
+    </div>
+    <div class="coze-node-row">
+      <div class="coze-node">📥 开始节点<br><span style="font-size:10px;font-weight:400;">输入简历文本</span></div>
+      <div class="coze-arrow">→</div>
+      <div class="coze-node">🤖 LLM节点<br><span style="font-size:10px;font-weight:400;">简历解析Skill</span></div>
+      <div class="coze-arrow">→</div>
+      <div class="coze-node">🔀 条件节点<br><span style="font-size:10px;font-weight:400;">硬性过滤规则</span></div>
+      <div class="coze-arrow">→</div>
+      <div class="coze-node">🤖 LLM节点<br><span style="font-size:10px;font-weight:400;">评分Skill</span></div>
+      <div class="coze-arrow">→</div>
+      <div class="coze-node">🔀 条件节点<br><span style="font-size:10px;font-weight:400;">A/B/C分级</span></div>
+      <div class="coze-arrow">→</div>
+      <div class="coze-node">📤 结束节点<br><span style="font-size:10px;font-weight:400;">输出结果</span></div>
+    </div>
+    <p>每个 LLM 节点里填入的内容，就是 Skill 卡片的提示词主体——和代码版本里的 PARSE_SKILL、SCORE_SKILL 变量完全相同。Coze 的优势是可以直接接入飞书机器人、企业微信、定时触发等，适合需要把工作流"部署"为团队服务的场景。具体操作步骤见附录A：Coze 操作手册。</p>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>维度</th>
+        <th>Claude Code（推荐）</th>
+        <th>Coze（可视化替代）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>操作方式</td>
+        <td>描述需求，AI 生成代码，你运行</td>
+        <td>拖拉拽节点，配置参数，点击运行</td>
+      </tr>
+      <tr>
+        <td>处理本地文件</td>
+        <td>✅ 直接读取电脑上的文件</td>
+        <td>❌ 需要先上传到 Coze 平台</td>
+      </tr>
+      <tr>
+        <td>灵活性</td>
+        <td>✅ 任何逻辑都能实现</td>
+        <td>受限于 Coze 提供的节点类型</td>
+      </tr>
+      <tr>
+        <td>定时自动触发</td>
+        <td>需配合系统计划任务（cron）</td>
+        <td>✅ 内置定时触发功能</td>
+      </tr>
+      <tr>
+        <td>外部集成</td>
+        <td>需要自己写 API 调用代码</td>
+        <td>✅ 内置飞书/邮件/企微连接器</td>
+      </tr>
+      <tr>
+        <td>团队共享</td>
+        <td>共享 .py 文件</td>
+        <td>✅ 一键发布为团队可用服务</td>
+      </tr>
+      <tr>
+        <td>成本</td>
+        <td>Claude 订阅内含，仅 API 调用费</td>
+        <td>免费，但 LLM 节点调用有额度限制</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="body-text">选择建议：<strong>如果你的工作流处理的是本地文件（简历PDF/Excel数据），或者需要很灵活的数据处理逻辑——用 Claude Code</strong>。如果你的工作流需要定时自动跑、或者需要连接飞书/企微推送通知——Coze 是更合适的选择，或者 Claude Code + 系统定时任务的组合。</p>
+</div>
+
+<!-- ── 小节十一：工作流的边界 + 引出 Agent ── -->
+<div class="card">
+  <div class="section-label">小节十一</div>
+  <h2 class="section-title">工作流能做什么，不能做什么——边界决定选型</h2>
+  <span class="section-pill pill-orange">边界认知 · 引出 Agent</span>
+
+  <p class="body-text">工作流是目前为止最强大的 AI 能力层——它把所有前几章的技能（Python数据处理、HTML报告、Skill 提示词）整合成了一个自动运行的系统。但它有一个根本性的局限，值得在这里说清楚。</p>
+
+  <p class="body-text"><strong>工作流的本质是固定剧本：</strong>你提前设计好所有步骤和分支条件，运行时按剧本执行。这意味着，所有可能出现的情况你都需要提前考虑到并写进条件分支。工作流不能自己发现问题、不能自己改变处理策略、不能自己决定去哪里找额外信息。</p>
+
+  <div class="example-box">
+    <div class="ex-label">工作流遇到边界的真实场景</div>
+    <p>处理第473份简历时，这份简历是扫描版图片，文字提取失败，parse_resume 收到的是空字符串，AI 返回了一个空 JSON，评分输出 0 分，进入 C 层归档。——<strong>但实际上这可能是一个很强的候选人，只是简历格式特殊</strong>。</p>
+    <p>工作流里的 try/except 记录了这个错误，但不会主动说"我要去用 OCR 重新识别这份简历"或者"我要通知 HR 这份简历需要人工处理"。它只会跳过，记录错误，继续处理下一份。</p>
+    <p><strong>这就是工作流的边界：它按规则执行，不会自主判断"这条规则现在不合适，我要换一种方式"。</strong></p>
+  </div>
+
+  <p class="body-text">当你遇到以下两种情况时，工作流就力不从心了，需要考虑升级到 Agent：</p>
+
+  <p class="body-text">第一种：<strong>处理路径无法提前枚举</strong>。比如一个工作流需要"根据简历内容的具体情况，决定去哪个网站查额外信息"——可能去领英、可能去 GitHub、可能去某行业数据库。这些路径太多，写不完条件分支。</p>
+
+  <p class="body-text">第二种：<strong>需要多轮迭代直到达标</strong>。比如"不断修改报告，直到所有数据引用都有来源"——这需要 AI 反复检查自己的输出、决定下一步改什么。这是循环判断的逻辑，不是固定步骤。</p>
+
+  <div class="perception-box">
+    <div class="p-label">✅ 本章核心结论</div>
+    <p>工作流 = 把你手动推进的 Skill 调用链，变成触发一次自动完成的代码流水线。用 Claude Code 实现的方法：三段式框架（触发→处理→输出）+ Skill 提示词迁移进代码 + 循环处理批量数据 + 条件分支自动路由。工作流能解决"重复性强、步骤固定"的自动化需求；当任务需要"临时判断、动态路径"时，它就到了边界，需要 Agent 接手。</p>
+  </div>
+</div>
+
+<!-- ── 章节结尾 ── -->
+<div class="chapter-footer">
+  <div class="footer-title">📚 本章交付物检查</div>
+  <div class="checklist">
+    <div class="cl-row">
+      <div class="cl-icon cl-done">✓</div>
+      <div class="cl-text"><strong>一张三段式设计图：</strong>你自己的工作场景用触发→处理→输出三段写清楚，每步有输入和输出说明</div>
+    </div>
+    <div class="cl-row">
+      <div class="cl-icon cl-done">✓</div>
+      <div class="cl-text"><strong>一条跑通的工作流脚本：</strong>用 Claude Code 生成并实际运行了至少一条工作流，处理了真实数据</div>
+    </div>
+    <div class="cl-row">
+      <div class="cl-icon cl-done">✓</div>
+      <div class="cl-text"><strong>Skill 迁移完成：</strong>第12章至少一个 Skill 卡片的提示词，已经变成工作流代码里的 AI 节点</div>
+    </div>
+    <div class="cl-row">
+      <div class="cl-icon cl-done">✓</div>
+      <div class="cl-text"><strong>识别了工作流的边界：</strong>能说出自己这条工作流"在什么情况下会失效、什么情况下需要升级到 Agent"</div>
+    </div>
+  </div>
+  <p class="footer-text" style="margin-top:16px;">工作流解决的是"固定流程的自动化"。下一章要解决的是工作流搞不定的那类问题：任务目标明确，但执行路径需要 AI 自主判断，中途会遇到各种意外情况，需要 AI 像一个真正的执行者一样灵活应对。</p>
+  <div class="next-chapter">
+    → 下一章：搭建你的第一个 Agent 助手——当任务需要 AI 自主判断路径时，工作流升级成 Agent
+  </div>
+</div>
+
+</div><!-- .page -->
+</body>
+</html>
